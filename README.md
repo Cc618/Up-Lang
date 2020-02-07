@@ -10,7 +10,7 @@ Up is a programming language with Python like syntax, static typing and is trans
 # Create a variable with type int
 int a = 42
 
-# Create a variable with type automaticaly deducted
+# Create a variable with automatically deducted type
 $b = 38.2
 
 # Some operations
@@ -34,7 +34,7 @@ for i=10 to 1:
 while yes:
     ...
 
-# Same as
+# Same as while yes
 loop:
     ...
 
