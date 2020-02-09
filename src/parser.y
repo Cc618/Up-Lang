@@ -47,7 +47,7 @@
 %token
 	END 0 "End of file"
 	INDENT "Indentation"
-	DEDENT "Deindentation"
+	DEDENT "Unindentation"
 	EQ "="
 	<string> ID "Identifier"
 	<int> NB "Number"
@@ -60,6 +60,8 @@
 %%
 program:
 	| program ID ID EQ NB { compiler.printVarDecl($2, $3, $5); }
+	| program INDENT { cout << "INDENT\n"; }
+	| program DEDENT { cout << "DEDENT\n"; }
 	;
 %%
 

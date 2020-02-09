@@ -61,6 +61,11 @@ namespace up
         // Current indentation
         // * Used when tokenizing
         int indent;
+
+        // To add multiple indent or dedent tokens at once
+        // indentsToAdd > 0 for INDENT, DEDENT otherwise
+        // * Used when tokenizing
+        int indentsToAdd;
     };
 
 }

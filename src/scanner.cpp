@@ -12,6 +12,7 @@ namespace up
     {
         loc = Parser::location_type();
         indent = 0;
+        indentsToAdd = 0;
         file = FILE_PATH;
 
         fileInput.open(FILE_PATH);
@@ -40,12 +41,14 @@ namespace up
         // How many tabs have been added since the last line
         const int GAP = TABS - indent;
 
-        if (GAP > 0)
-        {
-            std::cout << GAP << " INDENTS\n";
-        }
-        else if (GAP < 0)
-            std::cout << (-GAP) << " DEDENTS\n";
+        // if (GAP > 0)
+        // {
+        //     std::cout << GAP << " INDENTS\n";
+        // }
+        // else if (GAP < 0)
+        //     std::cout << (-GAP) << " DEDENTS\n";
+
+        indentsToAdd = GAP;
 
         // Update indentation
         indent = TABS;

@@ -1,12 +1,13 @@
-
+# !!! Use tabs and not spaces for the moment
 
 
 int a = 42
 
+	# I'm a comment
 	bool g=-36
-	bool g=-36
+	bool g=-36	# Wow amazing comment # Just commenting my comment
 
-			int x =   6
+		# Weird indentation ?	int x =   6
 	bool g=-36
 		bool g=-36
 
