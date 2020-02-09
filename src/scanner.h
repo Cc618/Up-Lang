@@ -13,7 +13,7 @@
 
 // Set the lex function
 #undef YY_DECL
-#define YY_DECL up::Parser::symbol_type up::Scanner::Next()
+#define YY_DECL up::Parser::symbol_type up::Scanner::next()
 
 namespace up
 {
@@ -31,15 +31,15 @@ namespace up
 
     public:
         // Equivalent to yylex
-        virtual Parser::symbol_type Next();
+        virtual Parser::symbol_type next();
 
         // Reset attributes to parse a new file
         // Returns whether there is no error
-        bool BeginParse(const std::string &FILE_PATH);
-        void EndParse();
+        bool beginParse(const std::string &FILE_PATH);
+        void endParse();
 
         // Moves the cursor
-        void UpdateLocation(const int COLS);
+        void updateLocation(const int COLS);
 
     public:
         // The location within the file

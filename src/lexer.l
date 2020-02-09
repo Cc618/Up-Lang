@@ -10,7 +10,7 @@
 	#define yyterminate() up::Parser::make_END(loc);
 
 	// Update the location
-	#define YY_USER_ACTION UpdateLocation(yyleng);
+	#define YY_USER_ACTION updateLocation(yyleng);
 
 %}
 

@@ -53,3 +53,21 @@ Up targets linux platforms, some programs are required to compile Up :
 - g++
 - flex
 - bison
+
+## Mechanism
+
+There are two processes : *Parsing* and *compiling*.
+
+### Parsing
+
+We use bison and flex to parse, flex is used to tokenize the text and
+bison to analyze semantics. The class *Scanner* handle this process.
+
+### Compiling
+
+To compile, OOP is used :
+- Instruction : The smaller component in Compiler
+- Variable : Has a type and an identifier
+- Function : Gathers a sequence of instructions
+- ISerializable : Interface which provide the function serialize that returns the object in text
+- Compiler : Gathers main data such as the program in text format and also the scanner

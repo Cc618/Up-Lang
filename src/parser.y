@@ -41,7 +41,7 @@
 
 	// Replace the yylex function by up::Scanner::Next
 	static inline Parser::symbol_type yylex(Scanner &scanner, Compiler &compiler)
-	{ return scanner.Next(); }
+	{ return scanner.next(); }
 }
 
 %token END 0 "End of file"
@@ -54,8 +54,8 @@
 
 %%
 program:
-	| program number { compiler.PrintNumber($2); }
-	| program LETTER { compiler.PrintLetter($2[0]); }
+	| program number { compiler.printNumber($2); }
+	| program LETTER { compiler.printLetter($2[0]); }
 	;
 
 number:

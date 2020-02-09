@@ -14,13 +14,13 @@ namespace up
         
     public:
         // Returns 0 if no error
-        int Parse(const std::string &FILE_PATH);
+        int parse(const std::string &FILE_PATH);
         
     public:
-        void PrintLetter(const char l)
+        void printLetter(const char l)
         { std::cout << l << '\n'; }
 
-        void PrintNumber(const int i)
+        void printNumber(const int i)
         { std::cout << i << '\n'; }
         
     private:

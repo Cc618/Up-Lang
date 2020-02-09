@@ -8,14 +8,17 @@ namespace up
         : scanner(*this), parser(scanner, *this)
     {}
 
-    int Compiler::Parse(const std::string &FILE_PATH)
+    int Compiler::parse(const std::string &FILE_PATH)
     {
-        if (!scanner.BeginParse(FILE_PATH))
+        if (!scanner.beginParse(FILE_PATH))
+        {
+            scanner.endParse();
             return -1;
+        }
 
         int ret = parser.parse();
 
-        scanner.EndParse();
+        scanner.endParse();
 
         return ret;
     }

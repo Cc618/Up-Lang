@@ -8,7 +8,7 @@ src:
 	cd src && make
 
 # Runs the compiler on the test/main.up file
-test:
+test: src
 	bin/up test/main.up
 
 clean:

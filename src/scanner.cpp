@@ -8,28 +8,30 @@ namespace up
         : compiler(compiler)
     {}
 
-    bool Scanner::BeginParse(const std::string &FILE_PATH)
+    bool Scanner::beginParse(const std::string &FILE_PATH)
     {
         file = FILE_PATH;
         loc = Parser::location_type();
 
-        fileInput = ifstream(FILE_PATH);
+        fileInput.open(FILE_PATH);
 
         if (fileInput.is_open())
         {
             switch_streams(fileInput, cout);
             return true;
         }
-        
+
+        cerr << "Error : File " << FILE_PATH << " can't be opened\n";
+
         return false;
     }
 
-    void Scanner::EndParse()
+    void Scanner::endParse()
     {
         fileInput.close();
     }
 
-    void Scanner::UpdateLocation(const int COLS)
+    void Scanner::updateLocation(const int COLS)
     {
         loc.step();
         loc.columns(COLS);
