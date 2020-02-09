@@ -20,12 +20,32 @@
 %option yyclass="Scanner"
 %option prefix="Up"
 
-letter [a-zA-Z]
+/* TODO : Float */
 number [\-]?[0-9]+
+id [a-zA-Z][a-zA-Z0-9]*
+
+/* TODO : Comments */
+/* Empty line */
+empty_line \n[ \t]*$
+/* TODO : Tabs with 4 spaces */
+/* Start of line */
+tabs \n[\t]*
+/* After the linme begining */
+space [ \t]
+
 
 %%
 
-{letter}		return Parser::make_LETTER(yytext, loc);
+{empty_line}	loc.lines();
+
+{tabs}			{
+	// Update lines
+	loc.lines();
+
+	updateIndent(yytext, yyleng);
+}
+
+{id}			return Parser::make_ID(yytext, loc);
 
 {number}		{
 	// Convert matched string to int
@@ -34,7 +54,11 @@ number [\-]?[0-9]+
 	return Parser::make_NB(number, loc);
 }
 
+"="				return Parser::make_EQ(loc);
+
 \n				loc.lines();
+
+{space}			; // Ignored
 
 .				{
 	cerr << file << ":" << loc.begin.line << ":" << loc.begin.column

@@ -20,11 +20,11 @@ a += 8
 # Condition
 a > 0 ?
     # Function call
-    Exit()
+    exit()
 
 # Loops
 for i to 618:
-    Log(i)
+    log(i)
 for i=3 to 8:
     ...
 for i=10 to 1:

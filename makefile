@@ -9,7 +9,8 @@ src:
 
 # Runs the compiler on the test/main.up file
 test: src
-	bin/up test/main.up
+	@printf '--- Running up ---\n\n'
+	@bin/up test/main.up
 
 clean:
 	cd src && make clean

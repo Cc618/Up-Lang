@@ -44,22 +44,22 @@
 	{ return scanner.next(); }
 }
 
-%token END 0 "End of file"
-%token <string> LETTER  "Letter";
-%token <int> NB "Number";
+%token
+	END 0 "End of file"
+	INDENT "Indentation"
+	DEDENT "Deindentation"
+	EQ "="
+	<string> ID "Identifier"
+	<int> NB "Number"
+;
 
-%type <int> number;
+// %type <int> number;
 
 %start program
 
 %%
 program:
-	| program number { compiler.printNumber($2); }
-	| program LETTER { compiler.printLetter($2[0]); }
-	;
-
-number:
-	NB LETTER { $$ = $1; }
+	| program ID ID EQ NB { compiler.printVarDecl($2, $3, $5); }
 	;
 %%
 

@@ -46,11 +46,21 @@ namespace up
         Parser::location_type loc;
 
     private:
+        // Updates the indentation
+        // - TEXT : The "\n\t\t\t..." sequence
+        // - LEN : Length of the whole text (LEN >= 1)
+        void updateIndent(const char *TEXT, const int LEN);
+
+    private:
         Compiler &compiler;
 
         // File path and content
         std::string file;
         std::ifstream fileInput;
+
+        // Current indentation
+        // * Used when tokenizing
+        int indent;
     };
 
 }
