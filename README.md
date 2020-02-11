@@ -57,6 +57,8 @@ Up targets linux platforms, some programs are required to compile Up :
 ## Mechanism
 
 There are two processes : *Parsing* and *compiling*.
+Parsing serves to understand program semantics, it creates components.
+Compiling is used to gather all those components in one string, the program.
 
 ### Parsing
 
@@ -65,12 +67,8 @@ bison to analyze semantics. The class *Scanner* handle this process.
 
 ### Compiling
 
-To compile, OOP is used :
-- Instruction : The smaller component in Compiler
+To compile multiple components are used :
 - Variable : Has a type and an identifier
-- Function : Gathers a sequence of instructions
-- ISerializable : Interface which provide the function serialize that returns the object in text
-- Compiler : Gathers main data such as the program in text format and also the scanner
 
 ## Usage
 
