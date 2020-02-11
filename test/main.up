@@ -1,19 +1,4 @@
-# !!! Use tabs and not spaces for the moment
-
 
 int a = 42
-
-    # I'm a comment
-    bool g=-36
-    bool g=-36	# Wow amazing comment # Just commenting my comment
-
-        # Weird indentation ?	int x =   6
-    bool g=-36
-        bool g=-36
-
-int y = 43
-int y = 43
-int y = 43
-
-
-
+float b = -618
+bool c = yes

@@ -20,9 +20,10 @@
 %option yyclass="Scanner"
 %option prefix="Up"
 
-/* TODO : Float */
-int [\-]?[0-9]+
 id [a-zA-Z][a-zA-Z0-9]*
+int [\-]?[0-9]+
+num [\-]?[0-9]+\.[0-9]*
+bool yes|no
 
 /* !!! We use \n for line start and $ for line end : [start, end) */
 comment #.*$
@@ -67,11 +68,13 @@ space [ \t]
 	updateIndent(yytext, yyleng);
 }
 
-{id}			return Parser::make_ID(yytext, loc);
-
 {int}			return Parser::make_INT(yytext, loc);
+{num}			return Parser::make_NUM(yytext, loc);
+{bool}			return Parser::make_BOOL(yytext, loc);
 
 "="				return Parser::make_EQ(loc);
+
+{id}			return Parser::make_ID(yytext, loc);
 
 {space}			; // Ignored
 

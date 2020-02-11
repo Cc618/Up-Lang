@@ -50,16 +50,24 @@
 	DEDENT "Unindentation"
 	EQ "="
 	<string> ID "Identifier"
-	<string> INT "Int"
+	<string> INT "Integer (int)"
+	<string> NUM "Float number (num)"
+	<string> BOOL "Boolean (bool)"
 ;
 
-// %type <int> number;
+%type <string> literal;
 
 %start program
 
 %%
 program:
-	| program ID ID EQ INT { compiler.varDecl($2, $3, $5); }
+	| program ID ID EQ literal { compiler.varDecl($2, $3, $5); }
+	;
+
+literal:
+	INT { $$ = $1; }
+	| NUM { $$ = $1; }
+	| BOOL { $$ = $1; }
 	;
 %%
 
