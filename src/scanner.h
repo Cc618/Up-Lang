@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 
+#include "components.h"
 #include "parser.hpp"
 
 #if ! defined(yyFlexLexerOnce)
@@ -54,6 +55,9 @@ namespace up
         // Counts the number of tabs in TEXT
         // !!! TEXT must have either tabs or spaces
         int countTabs(const char *TEXT, const int LEN) const;
+
+        // Creates a bool true or false for yes or no
+        Literal genBoolLiteral(const std::string &LITERAL) const;
 
     private:
         Compiler &compiler;

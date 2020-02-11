@@ -1,4 +1,10 @@
 
-int a = 42
-float b = -618
+# $ means auto type
+$a = 42
+
+# num stands for floating point
+num b = -618.32
+
+# Booleans are set with yes or no
 bool c = yes
+$yesOrNo = no

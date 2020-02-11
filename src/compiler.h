@@ -3,9 +3,9 @@
 #include <vector>
 #include <string>
 
-#include "parser.hpp"
 #include "scanner.h"
 #include "components.h"
+#include "parser.hpp" 
 
 namespace up
 {
@@ -28,10 +28,22 @@ namespace up
         void printNumber(const int i)
         { std::cout << i << '\n'; }
 
-        void varDecl(const typeId &TYPE, const identifier &ID, const std::string &VAL)
+        void varDecl(const TypeId &TYPE, const Identifier &ID, const Literal &VAL)
         {
             Variable var(ID, TYPE);
+            
+            if (VAL.compatibleType(var.type))
+                var.type = VAL.type;
+            else
+            {
+                // TODO : Error with Parser::error with location
+                cerr << "Error for variable \n";
+                cerr << "Literal initialization must match the type of the variable\n";
+                return;
+            }
+
             var.initVal = VAL;
+            
             vars.push_back(var);
         }
         // !!! End tests //

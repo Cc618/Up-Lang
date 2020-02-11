@@ -36,6 +36,7 @@
 	#include "scanner.h"
 	#include "parser.hpp"
 	#include "compiler.h"
+	#include "components.h"
 
 	using namespace up;
 
@@ -49,26 +50,34 @@
 	INDENT "Indentation"
 	DEDENT "Unindentation"
 	EQ "="
+	AUTO "Auto type ($)"
 	<string> ID "Identifier"
 	<string> INT "Integer (int)"
 	<string> NUM "Float number (num)"
 	<string> BOOL "Boolean (bool)"
 ;
 
-%type <string> literal;
+%type <Literal> literal;
+%type <TypeId> type;
 
 %start program
 
 %%
 program:
-	| program ID ID EQ literal { compiler.varDecl($2, $3, $5); }
+	| program type ID EQ literal { compiler.varDecl($2, $3, $5); }
 	;
 
 literal:
-	INT { $$ = $1; }
-	| NUM { $$ = $1; }
-	| BOOL { $$ = $1; }
+	INT { $$ = Literal($1, TypeId("int")); }
+	| NUM { $$ = Literal($1, TypeId("num")); }
+	| BOOL { $$ = scanner.genBoolLiteral($1); }
 	;
+
+type:
+	ID { $$ = TypeId($1); }
+	| AUTO {
+		$$ = TypeId("auto");
+	}
 %%
 
 void Parser::error(const location &loc, const string &msg)

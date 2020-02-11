@@ -21,6 +21,8 @@
 %option prefix="Up"
 
 id [a-zA-Z][a-zA-Z0-9]*
+auto \$
+
 int [\-]?[0-9]+
 num [\-]?[0-9]+\.[0-9]*
 bool yes|no
@@ -35,7 +37,6 @@ comment_line \n[ \t]*#.*$
 tabs \n(\t|[ ]{4})*
 /* After the line begining */
 space [ \t]
-
 
 %%
 
@@ -71,6 +72,8 @@ space [ \t]
 {int}			return Parser::make_INT(yytext, loc);
 {num}			return Parser::make_NUM(yytext, loc);
 {bool}			return Parser::make_BOOL(yytext, loc);
+
+{auto}			return Parser::make_AUTO(loc);
 
 "="				return Parser::make_EQ(loc);
 
