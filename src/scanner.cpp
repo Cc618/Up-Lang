@@ -35,23 +35,35 @@ namespace up
 
     void Scanner::updateIndent(const char *TEXT, const int LEN)
     {
-        // TODO : With 4 spaces = 1 tab also
-        const int TABS = LEN - 1;
+        const int TABS = countTabs(TEXT + 1, LEN - 1);
 
         // How many tabs have been added since the last line
         const int GAP = TABS - indent;
-
-        // if (GAP > 0)
-        // {
-        //     std::cout << GAP << " INDENTS\n";
-        // }
-        // else if (GAP < 0)
-        //     std::cout << (-GAP) << " DEDENTS\n";
 
         indentsToAdd = GAP;
 
         // Update indentation
         indent = TABS;
+    }
+
+    int Scanner::countTabs(const char *TEXT, const int LEN) const
+    {
+        int tabs = 0;
+
+        for (int i = 0; i < LEN; )
+            if (TEXT[i] == '\t')
+            {
+                ++tabs;
+                ++i;
+            }
+            else if (TEXT[i] == ' ')
+            {
+                // There are necessarily 4 spaces in a row because of the regex rule
+                ++tabs;
+                i += 4;
+            }
+
+        return tabs;
     }
 
     void Scanner::updateLocation(const int COLS)

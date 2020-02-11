@@ -71,3 +71,17 @@ To compile, OOP is used :
 - Function : Gathers a sequence of instructions
 - ISerializable : Interface which provide the function serialize that returns the object in text
 - Compiler : Gathers main data such as the program in text format and also the scanner
+
+## Usage
+
+To compile a file :
+
+```sh
+up <file_ path>
+```
+
+To run the test file located at test/main.up :
+
+```sh
+make test
+```

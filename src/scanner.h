@@ -51,6 +51,10 @@ namespace up
         // - LEN : Length of the whole text (LEN >= 1)
         void updateIndent(const char *TEXT, const int LEN);
 
+        // Counts the number of tabs in TEXT
+        // !!! TEXT must have either tabs or spaces
+        int countTabs(const char *TEXT, const int LEN) const;
+
     private:
         Compiler &compiler;
 

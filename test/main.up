@@ -3,13 +3,13 @@
 
 int a = 42
 
-	# I'm a comment
-	bool g=-36
-	bool g=-36	# Wow amazing comment # Just commenting my comment
+    # I'm a comment
+    bool g=-36
+    bool g=-36	# Wow amazing comment # Just commenting my comment
 
-		# Weird indentation ?	int x =   6
-	bool g=-36
-		bool g=-36
+        # Weird indentation ?	int x =   6
+    bool g=-36
+        bool g=-36
 
 int y = 43
 int y = 43

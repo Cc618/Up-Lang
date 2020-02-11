@@ -50,7 +50,7 @@
 	DEDENT "Unindentation"
 	EQ "="
 	<string> ID "Identifier"
-	<int> NB "Number"
+	<string> INT "Int"
 ;
 
 // %type <int> number;
@@ -59,9 +59,7 @@
 
 %%
 program:
-	| program ID ID EQ NB { compiler.printVarDecl($2, $3, $5); }
-	| program INDENT { cout << "INDENT\n"; }
-	| program DEDENT { cout << "DEDENT\n"; }
+	| program ID ID EQ INT { compiler.varDecl($2, $3, $5); }
 	;
 %%
 
