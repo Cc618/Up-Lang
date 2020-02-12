@@ -4,11 +4,7 @@ using namespace std;
 
 namespace up
 {
-    TypeId::TypeId(const Identifier &ID)
-        : id(ID)
-    {}
-
-    Identifier TypeId::cType() const
+    std::string cType(const std::string &id)
     {
         // TODO : Error
         if (id == "auto")
@@ -20,7 +16,7 @@ namespace up
         return id;
     }
 
-    Variable::Variable(const Identifier &ID, const TypeId &TYPE)
+    Variable::Variable(const std::string &ID, const std::string &TYPE)
         : id(ID), type(TYPE)
     {}
 } // namespace up

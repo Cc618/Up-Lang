@@ -58,7 +58,7 @@
 ;
 
 %type <Literal> literal;
-%type <TypeId> type;
+%type <string> type;
 
 %start program
 
@@ -68,20 +68,21 @@ program:
 	;
 
 literal:
-	INT { $$ = Literal($1, TypeId("int")); }
-	| NUM { $$ = Literal($1, TypeId("num")); }
+	INT { $$ = Literal($1, "int"); }
+	| NUM { $$ = Literal($1, "num"); }
 	| BOOL { $$ = scanner.genBoolLiteral($1); }
 	;
 
 type:
-	ID { $$ = TypeId($1); }
-	| AUTO {
-		$$ = TypeId("auto");
-	}
+	ID { $$ = $1; }
+	| AUTO { $$ = "auto"; }
+	;
 %%
 
-void Parser::error(const location &loc, const string &msg)
+void Parser::error(const location &_, const string &msg)
 {
-	cerr << scanner.file << ":" << loc.begin.line << ":" << loc.begin.column
-		<< ": " << msg << endl;
+	cerr << scanner.file << ":" <<
+		scanner.loc.begin.line << ":" <<
+		scanner.loc.begin.column << ": " <<
+		msg << endl;
 }

@@ -74,6 +74,6 @@ namespace up
 
     Literal Scanner::genBoolLiteral(const std::string &LITERAL) const
     {
-        return Literal(LITERAL == "yes" ? "true" : "false", TypeId("bool"));
+        return Literal(LITERAL == "yes" ? "true" : "false", "bool");
     }
 } // namespace up

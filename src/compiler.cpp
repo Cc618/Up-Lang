@@ -28,7 +28,7 @@ namespace up
             return ret;
 
         // TODO : Write into a file
-        cout << "Program transpiled :\n\n";
+        cout << "Transpiled program :\n\n";
         cout << program;
 
         return ret;

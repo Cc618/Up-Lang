@@ -28,7 +28,7 @@ namespace up
         void printNumber(const int i)
         { std::cout << i << '\n'; }
 
-        void varDecl(const TypeId &TYPE, const Identifier &ID, const Literal &VAL)
+        void varDecl(const std::string &TYPE, const std::string &ID, const Literal &VAL)
         {
             Variable var(ID, TYPE);
             
