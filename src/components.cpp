@@ -1,5 +1,7 @@
 #include "components.h"
 
+#include <iostream>
+
 using namespace std;
 
 namespace up
@@ -16,7 +18,11 @@ namespace up
         return id;
     }
 
-    bool Literal::compatibleType(const std::string &TYPE) const
+    Expression::Expression(const std::string &TYPE)
+        : type(TYPE)
+    {}
+
+    bool Expression::compatibleType(const std::string &TYPE) const
     {
         return TYPE == "auto"
             || TYPE == type;
@@ -33,8 +39,29 @@ namespace up
         return data;
     }
 
+    VariableDeclaration::VariableDeclaration(const std::string &ID, const std::string &TYPE, const Expression *EXPR)
+        : id(ID), type(TYPE), EXPR(EXPR)
+    {
+        // Verify type compatibility
+        if (EXPR->compatibleType(type))
+            type = EXPR->type;
+        else
+        {
+            // TODO : Error with location
+            std::cerr << "Error for variable '" << id << "'\n";
+            std::cerr << "Literal initialization must match the type of the variable\n";
+            return;
+        }
+    }
 
-    Variable::Variable(const std::string &ID, const std::string &TYPE)
-        : id(ID), type(TYPE)
-    {}
+    VariableDeclaration::~VariableDeclaration()
+    {
+        delete EXPR;
+    }
+
+    std::string VariableDeclaration::toString() const
+    {
+        return cType(type) + " " + id + " = " + EXPR->toString() + ";";
+    }
+
 } // namespace up

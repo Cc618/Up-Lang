@@ -13,6 +13,7 @@ namespace up
     {
     public:
         Compiler();
+        ~Compiler();
         
     public:
         // Returns 0 if no error
@@ -30,26 +31,31 @@ namespace up
 
         void varDecl(const std::string &TYPE, const std::string &ID, const Literal &VAL)
         {
-            Variable var(ID, TYPE);
+            // Variable var(ID, TYPE);
             
-            if (VAL.compatibleType(var.type))
-                var.type = VAL.type;
-            else
-            {
-                // TODO : Error with Parser::error with location
-                cerr << "Error for variable \n";
-                cerr << "Literal initialization must match the type of the variable\n";
-                return;
-            }
+            // if (VAL.compatibleType(var.type))
+            //     var.type = VAL.type;
+            // else
+            // {
+            //     // TODO : Error with Parser::error with location
+            //     cerr << "Error for variable \n";
+            //     cerr << "Literal initialization must match the type of the variable\n";
+            //     return;
+            // }
 
-            var.initVal = VAL;
+            // var.initVal = VAL;
             
-            vars.push_back(var);
+            // statements.push_back(var);
         }
         // !!! End tests //
 
         // void assignVariable(const std::string &VAR_ID, const )
 
+
+    public:
+        // !!! Tests //
+        std::vector<Statement*> statements;
+        // !!! End tests //
         
     private:
         // Calls the scanner to create components
@@ -61,9 +67,6 @@ namespace up
         Scanner scanner;
         Parser parser;
 
-        // !!! Tests //
-        std::vector<Variable> vars;
-        // !!! End tests //
 
         // The program in string
         std::string program;

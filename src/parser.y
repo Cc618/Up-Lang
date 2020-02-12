@@ -57,21 +57,21 @@
 	<string> BOOL "Boolean (bool)"
 ;
 
-%type <Literal> literal;
+%type <Literal*> literal;
 %type <string> type;
 
 %start program
 
 %%
 program:
-	| program type ID EQ literal { compiler.varDecl($2, $3, $5); }
+	| program type ID EQ literal { compiler.statements.push_back(new VariableDeclaration($3, $2, $5)); }
 	/* | program ID EQ literal { compiler.assignVariable($2, $3, $5); } */
 	;
 
 literal:
-	INT { $$ = Literal($1, "int"); }
-	| NUM { $$ = Literal($1, "num"); }
-	| BOOL { $$ = Literal($1, "bool"); }
+	INT { $$ = new Literal($1, "int"); }
+	| NUM { $$ = new Literal($1, "num"); }
+	| BOOL { $$ = new Literal($1, "bool"); }
 	;
 
 type:

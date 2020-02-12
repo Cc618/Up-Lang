@@ -12,12 +12,41 @@ namespace up
     // Gives a result
     // For example :
     // 42 + 618
-    struct Expression
+    class Expression
     {
+    public:
         Expression() = default;
+        Expression(const std::string &TYPE);
+        virtual ~Expression() = default;
 
+    public:
         // Returns the string representation of
         // the expression in C
+        virtual std::string toString() const = 0;
+
+        // Whether the type is compatible to this type
+        // * TYPE belongs to a Variable
+        // !!! TYPE is a Up type
+        bool compatibleType(const std::string &TYPE) const;
+
+    public:
+        // Up type (can be auto)
+        std::string type;
+    };
+
+    // A statement is like an instruction but
+    // can be also a sequence of instructions
+    // For example :
+    // $a = 48
+    class Statement
+    {
+    public:
+        Statement() = default;
+        virtual ~Statement() = default;
+
+    public:
+        // Returns the string representation of
+        // the statement in C
         virtual std::string toString() const = 0;
     };
 
@@ -30,40 +59,34 @@ namespace up
     public:
         Literal() = default;
         Literal(const std::string &DATA, const std::string &TYPE)
-            : data(DATA), type(TYPE)
+            : Expression(TYPE), data(DATA)
         {}
 
     public:
-        // Whether the type is compatible to this type
-        // * TYPE belongs to a Variable
-        // !!! Use up types
-        bool compatibleType(const std::string &TYPE) const;
-
         virtual std::string toString() const override;
 
-    public:
-        // Up type
-        std::string type;
-    
     private:
         std::string data;
     };
 
-    struct Variable
+    // For example :
+    // $a = 6
+    class VariableDeclaration : public Statement
     {
-        Variable() = default;
-        Variable(const std::string &ID, const std::string &TYPE);
+    public:
+        VariableDeclaration() = default;
+        VariableDeclaration(const std::string &ID, const std::string &TYPE, const Expression *EXPR);
+        ~VariableDeclaration();
 
-        // TODO : rm
-        // !!! Tests //
-        Literal initVal;
-        std::string declare() const
-        { return cType(type) + " " + id + " = " + initVal.toString() + ";"; }
-        // !!! End tests //
+    public:
+        virtual std::string toString() const override;
 
-        std::string id; 
+    public:
         std::string type;
-    }; 
+        std::string id;
 
-
+    private:
+        // The expression which inits the variable
+        const Expression *EXPR;
+    };
 }

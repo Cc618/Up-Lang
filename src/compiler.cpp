@@ -8,6 +8,12 @@ namespace up
         : scanner(*this), parser(scanner, *this)
     {}
 
+    Compiler::~Compiler()
+    {
+        for (const Statement *s : statements)
+            delete s;
+    }
+
     int Compiler::parse(const std::string &FILE_PATH)
     {
         // Init variables
@@ -54,9 +60,9 @@ namespace up
         // !!! Tests //
         program += "int main() {\n";
 
-        // Declare variables
-        for (auto v : vars)
-            program += "\t" + v.declare() + "\n";
+        // Add statements
+        for (auto s : statements)
+            program += "\t" + s->toString() + "\n";
 
         // End of main
         program += "\treturn 0;\n}\n";
