@@ -98,6 +98,9 @@ num b = -618.32
 # Booleans are set with yes or no
 bool c = yes
 $yesOrNo = no
+
+# Relative operations
+a += 38
 ```
 
 Result :
@@ -109,6 +112,7 @@ int main() {
     float b = -618.32f;
     bool c = true;
     bool yesOrNo = false;
+    a += 38;
     return 0;
 }
 ```

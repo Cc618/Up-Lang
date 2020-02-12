@@ -50,6 +50,8 @@
 	INDENT "Indentation"
 	DEDENT "Unindentation"
 	EQ "="
+	ADDEQ "+="
+	SUBEQ "-="
 	AUTO "Auto type ($)"
 	<string> ID "Identifier"
 	<string> INT "Integer (int)"
@@ -57,18 +59,24 @@
 	<string> BOOL "Boolean (bool)"
 ;
 
-%type <Literal*> literal;
+%type <Expression*> expr;
+%type <Statement*> stmt;
 %type <string> type;
+// %type <string> operand;
 
 %start program
 
 %%
 program:
-	| program type ID EQ literal { compiler.statements.push_back(new VariableDeclaration($3, $2, $5)); }
-	/* | program ID EQ literal { compiler.assignVariable($2, $3, $5); } */
+	| program stmt { compiler.statements.push_back($2); }
 	;
 
-literal:
+stmt:
+	ID ADDEQ expr { $$ = new VariableOperation($1, $3, "+="); }
+	| type ID EQ expr { $$ = new VariableDeclaration($2, $1, $4); }
+	;
+
+expr:
 	INT { $$ = new Literal($1, "int"); }
 	| NUM { $$ = new Literal($1, "num"); }
 	| BOOL { $$ = new Literal($1, "bool"); }

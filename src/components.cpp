@@ -42,6 +42,8 @@ namespace up
     VariableDeclaration::VariableDeclaration(const std::string &ID, const std::string &TYPE, const Expression *EXPR)
         : id(ID), type(TYPE), EXPR(EXPR)
     {
+        // TODO : Check variable exists
+
         // Verify type compatibility
         if (EXPR->compatibleType(type))
             type = EXPR->type;
@@ -62,6 +64,22 @@ namespace up
     std::string VariableDeclaration::toString() const
     {
         return cType(type) + " " + id + " = " + EXPR->toString() + ";";
+    }
+
+    VariableOperation::VariableOperation(const std::string &ID, const Expression *EXPR, const std::string &OP)
+        : id(ID), EXPR(EXPR), operand(OP)
+    {
+        // TODO : Check variable exists + EXPR and variable types are compatible
+    }
+
+    VariableOperation::~VariableOperation()
+    {
+        delete EXPR;
+    }
+
+    std::string VariableOperation::toString() const
+    {
+        return id + " " + operand + " " + EXPR->toString() + ";";
     }
 
 } // namespace up

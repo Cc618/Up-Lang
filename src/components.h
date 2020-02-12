@@ -89,4 +89,27 @@ namespace up
         // The expression which inits the variable
         const Expression *EXPR;
     };
+
+    // Relative operation
+    // For example :
+    // $a += 6
+    // a : ID, + : OPERATOR, 6 : EXPR 
+    class VariableOperation : public Statement
+    {
+    public:
+        VariableOperation() = default;
+        VariableOperation(const std::string &ID, const Expression *EXPR, const std::string &OPERAND);
+        ~VariableOperation();
+
+    public:
+        virtual std::string toString() const override;
+
+    public:
+        std::string id;
+
+    private:
+        // The expression which modifies the variable
+        const Expression *EXPR;
+        std::string operand;
+    };
 }
