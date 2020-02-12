@@ -56,9 +56,6 @@ namespace up
         // !!! TEXT must have either tabs or spaces
         int countTabs(const char *TEXT, const int LEN) const;
 
-        // Creates a bool true or false for yes or no
-        Literal genBoolLiteral(const std::string &LITERAL) const;
-
     private:
         Compiler &compiler;
 

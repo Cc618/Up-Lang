@@ -16,6 +16,24 @@ namespace up
         return id;
     }
 
+    bool Literal::compatibleType(const std::string &TYPE) const
+    {
+        return TYPE == "auto"
+            || TYPE == type;
+    }
+
+    std::string Literal::toString() const
+    {
+        if (type == "bool")
+            return data == "yes" ? "true" : "false";
+
+        if (type == "num")
+            return data + "f";
+
+        return data;
+    }
+
+
     Variable::Variable(const std::string &ID, const std::string &TYPE)
         : id(ID), type(TYPE)
     {}

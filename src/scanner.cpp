@@ -71,9 +71,4 @@ namespace up
         loc.step();
         loc.columns(COLS);
     }
-
-    Literal Scanner::genBoolLiteral(const std::string &LITERAL) const
-    {
-        return Literal(LITERAL == "yes" ? "true" : "false", "bool");
-    }
 } // namespace up

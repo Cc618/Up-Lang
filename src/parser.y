@@ -65,12 +65,13 @@
 %%
 program:
 	| program type ID EQ literal { compiler.varDecl($2, $3, $5); }
+	/* | program ID EQ literal { compiler.assignVariable($2, $3, $5); } */
 	;
 
 literal:
 	INT { $$ = Literal($1, "int"); }
 	| NUM { $$ = Literal($1, "num"); }
-	| BOOL { $$ = scanner.genBoolLiteral($1); }
+	| BOOL { $$ = Literal($1, "bool"); }
 	;
 
 type:

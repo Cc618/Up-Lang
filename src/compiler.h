@@ -47,6 +47,9 @@ namespace up
             vars.push_back(var);
         }
         // !!! End tests //
+
+        // void assignVariable(const std::string &VAR_ID, const )
+
         
     private:
         // Calls the scanner to create components
