@@ -7,6 +7,12 @@ Up is a programming language with Python like syntax, static typing and is trans
 ```
 # This is an inline comment
 
+# Import up modules (import the file ./mymodule.up)
+use mymodule
+
+# Wrapper to import libc c headers
+use libc
+
 # Create a variable with type int
 int a = 42
 
