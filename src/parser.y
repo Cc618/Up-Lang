@@ -52,6 +52,10 @@
 	EQ "="
 	ADDEQ "+="
 	SUBEQ "-="
+	MULEQ "-="
+	DIVEQ "/="
+	INC "++"
+	DEC "--"
 	AUTO "Auto type ($)"
 	<string> ID "Identifier"
 	<string> INT "Integer (int)"
@@ -62,7 +66,8 @@
 %type <Expression*> expr;
 %type <Statement*> stmt;
 %type <string> type;
-// %type <string> operand;
+%type <string> assign_op;
+%type <string> unary_op;
 
 %start program
 
@@ -72,8 +77,8 @@ program:
 	;
 
 stmt:
-	ID ADDEQ expr { $$ = new VariableOperation($1, $3, "+="); }
-	| type ID EQ expr { $$ = new VariableDeclaration($2, $1, $4); }
+	type ID EQ expr { $$ = new VariableDeclaration($2, $1, $4); }
+	| ID assign_op expr { $$ = new VariableAssignement($1, $3, $2); }
 	;
 
 expr:
@@ -86,6 +91,15 @@ type:
 	ID { $$ = $1; }
 	| AUTO { $$ = "auto"; }
 	;
+
+assign_op:
+	EQ { $$ = "="; }
+	| ADDEQ { $$ = "+="; }
+	| SUBEQ { $$ = "-="; }
+	| MULEQ { $$ = "*="; }
+	| DIVEQ { $$ = "/="; }
+	;
+
 %%
 
 void Parser::error(const location &_, const string &msg)

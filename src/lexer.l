@@ -78,6 +78,10 @@ space [ \t]
 "="				return Parser::make_EQ(loc);
 "+="			return Parser::make_ADDEQ(loc);
 "-="			return Parser::make_SUBEQ(loc);
+"*="			return Parser::make_MULEQ(loc);
+"/="			return Parser::make_DIVEQ(loc);
+"++"			return Parser::make_INC(loc);
+"--"			return Parser::make_DEC(loc);
 
 {id}			return Parser::make_ID(yytext, loc);
 

@@ -9,5 +9,7 @@ num b = -618.32
 bool c = yes
 $yesOrNo = no
 
-# Relative operations
+# Operations
+b = 8
 a += 38
+a -= 314

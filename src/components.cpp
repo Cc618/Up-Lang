@@ -66,18 +66,18 @@ namespace up
         return cType(type) + " " + id + " = " + EXPR->toString() + ";";
     }
 
-    VariableOperation::VariableOperation(const std::string &ID, const Expression *EXPR, const std::string &OP)
+    VariableAssignement::VariableAssignement(const std::string &ID, const Expression *EXPR, const std::string &OP)
         : id(ID), EXPR(EXPR), operand(OP)
     {
         // TODO : Check variable exists + EXPR and variable types are compatible
     }
 
-    VariableOperation::~VariableOperation()
+    VariableAssignement::~VariableAssignement()
     {
         delete EXPR;
     }
 
-    std::string VariableOperation::toString() const
+    std::string VariableAssignement::toString() const
     {
         return id + " " + operand + " " + EXPR->toString() + ";";
     }

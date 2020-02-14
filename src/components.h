@@ -94,12 +94,12 @@ namespace up
     // For example :
     // $a += 6
     // a : ID, + : OPERATOR, 6 : EXPR 
-    class VariableOperation : public Statement
+    class VariableAssignement : public Statement
     {
     public:
-        VariableOperation() = default;
-        VariableOperation(const std::string &ID, const Expression *EXPR, const std::string &OPERAND);
-        ~VariableOperation();
+        VariableAssignement() = default;
+        VariableAssignement(const std::string &ID, const Expression *EXPR, const std::string &OPERAND);
+        ~VariableAssignement();
 
     public:
         virtual std::string toString() const override;
