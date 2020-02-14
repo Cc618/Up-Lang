@@ -1,7 +1,6 @@
 # To have functions from stdio.h, stdlib.h and math.h
 use libc
 
-
 # $ means auto type
 $a = 42
 
@@ -15,6 +14,5 @@ $yesOrNo = no
 # Operations
 b = 8
 a += ++c
-a -= 314
 c--
 
