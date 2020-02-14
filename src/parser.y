@@ -37,6 +37,7 @@
 	#include "parser.hpp"
 	#include "compiler.h"
 	#include "components.h"
+	#include "module.h"
 
 	using namespace up;
 
@@ -57,6 +58,7 @@
 	INC						"++"
 	DEC						"--"
 	AUTO					"Auto type ($)"
+	USE						"Use"
 	<string> ID				"Identifier"
 	<string> INT			"Integer (int)"
 	<string> NUM			"Float number (num)"
@@ -67,6 +69,7 @@
 %type <Expression*>			expr;
 %type <Literal*>			literal;
 %type <UnaryOperation*>		unary_op;
+%type <Module>				import;
 %type <string>				type;
 %type <string>				assign_op;
 
@@ -75,6 +78,7 @@
 %%
 program:
 	| program stmt { compiler.statements.push_back($2); }
+	| program import { compiler.import($2); }
 	;
 
 stmt:
@@ -86,6 +90,11 @@ stmt:
 expr:
 	literal { $$ = $1; }
 	| unary_op { $$ = $1; }
+	;
+
+import:
+	/* TODO : Imports with . */
+	USE ID { $$ = Module($2); }
 	;
 
 literal:

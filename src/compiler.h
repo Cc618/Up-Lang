@@ -6,9 +6,11 @@
 #include "scanner.h"
 #include "components.h"
 #include "parser.hpp" 
+#include "module.h"
 
 namespace up
 {
+    // Main class which parses and then transpile the up code
     class Compiler
     {
     public:
@@ -20,37 +22,8 @@ namespace up
         // Calls scan and generate
         int parse(const std::string &FILE_PATH);
         
-    public:
-        // !!! Tests //
-        // TODO : Remove these test functions
-        void printLetter(const char l)
-        { std::cout << l << '\n'; }
-
-        void printNumber(const int i)
-        { std::cout << i << '\n'; }
-
-        void varDecl(const std::string &TYPE, const std::string &ID, const Literal &VAL)
-        {
-            // Variable var(ID, TYPE);
-            
-            // if (VAL.compatibleType(var.type))
-            //     var.type = VAL.type;
-            // else
-            // {
-            //     // TODO : Error with Parser::error with location
-            //     cerr << "Error for variable \n";
-            //     cerr << "Literal initialization must match the type of the variable\n";
-            //     return;
-            // }
-
-            // var.initVal = VAL;
-            
-            // statements.push_back(var);
-        }
-        // !!! End tests //
-
-        // void assignVariable(const std::string &VAR_ID, const )
-
+        // Adds the module as import
+        void import(const Module &MOD);
 
     public:
         // !!! Tests //
@@ -60,13 +33,19 @@ namespace up
     private:
         // Calls the scanner to create components
         int scan(const std::string &FILE_PATH);
+        
         // Generates the program with all scanned components
         int generate();
+
+        // Add all imports to program
+        void parseModules();
 
     private:
         Scanner scanner;
         Parser parser;
 
+        // All depedencies to import
+        std::vector<Module> modules;
 
         // The program in string
         std::string program;

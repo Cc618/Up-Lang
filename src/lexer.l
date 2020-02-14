@@ -83,6 +83,8 @@ space [ \t]
 "++"			return Parser::make_INC(loc);
 "--"			return Parser::make_DEC(loc);
 
+"use"			return Parser::make_USE(loc);
+
 {id}			return Parser::make_ID(yytext, loc);
 
 {space}			; // Ignored

@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "components.h"
+#include "module.h"
 #include "parser.hpp"
 
 #if ! defined(yyFlexLexerOnce)

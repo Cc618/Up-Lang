@@ -1,3 +1,6 @@
+# To have functions from stdio.h, stdlib.h and math.h
+use libc
+
 
 # $ means auto type
 $a = 42
