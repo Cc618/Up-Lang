@@ -50,6 +50,26 @@ namespace up
         virtual std::string toString() const = 0;
     };
 
+    // Used to convert expression to statement
+    // This is an expression used as a statement,
+    // aka inline expression (return value ignored)
+    // For example :
+    // a++;
+    class ExpressionStatement : public Statement
+    {
+    public:
+        ExpressionStatement() = default;
+        ExpressionStatement(const Expression *EXPR);
+        ~ExpressionStatement();
+
+    public:
+        virtual std::string toString() const override;
+
+    private:
+        // The expression which inits the variable
+        const Expression *EXPR;
+    };
+
     // A literal expression
     // Matches a type
     // For example :
@@ -90,10 +110,9 @@ namespace up
         const Expression *EXPR;
     };
 
-    // Relative operation
     // For example :
     // $a += 6
-    // a : ID, + : OPERATOR, 6 : EXPR 
+    // a : ID, + : OPERAND, 6 : EXPR 
     class VariableAssignement : public Statement
     {
     public:
@@ -111,5 +130,25 @@ namespace up
         // The expression which modifies the variable
         const Expression *EXPR;
         std::string operand;
+    };
+
+    // For example :
+    // a++
+    // a : ID, ++ : OPERAND
+    class UnaryOperation : public Expression
+    {
+    public:
+        UnaryOperation() = default;
+        UnaryOperation(const std::string &ID, const std::string &OPERAND, const bool PREFIX=false);
+
+    public:
+        virtual std::string toString() const override;
+
+    public:
+        std::string id;
+
+    private:
+        std::string operand;
+        bool prefix;
     };
 }

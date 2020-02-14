@@ -28,6 +28,21 @@ namespace up
             || TYPE == type;
     }
 
+    ExpressionStatement::ExpressionStatement(const Expression *EXPR)
+        : EXPR(EXPR)
+    {}
+
+    ExpressionStatement::~ExpressionStatement()
+    {
+        delete EXPR;
+    }
+
+    std::string ExpressionStatement::toString() const
+    {
+        // Just terminate the instruction
+        return EXPR->toString() + ";";
+    }
+
     std::string Literal::toString() const
     {
         if (type == "bool")
@@ -82,4 +97,17 @@ namespace up
         return id + " " + operand + " " + EXPR->toString() + ";";
     }
 
+    UnaryOperation::UnaryOperation(const std::string &ID, const std::string &OP, const bool PREFIX)
+        : Expression("auto"), id(ID), operand(OP), prefix(PREFIX)
+    {
+        // TODO : Check variable exists + deduce type compatibility
+    }
+
+    std::string UnaryOperation::toString() const
+    {
+        if (prefix)
+            return operand + id;
+        else
+            return id + operand;
+    }
 } // namespace up

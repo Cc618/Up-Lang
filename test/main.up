@@ -11,5 +11,7 @@ $yesOrNo = no
 
 # Operations
 b = 8
-a += 38
+a += ++c
 a -= 314
+c--
+
