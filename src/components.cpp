@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "compiler.h"
+
 using namespace std;
 
 namespace up
@@ -14,6 +16,10 @@ namespace up
         
         if (id == "num")
             return "float";
+        
+        // TODO : Custom up string type
+        if (id == "str")
+            return "const char*";
         
         return id;
     }
@@ -28,19 +34,24 @@ namespace up
             || TYPE == type;
     }
 
-    ExpressionStatement::ExpressionStatement(const Expression *EXPR)
-        : EXPR(EXPR)
+    ExpressionStatement::ExpressionStatement(Expression *expr)
+        : expr(expr)
     {}
 
     ExpressionStatement::~ExpressionStatement()
     {
-        delete EXPR;
+        delete expr;
     }
 
     std::string ExpressionStatement::toString() const
     {
         // Just terminate the instruction
-        return EXPR->toString() + ";";
+        return expr->toString() + ";";
+    }
+
+    void ExpressionStatement::process(Compiler *compiler)
+    {
+        expr->process(compiler);
     }
 
     std::string Literal::toString() const
@@ -88,47 +99,49 @@ namespace up
         return s;
     }
 
-    VariableDeclaration::VariableDeclaration(const std::string &ID, const std::string &TYPE, const Expression *EXPR)
-        : id(ID), type(TYPE), EXPR(EXPR)
-    {
-        // TODO : Check variable exists
-
-        // Verify type compatibility
-        if (EXPR->compatibleType(type))
-            type = EXPR->type;
-        else
-        {
-            // TODO : Error with location
-            std::cerr << "Error for variable '" << id << "'\n";
-            std::cerr << "Literal initialization must match the type of the variable\n";
-            return;
-        }
-    }
+    VariableDeclaration::VariableDeclaration(const std::string &ID, const std::string &TYPE, Expression *expr)
+        : id(ID), type(TYPE), expr(expr)
+    {}
 
     VariableDeclaration::~VariableDeclaration()
     {
-        delete EXPR;
+        delete expr;
     }
 
     std::string VariableDeclaration::toString() const
     {
-        return cType(type) + " " + id + " = " + EXPR->toString() + ";";
+        return cType(type) + " " + id + " = " + expr->toString() + ";";
     }
 
-    VariableAssignement::VariableAssignement(const std::string &ID, const Expression *EXPR, const std::string &OP)
-        : id(ID), EXPR(EXPR), operand(OP)
+    void VariableDeclaration::process(Compiler *compiler)
     {
-        // TODO : Check variable exists + EXPR and variable types are compatible
+        // TODO : Check variable exists
+
+        // Verify type compatibility
+        if (expr->compatibleType(type))
+            type = expr->type;
+        else
+        {
+            // TODO : Error with location
+            compiler->generateError("Error for variable '" + id + "'\n" \
+                "Literal initialization must match the type of the variable\n");
+        }
+    }
+
+    VariableAssignement::VariableAssignement(const std::string &ID, Expression *expr, const std::string &OP)
+        : id(ID), expr(expr), operand(OP)
+    {
+        // TODO : Check variable exists + expr and variable types are compatible
     }
 
     VariableAssignement::~VariableAssignement()
     {
-        delete EXPR;
+        delete expr;
     }
 
     std::string VariableAssignement::toString() const
     {
-        return id + " " + operand + " " + EXPR->toString() + ";";
+        return id + " " + operand + " " + expr->toString() + ";";
     }
 
     UnaryOperation::UnaryOperation(const std::string &ID, const std::string &OP, const bool PREFIX)

@@ -25,6 +25,9 @@ namespace up
         // Adds the module as import
         void import(const Module &MOD);
 
+        // Creates and display a generation error
+        void generateError(const std::string &MSG);
+
     public:
         // !!! Tests //
         std::vector<Statement*> statements;
@@ -35,7 +38,7 @@ namespace up
         int scan(const std::string &FILE_PATH);
         
         // Generates the program with all scanned components
-        int generate();
+        void generate();
 
         // Add all imports to program
         void parseModules();
@@ -49,5 +52,8 @@ namespace up
 
         // The program in string
         std::string program;
+
+        // Whether the generation contains errors
+        bool generationError = false;
     };
 }

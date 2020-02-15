@@ -7,13 +7,15 @@
 
 namespace up
 {
+    class Compiler;
+
     // Casts up type to c type in string
     std::string cType(const std::string &TYPE);
-
 
     // Gives a result
     // For example :
     // 42 + 618
+    // * The type must be resolved when process is called
     class Expression
     {
     public:
@@ -30,6 +32,10 @@ namespace up
         // * TYPE belongs to a Variable
         // !!! TYPE is a Up type
         bool compatibleType(const std::string &TYPE) const;
+        
+        // Like a constructor with the compiler as argument
+        virtual void process(Compiler *compiler)
+        {}
 
     public:
         // Up type (can be auto)
@@ -50,6 +56,10 @@ namespace up
         // Returns the string representation of
         // the statement in C
         virtual std::string toString() const = 0;
+
+        // Like a constructor with the compiler as argument
+        virtual void process(Compiler *compiler)
+        {}
     };
 
     // Used to convert expression to statement
@@ -61,15 +71,16 @@ namespace up
     {
     public:
         ExpressionStatement() = default;
-        ExpressionStatement(const Expression *EXPR);
+        ExpressionStatement(Expression *expr);
         ~ExpressionStatement();
 
     public:
         virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
 
     private:
         // The expression which inits the variable
-        const Expression *EXPR;
+        Expression *expr;
     };
 
     // A literal expression
@@ -142,11 +153,12 @@ namespace up
     {
     public:
         VariableDeclaration() = default;
-        VariableDeclaration(const std::string &ID, const std::string &TYPE, const Expression *EXPR);
+        VariableDeclaration(const std::string &ID, const std::string &TYPE, Expression *expr);
         ~VariableDeclaration();
 
     public:
         virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
 
     public:
         std::string type;
@@ -154,17 +166,17 @@ namespace up
 
     private:
         // The expression which inits the variable
-        const Expression *EXPR;
+        Expression *expr;
     };
 
     // For example :
     // $a += 6
-    // a : ID, + : OPERAND, 6 : EXPR 
+    // a : ID, + : OPERAND, 6 : expr 
     class VariableAssignement : public Statement
     {
     public:
         VariableAssignement() = default;
-        VariableAssignement(const std::string &ID, const Expression *EXPR, const std::string &OPERAND);
+        VariableAssignement(const std::string &ID, Expression *expr, const std::string &OPERAND);
         ~VariableAssignement();
 
     public:
@@ -175,7 +187,7 @@ namespace up
 
     private:
         // The expression which modifies the variable
-        const Expression *EXPR;
+        Expression *expr;
         std::string operand;
     };
 

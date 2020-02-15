@@ -15,6 +15,7 @@ $yesOrNo = no
 b = 8
 a += ++b
 b--
+$x = 'I am a string';
 
 # Functions
 printf('Here is a : %d\n', a)
