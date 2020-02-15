@@ -110,8 +110,11 @@ $yesOrNo = no
 
 # Operations
 b = 8
-a += ++c
-c--
+a += --b
+$x = 'I am a string'
+
+# Functions
+printf('Here is a : %d\n', a)
 ```
 
 Result :
@@ -129,8 +132,9 @@ int main() {
     bool c = true;
     bool yesOrNo = false;
     b = 8;
-    a += ++c;
-    c--;
+    a += --b;
+    const char* x = "I am a string";
+    printf("Here is a : %d\n", a);
 
     return 0;
 }
