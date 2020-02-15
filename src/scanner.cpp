@@ -71,4 +71,9 @@ namespace up
         loc.step();
         loc.columns(COLS);
     }
+
+    ErrorInfo Scanner::errorInfo() const
+    {
+        return ErrorInfo(file, loc.begin.line, loc.begin.column);
+    }
 } // namespace up

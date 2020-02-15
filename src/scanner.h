@@ -5,6 +5,7 @@
 
 #include "components.h"
 #include "module.h"
+#include "error_info.h"
 #include "parser.hpp"
 
 #if ! defined(yyFlexLexerOnce)
@@ -42,6 +43,9 @@ namespace up
 
         // Moves the cursor
         void updateLocation(const int COLS);
+
+        // Generates an error info
+        ErrorInfo errorInfo() const;
 
     public:
         // The location within the file

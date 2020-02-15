@@ -7,6 +7,7 @@
 #include "components.h"
 #include "parser.hpp" 
 #include "module.h"
+#include "error_info.h"
 
 namespace up
 {
@@ -26,7 +27,7 @@ namespace up
         void import(const Module &MOD);
 
         // Creates and display a generation error
-        void generateError(const std::string &MSG);
+        void generateError(const std::string &MSG, const ErrorInfo &INFO);
 
     public:
         // !!! Tests //

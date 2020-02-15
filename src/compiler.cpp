@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "colors.h"
+
 namespace up
 {
     Compiler::Compiler()
@@ -53,11 +55,13 @@ namespace up
             modules.push_back(MOD);
     }
 
-    void Compiler::generateError(const string &MSG)
+    void Compiler::generateError(const string &MSG, const ErrorInfo &INFO)
     {
         generationError = true;
 
-        cerr << "Generatino Error : " << MSG << '\n';
+        cerr << "File " << YELLOW << INFO.file << DEFAULT <<
+            ":" << BLUE << INFO.line << DEFAULT << ":" << BLUE << INFO.column << DEFAULT <<
+            " - " << RED << "Generation Error" << DEFAULT << " :\n" << MSG << '\n';
     }
 
     int Compiler::scan(const std::string &FILE_PATH)

@@ -1,0 +1,15 @@
+# Small program with a sequence of instruction
+
+use libc
+
+$a = 42
+
+--a
+--a
+
+printf('Here is a : %d\n', a)
+
+$pi = cosf(0.)
+printf('PI = %f\n', pi)
+
+

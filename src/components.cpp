@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "compiler.h"
+#include "colors.h"
 
 using namespace std;
 
@@ -10,9 +11,9 @@ namespace up
 {
     std::string cType(const std::string &id)
     {
-        // TODO : Error
         if (id == "auto")
-            return "auto_type";
+            // Empty = error
+            return "";
         
         if (id == "num")
             return "float";
@@ -34,8 +35,8 @@ namespace up
             || TYPE == type;
     }
 
-    ExpressionStatement::ExpressionStatement(Expression *expr)
-        : expr(expr)
+    ExpressionStatement::ExpressionStatement(const ErrorInfo &INFO, Expression *expr)
+        : Statement(INFO), expr(expr)
     {}
 
     ExpressionStatement::~ExpressionStatement()
@@ -99,8 +100,8 @@ namespace up
         return s;
     }
 
-    VariableDeclaration::VariableDeclaration(const std::string &ID, const std::string &TYPE, Expression *expr)
-        : id(ID), type(TYPE), expr(expr)
+    VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const std::string &ID, const std::string &TYPE, Expression *expr)
+        : Statement(INFO), id(ID), type(TYPE), expr(expr)
     {}
 
     VariableDeclaration::~VariableDeclaration()
@@ -110,7 +111,7 @@ namespace up
 
     std::string VariableDeclaration::toString() const
     {
-        return cType(type) + " " + id + " = " + expr->toString() + ";";
+        return parsedType + " " + id + " = " + expr->toString() + ";";
     }
 
     void VariableDeclaration::process(Compiler *compiler)
@@ -122,14 +123,21 @@ namespace up
             type = expr->type;
         else
         {
-            // TODO : Error with location
             compiler->generateError("Error for variable '" + id + "'\n" \
-                "Literal initialization must match the type of the variable\n");
+                "Literal initialization must match the type of the variable\n", info);
+
+            return;
         }
+
+        parsedType = cType(type);
+
+        if (parsedType.empty())
+            compiler->generateError(std::string("Error for variable '") + BLUE + id + DEFAULT +
+                "'\nThe auto type can't be used in this context\n", info);
     }
 
-    VariableAssignement::VariableAssignement(const std::string &ID, Expression *expr, const std::string &OP)
-        : id(ID), expr(expr), operand(OP)
+    VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const std::string &ID, Expression *expr, const std::string &OP)
+        : Statement(INFO), id(ID), expr(expr), operand(OP)
     {
         // TODO : Check variable exists + expr and variable types are compatible
     }

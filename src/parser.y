@@ -44,6 +44,9 @@
 	// Replace the yylex function by up::Scanner::Next
 	static inline Parser::symbol_type yylex(Scanner &scanner, Compiler &compiler)
 	{ return scanner.next(); }
+
+	// Used for statements
+	#define ERROR_INFO scanner.errorInfo()
 }
 
 %token
@@ -87,10 +90,10 @@ program:
 	;
 
 stmt:
-	ID ID EQ expr { $$ = new VariableDeclaration($2, $1, $4); }
-	| AUTO ID EQ expr { $$ = new VariableDeclaration($2, "auto", $4); }
-	| ID assign_op expr { $$ = new VariableAssignement($1, $3, $2); }
-	| expr { $$ = new ExpressionStatement($1); }
+	ID ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
+	| AUTO ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
+	| ID assign_op expr { $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
+	| expr { $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	;
 
 expr:

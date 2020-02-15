@@ -5,11 +5,15 @@
 #include <string>
 #include <vector>
 
+#include "error_info.h"
+
 namespace up
 {
     class Compiler;
 
     // Casts up type to c type in string
+    // !!! May return empty string if the type
+    // !!! is an auto type
     std::string cType(const std::string &TYPE);
 
     // Gives a result
@@ -50,6 +54,9 @@ namespace up
     {
     public:
         Statement() = default;
+        Statement(const ErrorInfo &INFO)
+            : info(INFO)
+        {}
         virtual ~Statement() = default;
 
     public:
@@ -60,6 +67,9 @@ namespace up
         // Like a constructor with the compiler as argument
         virtual void process(Compiler *compiler)
         {}
+    
+    public:
+        ErrorInfo info;
     };
 
     // Used to convert expression to statement
@@ -71,7 +81,7 @@ namespace up
     {
     public:
         ExpressionStatement() = default;
-        ExpressionStatement(Expression *expr);
+        ExpressionStatement(const ErrorInfo &INFO, Expression *expr);
         ~ExpressionStatement();
 
     public:
@@ -153,7 +163,7 @@ namespace up
     {
     public:
         VariableDeclaration() = default;
-        VariableDeclaration(const std::string &ID, const std::string &TYPE, Expression *expr);
+        VariableDeclaration(const ErrorInfo &INFO, const std::string &ID, const std::string &TYPE, Expression *expr);
         ~VariableDeclaration();
 
     public:
@@ -161,6 +171,8 @@ namespace up
         virtual void process(Compiler *compiler) override;
 
     public:
+        // C type
+        std::string parsedType;
         std::string type;
         std::string id;
 
@@ -176,7 +188,7 @@ namespace up
     {
     public:
         VariableAssignement() = default;
-        VariableAssignement(const std::string &ID, Expression *expr, const std::string &OPERAND);
+        VariableAssignement(const ErrorInfo &INFO, const std::string &ID, Expression *expr, const std::string &OPERAND);
         ~VariableAssignement();
 
     public:
