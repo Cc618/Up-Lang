@@ -13,9 +13,9 @@ $yesOrNo = no
 
 # Operations
 b = 8
-a += ++c
-c--
+a += ++b
+b--
 
 # Functions
-value = printf('Here is a : %d\n', 42)
+printf('Here is a : %d\n', a)
 

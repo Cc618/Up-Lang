@@ -10,6 +10,7 @@ namespace up
     // Casts up type to c type in string
     std::string cType(const std::string &TYPE);
 
+
     // Gives a result
     // For example :
     // 42 + 618
@@ -88,6 +89,26 @@ namespace up
 
     private:
         std::string data;
+    };
+
+    // When we use a variable in a statement
+    // For example :
+    // int a = b
+    // Variable use : b (ID)
+    class VariableUse : public Expression
+    {
+    public:
+        VariableUse() = default;
+        VariableUse(const std::string &ID)
+            // TODO : Type
+            : Expression("auto"), id(ID)
+        {}
+
+    public:
+        virtual std::string toString() const override;
+
+    private:
+        std::string id;
     };
 
     // A function call with arg list

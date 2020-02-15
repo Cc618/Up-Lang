@@ -76,7 +76,6 @@
 %type <Call*>				call;
 %type <Call*>				call_start;
 %type <Module>				import;
-%type <string>				type;
 %type <string>				assign_op;
 
 %start program
@@ -88,7 +87,8 @@ program:
 	;
 
 stmt:
-	type ID EQ expr { $$ = new VariableDeclaration($2, $1, $4); }
+	ID ID EQ expr { $$ = new VariableDeclaration($2, $1, $4); }
+	| AUTO ID EQ expr { $$ = new VariableDeclaration($2, "auto", $4); }
 	| ID assign_op expr { $$ = new VariableAssignement($1, $3, $2); }
 	| expr { $$ = new ExpressionStatement($1); }
 	;
@@ -97,6 +97,7 @@ expr:
 	literal { $$ = $1; }
 	| unary_op { $$ = $1; }
 	| call { $$ = $1; }
+	| ID { $$ = new VariableUse($1); }
 	;
 
 import:
@@ -109,11 +110,6 @@ literal:
 	| NUM { $$ = new Literal($1, "num"); }
 	| BOOL { $$ = new Literal($1, "bool"); }
 	| STR { $$ = new Literal($1, "str"); }
-	;
-
-type:
-	ID { $$ = $1; }
-	| AUTO { $$ = "auto"; }
 	;
 
 assign_op:

@@ -58,6 +58,11 @@ namespace up
         return data;
     }
 
+    std::string VariableUse::toString() const
+    {
+        return id;
+    }
+
     Call::~Call()
     {
         for (auto a : args)
