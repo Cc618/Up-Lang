@@ -16,3 +16,6 @@ b = 8
 a += ++c
 c--
 
+# Functions
+value = printf('Here is a : %d\n', 42)
+

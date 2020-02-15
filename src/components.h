@@ -3,6 +3,7 @@
 // All classes parsed and then compiled
 
 #include <string>
+#include <vector>
 
 namespace up
 {
@@ -87,6 +88,31 @@ namespace up
 
     private:
         std::string data;
+    };
+
+    // A function call with arg list
+    // Matches a type
+    // For example :
+    // fun(a1, a2)
+    // fun : ID, { a1, a2 } : args
+    class Call : public Expression
+    {
+    public:
+        Call() = default;
+        Call(const std::string &ID)
+            // TODO : decl type of the function
+            : Expression("auto"), id(ID)
+        {}
+        ~Call();
+
+    public:
+        virtual std::string toString() const override;
+
+    public:
+        std::vector<Expression*> args;
+
+    private:
+        std::string id;
     };
 
     // For example :

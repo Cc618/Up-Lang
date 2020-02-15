@@ -57,18 +57,24 @@
 	DIVEQ					"/="
 	INC						"++"
 	DEC						"--"
+	PAR_BEGIN				"("
+	PAR_END					")"
+	COMMA					","
 	AUTO					"Auto type ($)"
 	USE						"Use"
 	<string> ID				"Identifier"
 	<string> INT			"Integer (int)"
 	<string> NUM			"Float number (num)"
 	<string> BOOL			"Boolean (bool)"
+	<string> STR			"String (str)"
 ;
 
 %type <Statement*>			stmt;
 %type <Expression*>			expr;
 %type <Literal*>			literal;
 %type <UnaryOperation*>		unary_op;
+%type <Call*>				call;
+%type <Call*>				call_start;
 %type <Module>				import;
 %type <string>				type;
 %type <string>				assign_op;
@@ -90,6 +96,7 @@ stmt:
 expr:
 	literal { $$ = $1; }
 	| unary_op { $$ = $1; }
+	| call { $$ = $1; }
 	;
 
 import:
@@ -101,6 +108,7 @@ literal:
 	INT { $$ = new Literal($1, "int"); }
 	| NUM { $$ = new Literal($1, "num"); }
 	| BOOL { $$ = new Literal($1, "bool"); }
+	| STR { $$ = new Literal($1, "str"); }
 	;
 
 type:
@@ -121,6 +129,16 @@ unary_op:
 	| ID DEC { $$ = new UnaryOperation($1, "--"); }
 	| INC ID { $$ = new UnaryOperation($2, "++", true); }
 	| DEC ID { $$ = new UnaryOperation($2, "--", true); }
+	;
+
+call:
+	call_start PAR_END { $$ = $1; }
+	| call_start expr PAR_END { $$ = $1; $$->args.push_back($2); }
+	;
+
+call_start:
+	ID PAR_BEGIN { $$ = new Call($1); }
+	| call_start expr COMMA { $$ = $1; $$->args.push_back($2); }
 	;
 
 %%

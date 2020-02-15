@@ -26,6 +26,7 @@ auto \$
 int [\-]?[0-9]+
 num [\-]?[0-9]+\.[0-9]*
 bool yes|no
+str '(.|\\')*'
 
 /* !!! We use \n for line start and $ for line end : [start, end) */
 comment #.*$
@@ -69,6 +70,7 @@ space [ \t]
 	updateIndent(yytext, yyleng);
 }
 
+{str}			return Parser::make_STR(yytext, loc);
 {int}			return Parser::make_INT(yytext, loc);
 {num}			return Parser::make_NUM(yytext, loc);
 {bool}			return Parser::make_BOOL(yytext, loc);
@@ -82,6 +84,10 @@ space [ \t]
 "/="			return Parser::make_DIVEQ(loc);
 "++"			return Parser::make_INC(loc);
 "--"			return Parser::make_DEC(loc);
+
+"("				return Parser::make_PAR_BEGIN(loc);
+")"				return Parser::make_PAR_END(loc);
+","				return Parser::make_COMMA(loc);
 
 "use"			return Parser::make_USE(loc);
 

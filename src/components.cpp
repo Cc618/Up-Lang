@@ -51,7 +51,36 @@ namespace up
         if (type == "num")
             return data + "f";
 
+        if (type == "str")
+            // Replace the single quotes by double quotes
+            return '"' + data.substr(1, data.size() - 2) + '"';
+
         return data;
+    }
+
+    Call::~Call()
+    {
+        for (auto a : args)
+            delete a;
+    }
+
+    std::string Call::toString() const
+    {
+        string s = id;
+
+        s += "(";
+
+        if (!args.empty())
+        {
+            s += args[0]->toString();
+
+            for (size_t i = 1; i < args.size(); ++i)
+                s += ", " + args[i]->toString();
+        }
+        
+        s += ")";
+
+        return s;
     }
 
     VariableDeclaration::VariableDeclaration(const std::string &ID, const std::string &TYPE, const Expression *EXPR)
