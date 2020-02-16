@@ -90,6 +90,7 @@ space [ \t]
 ","				return Parser::make_COMMA(loc);
 
 "use"			return Parser::make_USE(loc);
+"cdef"			return Parser::make_CDEF(loc);
 
 {id}			return Parser::make_ID(yytext, loc);
 

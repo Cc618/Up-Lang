@@ -64,7 +64,8 @@
 	PAR_END					")"
 	COMMA					","
 	AUTO					"Auto type ($)"
-	USE						"Use"
+	USE						"use keyword"
+	CDEF					"cdef keyword"
 	<string> ID				"Identifier"
 	<string> INT			"Integer (int)"
 	<string> NUM			"Float number (num)"
@@ -91,8 +92,9 @@ program:
 
 stmt:
 	ID ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
-	| ID ID { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
 	| AUTO ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
+	| ID ID { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
+	| CDEF ID call { $$ = new CDef(ERROR_INFO, $2, $3); }
 	| ID assign_op expr { $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| expr { $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	;

@@ -106,6 +106,21 @@ namespace up
         return s;
     }
 
+    bool Call::isDeclarationList(Compiler *compiler) const
+    {
+        // TODO : Ellipsis
+        // TODO : Named arg
+        for (auto expr : args)
+        {
+            if (dynamic_cast<VariableUse*>(expr))
+                continue;
+         
+            return false;
+        }
+        
+        return true;
+    }
+
     VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const std::string &ID, const std::string &TYPE, Expression *expr)
         : Statement(INFO), id(ID), type(TYPE), expr(expr)
     {}
@@ -177,5 +192,27 @@ namespace up
             return operand + id;
         else
             return id + operand;
+    }
+
+    CDef::CDef(const ErrorInfo &INFO, const std::string &TYPE, Call *call)
+        : Statement(INFO), type(TYPE), call(call)
+    {}
+
+    void CDef::process(Compiler *compiler)
+    {
+        // Verify args
+        if (!call->isDeclarationList(compiler))
+        {
+            compiler->generateError("Invalid argument list", info);
+            return;
+        }
+
+        // TODO : Add function
+        cout << "C function, id : " << call->id << ", type : " << type << ", args : ";
+
+        for (auto a : call->args)
+            cout << a->toString() << " ";
+
+        cout << endl;
     }
 } // namespace up

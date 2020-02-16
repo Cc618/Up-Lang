@@ -141,20 +141,23 @@ namespace up
     {
     public:
         Call() = default;
-        Call(const std::string &ID)
+        Call(const std::string &ID, const std::vector<Expression*> &ARGS={})
             // TODO : decl type of the function
-            : Expression("auto"), id(ID)
+            : Expression("auto"), id(ID), args(ARGS)
         {}
         ~Call();
 
     public:
         virtual std::string toString() const override;
 
-    public:
-        std::vector<Expression*> args;
+        // Whether the args are an argument declaration list
+        // * Can contain ellipsis
+        // !!! Can raise error if the args are both types (ellipsis and operations)
+        bool isDeclarationList(Compiler *compiler) const;
 
-    private:
+    public:
         std::string id;
+        std::vector<Expression*> args;
     };
 
     // For example :
@@ -223,4 +226,29 @@ namespace up
         std::string operand;
         bool prefix;
     };
+
+    // For example :
+    // cdef num cosf(num)
+    // TYPE : num, ID : cosf, args : { num }
+    // TODO : Statement ? Not like import (compiler.import)
+    class CDef : public Statement
+    {
+    public:
+        CDef() = default;
+        // * TYPE can be auto
+        // TODO : * call.args might have ellipsis type at the end ("...")
+        CDef(const ErrorInfo &INFO, const std::string &TYPE, Call *call);
+        ~CDef()
+        { delete call; }
+
+    public:
+        virtual std::string toString() const
+        { return ""; }
+        virtual void process(Compiler *compiler) override;
+
+    public:
+        std::string type;
+        Call *call;
+    };
+
 }
