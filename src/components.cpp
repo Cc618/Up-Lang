@@ -21,6 +21,12 @@ namespace up
         // TODO : Custom up string type
         if (id == "str")
             return "const char*";
+
+        if (id == "nil")
+            return "void";
+        
+        if (id == "bool")
+            return "uint8";
         
         return id;
     }
@@ -106,27 +112,34 @@ namespace up
 
     VariableDeclaration::~VariableDeclaration()
     {
-        delete expr;
+        if (expr)
+            delete expr;
     }
 
     std::string VariableDeclaration::toString() const
     {
-        return parsedType + " " + id + " = " + expr->toString() + ";";
+        if (expr)
+            return parsedType + " " + id + " = " + expr->toString() + ";";
+        else
+            return parsedType + " " + id + ";";
     }
 
     void VariableDeclaration::process(Compiler *compiler)
     {
         // TODO : Check variable exists
 
-        // Verify type compatibility
-        if (expr->compatibleType(type))
-            type = expr->type;
-        else
+        if (expr)
         {
-            compiler->generateError("Error for variable '" + id + "'\n" \
-                "Literal initialization must match the type of the variable\n", info);
+            // Verify type compatibility
+            if (expr->compatibleType(type))
+                type = expr->type;
+            else
+            {
+                compiler->generateError("Error for variable '" + id + "'\n" \
+                    "Literal initialization must match the type of the variable\n", info);
 
-            return;
+                return;
+            }
         }
 
         parsedType = cType(type);

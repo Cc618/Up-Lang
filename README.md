@@ -4,6 +4,8 @@ Up is a programming language with Python like syntax, static typing and is trans
 
 ## Up syntax
 
+More details in [this file](syntax.md)
+
 ```
 # This is an inline comment
 
@@ -16,7 +18,7 @@ use libc
 # Create a variable with type int
 int a = 42
 
-# Create a variable with automatically deducted type
+# Create a variable with automatically deduced type (num here)
 $b = 38.2
 
 # Some operations
@@ -48,6 +50,12 @@ loop:
 int MyFunc(int a, int b=6)
     ...
     ret 42
+
+# C compatibility
+# cdef declares an extern C function
+cdef num cosf(num)
+
+
 ```
 
 ## Depedencies

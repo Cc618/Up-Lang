@@ -163,6 +163,7 @@ namespace up
     {
     public:
         VariableDeclaration() = default;
+        // expr can be nullptr if the variable is not init
         VariableDeclaration(const ErrorInfo &INFO, const std::string &ID, const std::string &TYPE, Expression *expr);
         ~VariableDeclaration();
 

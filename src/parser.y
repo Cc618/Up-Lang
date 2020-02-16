@@ -91,6 +91,7 @@ program:
 
 stmt:
 	ID ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
+	| ID ID { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
 	| AUTO ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
 	| ID assign_op expr { $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| expr { $$ = new ExpressionStatement(ERROR_INFO, $1); }
