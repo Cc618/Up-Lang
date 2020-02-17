@@ -86,7 +86,7 @@
 
 %%
 program:
-	| program stmt { compiler.statements.push_back($2); }
+	| program stmt { compiler.main()->statements.push_back($2); }
 	| program import { compiler.import($2); }
 	;
 

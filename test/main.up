@@ -1,7 +1,7 @@
 # To have functions from stdio.h, stdlib.h and math.h
 # use libc
 
-cdef num cosf(num, int, bool)
+# cdef num cosf(num, int, bool)
 
 
 

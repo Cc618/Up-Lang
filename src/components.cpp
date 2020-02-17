@@ -215,4 +215,58 @@ namespace up
 
         cout << endl;
     }
+
+    Function::Function(const std::string &TYPE, const std::string &NAME, const bool C_DEF)
+        : type(TYPE), name(NAME), isCDef(C_DEF)
+    {}
+
+    Function::~Function()
+    {
+        for (auto s : statements)
+            delete s;
+    }
+
+    string Function::signature() const
+    {
+        string s = cType(type) + " " + cName() + "(";
+
+        if (!args.empty())
+        {
+            s += args[0];
+            for (size_t i = 1; i < args.size(); ++i)
+                s += ", " + args[i];
+        }
+
+        s += ")";
+
+        return s;
+    }
+
+    std::string Function::toString() const
+    {
+        if (isCDef)
+            return "";
+        
+        // Signature
+        string s = signature();
+
+        // Block
+        s += "\n{\n";
+
+        // Statements
+        for (auto stmt : statements)
+            s += "\t" + stmt->toString() + "\n";
+
+        s += "}";
+
+        return s;
+    }
+
+    void Function::process(Compiler *compiler)
+    {
+        for (auto s : statements)
+            s->process(compiler);
+
+        // TODO : Verify return value
+    }
 } // namespace up

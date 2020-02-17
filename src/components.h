@@ -251,4 +251,54 @@ namespace up
         Call *call;
     };
 
+
+
+
+    // A function describes a function with
+    // instructions or a function declaration (cdef)
+    class Function
+    {
+    public:
+        Function() = default;
+        Function(const std::string &TYPE, const std::string &NAME, const bool C_DEF=false);
+        ~Function();
+
+    public:
+        // Getter for name
+        inline std::string upName() const
+        { return name; }
+        // Returns the mangled name
+        std::string cName() const
+        {
+            // TODO : Name mangling with args, ...
+            return upName();
+        }
+
+        // Returns the signature of the function
+        // For example :
+        // int main(int, char**)
+        // !!! ; is not added at the end of the line
+        std::string signature() const;
+
+        // If isCDef, the function will return an empty string
+        // Otherwise : Returns the function with its signature
+        // and all statements
+        /* virtual */ std::string toString() const /* override */;
+        /* virtual */ void process(Compiler *compiler) /* override */;
+
+    public:
+        // Can be auto if and only if isCDef
+        std::string type;
+        bool isCDef;
+
+        // TODO : Change statement with block (can contain statement + blocks)
+        // The content
+        std::vector<Statement*> statements;
+
+    private:
+        // Base name
+        std::string name;
+        // Args (only type names)
+        std::vector<std::string> args;
+    };
 }

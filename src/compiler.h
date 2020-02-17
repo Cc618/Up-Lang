@@ -29,10 +29,13 @@ namespace up
         // Creates and display a generation error
         void generateError(const std::string &MSG, const ErrorInfo &INFO);
 
+        // Returns the main function
+        inline Function *main()
+        { return functions[0]; }
+
     public:
-        // !!! Tests //
-        std::vector<Statement*> statements;
-        // !!! End tests //
+        // The first function is the main function
+        std::vector<Function*> functions;
         
     private:
         // Calls the scanner to create components
@@ -43,6 +46,9 @@ namespace up
 
         // Add all imports to program
         void parseModules();
+
+        // Removes each function in functions
+        void clearFunctions();
 
     private:
         Scanner scanner;
