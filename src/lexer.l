@@ -33,7 +33,6 @@ comment #.*$
 /* Empty line */
 empty_line \n[ \t]*$
 comment_line \n[ \t]*#.*$
-/* TODO : Tabs with 4 spaces */
 /* Start of line */
 tabs \n(\t|[ ]{4})*
 /* After the line begining */
@@ -48,13 +47,13 @@ space [ \t]
 	{
         // std::cout << "INDENT\n";
 		--indentsToAdd;
-		// return Parser::make_INDENT(loc);
+		return Parser::make_INDENT(loc);
 	}
 	else if (indentsToAdd < 0)
 	{
         // std::cout << "DEDENT\n";
 		++indentsToAdd;
-		// return Parser::make_DEDENT(loc);
+		return Parser::make_DEDENT(loc);
 	}
 %}
 

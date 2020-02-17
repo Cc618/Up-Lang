@@ -92,6 +92,8 @@ namespace up
         program += '\n';
 
         // Functions //
+        // TODO : Create depedencies on functions which use other functions (add signature)
+
         // Process functions
         for (auto f : functions)
             f->process(this);

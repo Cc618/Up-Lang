@@ -16,11 +16,30 @@ namespace up
     // !!! is an auto type
     std::string cType(const std::string &TYPE);
 
+
+    // Interface which provides process and toString virtual functions
+    class ISyntax
+    {
+    public:
+        ISyntax() = default;
+        virtual ~ISyntax() = default;
+
+    public:
+        // Returns the string representation of
+        // the syntax
+        virtual std::string toString() const
+        { return ""; }
+
+        // Like a constructor with the compiler as argument
+        virtual void process(Compiler *compiler)
+        {}
+    };
+
     // Gives a result
     // For example :
     // 42 + 618
     // * The type must be resolved when process is called
-    class Expression
+    class Expression : public ISyntax
     {
     public:
         Expression() = default;
@@ -28,18 +47,10 @@ namespace up
         virtual ~Expression() = default;
 
     public:
-        // Returns the string representation of
-        // the expression in C
-        virtual std::string toString() const = 0;
-
         // Whether the type is compatible to this type
         // * TYPE belongs to a Variable
         // !!! TYPE is a Up type
         bool compatibleType(const std::string &TYPE) const;
-        
-        // Like a constructor with the compiler as argument
-        virtual void process(Compiler *compiler)
-        {}
 
     public:
         // Up type (can be auto)
@@ -50,7 +61,7 @@ namespace up
     // can be also a sequence of instructions
     // For example :
     // $a = 48
-    class Statement
+    class Statement : public ISyntax
     {
     public:
         Statement() = default;
@@ -59,15 +70,6 @@ namespace up
         {}
         virtual ~Statement() = default;
 
-    public:
-        // Returns the string representation of
-        // the statement in C
-        virtual std::string toString() const = 0;
-
-        // Like a constructor with the compiler as argument
-        virtual void process(Compiler *compiler)
-        {}
-    
     public:
         ErrorInfo info;
     };
@@ -256,7 +258,7 @@ namespace up
 
     // A function describes a function with
     // instructions or a function declaration (cdef)
-    class Function
+    class Function : public ISyntax
     {
     public:
         Function() = default;
@@ -283,8 +285,8 @@ namespace up
         // If isCDef, the function will return an empty string
         // Otherwise : Returns the function with its signature
         // and all statements
-        /* virtual */ std::string toString() const /* override */;
-        /* virtual */ void process(Compiler *compiler) /* override */;
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
 
     public:
         // Can be auto if and only if isCDef
