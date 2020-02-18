@@ -90,7 +90,7 @@
 
 %%
 program:
-	| program stmt new_line { compiler.main()->statements.push_back($2); }
+	| program stmt { compiler.main()->statements.push_back($2); }
 	| program import { compiler.import($2); }
 	| program new_line {}
 	/* TODO */
@@ -114,12 +114,12 @@ block_start:
 
 
 stmt:
-	ID ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
-	| AUTO ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
-	| ID ID { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
-	| CDEF ID call { $$ = new CDef(ERROR_INFO, $2, $3); }
-	| ID assign_op expr { $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
-	| expr { $$ = new ExpressionStatement(ERROR_INFO, $1); }
+	ID ID EQ expr new_line 			{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
+	| AUTO ID EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
+	| ID ID new_line				{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
+	| CDEF ID call new_line 		{ $$ = new CDef(ERROR_INFO, $2, $3); }
+	| ID assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
+	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	;
 
 expr:
@@ -131,7 +131,7 @@ expr:
 
 import:
 	/* TODO : Imports with . */
-	USE ID { $$ = Module($2); }
+	USE ID new_line { $$ = Module($2); }
 	;
 
 literal:
