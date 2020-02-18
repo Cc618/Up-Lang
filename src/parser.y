@@ -51,6 +51,7 @@
 
 %token
 	END 0					"End of file"
+	NL						"New line"
 	INDENT					"Indentation"
 	DEDENT					"Unindentation"
 	EQ						"="
@@ -79,8 +80,11 @@
 %type <UnaryOperation*>		unary_op;
 %type <Call*>				call;
 %type <Call*>				call_start;
+%type <Block*>				block;
+%type <Block*>				block_start;
 %type <Module>				import;
 %type <string>				assign_op;
+%type <void>				new_line;
 
 %start program
 
@@ -88,7 +92,25 @@
 program:
 	| program stmt { compiler.main()->statements.push_back($2); }
 	| program import { compiler.import($2); }
+	/* TODO */
+	/* | program block { cout << "BLOCK\n" << $2->toString(); } */
+	| program NL
 	;
+
+
+/*
+block:
+	block_start DEDENT { $$ = $1; }
+	;
+
+block_start:
+	INDENT stmt { cout << "ok\n"; $$ = new Block(); $$->statements.push_back($2); }
+	| INDENT AUTO { $$ = nullptr; cout << "ok\n"; }
+	| block_start stmt { $$ = $1; $$->statements.push_back($2); }
+	;
+*/
+
+
 
 stmt:
 	ID ID EQ expr { $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
@@ -142,6 +164,11 @@ call_start:
 	ID PAR_BEGIN { $$ = new Call($1); }
 	| call_start expr COMMA { $$ = $1; $$->args.push_back($2); }
 	;
+
+// new_line:
+// 	NL
+// 	| new_line NL
+// 	;
 
 %%
 

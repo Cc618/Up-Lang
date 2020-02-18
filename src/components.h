@@ -303,4 +303,21 @@ namespace up
         // Args (only type names)
         std::vector<std::string> args;
     };
+
+    // A block is like the body of a function or a if statement
+    // This gathers indented statements
+    class Block : public ISyntax
+    {
+    public:
+        Block() = default;
+        ~Block();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    public:
+        // The content
+        std::vector<Statement*> statements;
+    };
 }

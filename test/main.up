@@ -18,8 +18,8 @@ $x = 'I am a string'
 
 nil c
 
-
-#    $s = 'I am INDENTED'
+# $s = 'I am INDENTED'
+# $s2 = 'I am INDENTED2'
 
 # Operations
 b = 8

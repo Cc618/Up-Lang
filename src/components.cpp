@@ -269,4 +269,29 @@ namespace up
 
         // TODO : Verify return value
     }
+
+    Block::~Block()
+    {
+        for (auto s : statements)
+            delete s;
+    }
+
+    string Block::toString() const
+    {
+        string s = "{\n";
+
+        // Add statements
+        for (auto stmt : statements)
+            s += "\t" + stmt->toString() + "\n";
+
+        s += "}";
+
+        return s;
+    }
+
+    void Block::process(Compiler *compiler)
+    {
+        for (auto s : statements)
+            s->process(compiler);
+    }
 } // namespace up

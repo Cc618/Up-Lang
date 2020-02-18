@@ -28,13 +28,13 @@ num [\-]?[0-9]+\.[0-9]*
 bool yes|no
 str '(.|\\')*'
 
-/* !!! We use \n for line start and $ for line end : [start, end) */
+/* !!! We use ^ for line start and $ for line end : (start, end) */
 comment #.*$
 /* Empty line */
-empty_line \n[ \t]*$
-comment_line \n[ \t]*#.*$
+empty_line ^[ \t]+$
+comment_line ^[ \t]*#.*$
 /* Start of line */
-tabs \n(\t|[ ]{4})*
+tabs ^(\t|[ ]{4})*
 /* After the line begining */
 space [ \t]
 
@@ -59,15 +59,10 @@ space [ \t]
 
 {comment}		; // Ignored
 
-{empty_line}	loc.lines();
-{comment_line}	loc.lines();
+{empty_line}	{ /* loc.lines(); */ }
+{comment_line}	{ /* loc.lines(); */ }
 
-{tabs}			{
-	// Update lines
-	loc.lines();
-
-	updateIndent(yytext, yyleng);
-}
+{tabs}			updateIndent(yytext, yyleng);
 
 {str}			return Parser::make_STR(yytext, loc);
 {int}			return Parser::make_INT(yytext, loc);
@@ -93,6 +88,7 @@ space [ \t]
 
 {id}			return Parser::make_ID(yytext, loc);
 
+"\n"			{ loc.lines(); return Parser::make_NL(loc); }	
 {space}			; // Ignored
 
 .				{

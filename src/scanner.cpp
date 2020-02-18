@@ -35,7 +35,7 @@ namespace up
 
     void Scanner::updateIndent(const char *TEXT, const int LEN)
     {
-        const int TABS = countTabs(TEXT + 1, LEN - 1);
+        const int TABS = countTabs(TEXT, LEN);
 
         // How many tabs have been added since the last line
         const int GAP = TABS - indent;
