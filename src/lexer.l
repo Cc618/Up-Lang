@@ -89,6 +89,8 @@ space [ \t]
 {id}			return Parser::make_ID(yytext, loc);
 
 "\n"			{ loc.lines(); return Parser::make_NL(loc); }	
+";"				return Parser::make_NL(loc);
+
 {space}			; // Ignored
 
 .				{

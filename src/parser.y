@@ -84,17 +84,18 @@
 %type <Block*>				block_start;
 %type <Module>				import;
 %type <string>				assign_op;
-%type <void>				new_line;
+%type <char>				new_line;
 
 %start program
 
 %%
 program:
-	| program stmt { compiler.main()->statements.push_back($2); }
+	| program stmt new_line { compiler.main()->statements.push_back($2); }
 	| program import { compiler.import($2); }
+	| program new_line {}
 	/* TODO */
 	/* | program block { cout << "BLOCK\n" << $2->toString(); } */
-	| program NL
+	// | program new_line
 	;
 
 
@@ -165,10 +166,10 @@ call_start:
 	| call_start expr COMMA { $$ = $1; $$->args.push_back($2); }
 	;
 
-// new_line:
-// 	NL
-// 	| new_line NL
-// 	;
+new_line:
+	NL {}
+	| new_line NL {}
+	;
 
 %%
 
