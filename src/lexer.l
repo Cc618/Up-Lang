@@ -41,6 +41,12 @@ space [ \t]
 %%
 
 %{
+	if (isStartOfFile)
+	{
+		isStartOfFile = false;
+		return Parser::make_START(loc);
+	}
+
 	// Executed for each token
 	// Update indents
 	if (indentsToAdd > 0)

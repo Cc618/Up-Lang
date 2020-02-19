@@ -51,6 +51,7 @@
 
 %token
 	END 0					"End of file"
+	START					"Start of file"
 	NL						"New line"
 	INDENT					"Indentation"
 	DEDENT					"Unindentation"
@@ -80,22 +81,31 @@
 %type <UnaryOperation*>		unary_op;
 %type <Call*>				call;
 %type <Call*>				call_start;
-%type <Block*>				block;
-%type <Block*>				block_start;
 %type <Module>				import;
 %type <string>				assign_op;
 %type <char>				new_line;
 
+/* TODO
+%type <Block*>				block;
+%type <Block*>				block_start;
+*/
+
 %start program
+
+%nonassoc INC DEC USE CDEF
+
+%left START
+%left END
+%left NL
 
 %%
 program:
 	| program stmt { compiler.main()->statements.push_back($2); }
 	| program import { compiler.import($2); }
-	| program new_line {}
+	| program START new_line {}
+	| program START {}
 	/* TODO */
 	/* | program block { cout << "BLOCK\n" << $2->toString(); } */
-	// | program new_line
 	;
 
 
@@ -169,6 +179,7 @@ call_start:
 new_line:
 	NL {}
 	| new_line NL {}
+	| END {}
 	;
 
 %%

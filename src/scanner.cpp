@@ -14,6 +14,7 @@ namespace up
         indent = 0;
         indentsToAdd = 0;
         file = FILE_PATH;
+        isStartOfFile = true;
 
         fileInput.open(FILE_PATH);
 

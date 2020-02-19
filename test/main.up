@@ -1,3 +1,4 @@
+int a = -42
 # To have functions from stdio.h, stdlib.h and math.h
 # use libc
 
@@ -28,3 +29,4 @@ a += --b
 # Functions
 printf(42, 43.)
 # printf('Result : %f\n', cosf(3.14))
+int b = 36
