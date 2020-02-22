@@ -115,14 +115,22 @@ num b = -618.32
 # Booleans are set with yes or no
 bool c = yes
 $yesOrNo = no
+$x = 'I am a string'
+
+# Declare variable without initialization
+nil c
+
+# Create function
+nil func()
+    a = b
+    b = 3.14
 
 # Operations
 b = 8
 a += --b
-$x = 'I am a string'
 
 # Functions
-printf('Here is a : %d\n', a)
+printf('Result : %f\n', cosf(3.14))
 ```
 
 Result :
@@ -134,17 +142,21 @@ Result :
 #include "stdlib.h"
 #include "math.h"
 
+void func() {
+    a = b;
+    b = 3.14f;
+}
+
 int main() {
     int a = 42;
     float b = -618.32f;
-    bool c = true;
-    bool yesOrNo = false;
+    uint8 c = true;
+    uint8 yesOrNo = false;
+    const char* x = "I am a string";
+    void c;
     b = 8;
     a += --b;
-    const char* x = "I am a string";
-    printf("Here is a : %d\n", a);
-
-    return 0;
+    printf("Result : %f\n", cosf(3.14f));
 }
 ```
 

@@ -1,7 +1,7 @@
 # To have functions from stdio.h, stdlib.h and math.h
-# use libc
+use libc
 
-cdef num cosf(num, int, bool)
+# cdef num cosf(num, int, bool)
 
 
 # $ means auto type
@@ -18,12 +18,10 @@ $x = 'I am a string'
 # Declare variable without initialization
 nil c
 
-
+# Create function
 nil func()
-    $s = 'I am INDENTED'
-    $s2 = 'I am INDENTED2'
-
-    b = 248724
+    a = b
+    b = 3.14
 
 # Operations
 b = 8

@@ -115,7 +115,7 @@
 
 %%
 program:
-	| program stmt { compiler.main()->content->statements.push_back($2); }
+	| program stmt { compiler.main()->body->content.push_back($2); }
 	| program function { compiler.functions.push_back($2); }
 	| program import { compiler.import($2); }
 	| program START new_line {}
@@ -128,8 +128,8 @@ block:
 	;
 
 block_start:
-	INDENT stmt						{ $$ = new Block(); $$->statements.push_back($2); }
-	| block_start stmt				{ $$ = $1; $$->statements.push_back($2); }
+	INDENT stmt						{ $$ = new Block(); $$->content.push_back($2); }
+	| block_start stmt				{ $$ = $1; $$->content.push_back($2); }
 	;
 
 function:
@@ -140,11 +140,12 @@ stmt:
 	ID ID EQ expr new_line 			{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
 	| AUTO ID EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
 	| ID ID new_line				{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
-	| CDEF ID call new_line 		{ $$ = new CDef(ERROR_INFO, $2, $3); }
+	| CDEF ID call new_line 		{ /* TODO : Not statement */ $$ = new CDef(ERROR_INFO, $2, $3); }
 	| ID assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	;
 
+/* TODO : Arg expression (int a) */ 
 expr:
 	literal { $$ = $1; }
 	| unary_op { $$ = $1; }

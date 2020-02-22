@@ -258,7 +258,7 @@ namespace up
     };
 
     // A block is like the body of a function or a if statement
-    // This gathers indented statements
+    // This gathers indented statements and other instructions
     class Block : public ISyntax
     {
     public:
@@ -274,8 +274,7 @@ namespace up
 
     public:
         // The content
-        // TODO : Change with ISyntax (gathers blocks, statements...)
-        std::vector<Statement*> statements;
+        std::vector<Statement*> content;
     };
    
     // A function describes a function with
@@ -291,7 +290,7 @@ namespace up
         // For cdefs
         Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &NAME);
         // For up defs
-        Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *content);
+        Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *body);
         ~Function();
 
     public:
@@ -323,7 +322,7 @@ namespace up
         bool isCDef;
 
         // The content
-        Block *content;
+        Block *body;
 
     private:
         // Base name

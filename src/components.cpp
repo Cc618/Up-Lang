@@ -218,8 +218,8 @@ namespace up
 
     Block::~Block()
     {
-        for (auto s : statements)
-            delete s;
+        for (auto instr : content)
+            delete instr;
     }
 
     string Block::toString() const
@@ -227,8 +227,8 @@ namespace up
         string s = "{\n";
 
         // Add statements
-        for (auto stmt : statements)
-            s += "\t" + stmt->toString() + "\n";
+        for (auto instr : content)
+            s += "\t" + instr->toString() + "\n";
 
         s += "}\n";
 
@@ -237,8 +237,8 @@ namespace up
 
     void Block::process(Compiler *compiler)
     {
-        for (auto s : statements)
-            s->process(compiler);
+        for (auto instr : content)
+            instr->process(compiler);
     }
 
     Function *Function::createMain()
@@ -246,17 +246,17 @@ namespace up
         Function *main = new Function(ErrorInfo("main.c", 0, 0), "int", "main");
 
         main->isCDef = false;
-        main->content = new Block(ErrorInfo("main.c", 0, 0));
+        main->body = new Block(ErrorInfo("main.c", 0, 0));
 
         return main;
     }
 
     Function::Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &NAME)
-        : ISyntax(INFO), type(TYPE), name(NAME), isCDef(true), content(nullptr)
+        : ISyntax(INFO), type(TYPE), name(NAME), isCDef(true), body(nullptr)
     {}
 
-    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *content)
-        : ISyntax(INFO), type(TYPE), name(call->id), isCDef(false), content(content)
+    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *body)
+        : ISyntax(INFO), type(TYPE), name(call->id), isCDef(false), body(body)
     {
         // TODO change args type to be type/id tuples
         // TODO in process
@@ -268,8 +268,8 @@ namespace up
 
     Function::~Function()
     {
-        if (content)
-            delete content;
+        if (body)
+            delete body;
     }
 
     string Function::signature() const
@@ -294,17 +294,17 @@ namespace up
             return "";
         
         // Signature
-        string s = signature();
+        string s = signature() + " ";
 
         // Content
-        s += content->toString();
+        s += body->toString();
 
         return s;
     }
 
     void Function::process(Compiler *compiler)
     {
-        content->process(compiler);
+        body->process(compiler);
 
         // TODO : Verify return value
     }
