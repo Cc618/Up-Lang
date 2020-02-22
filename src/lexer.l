@@ -65,6 +65,7 @@ space [ \t]
 "("				return Parser::make_PAR_BEGIN(loc);
 ")"				return Parser::make_PAR_END(loc);
 ","				return Parser::make_COMMA(loc);
+"..."			return Parser::make_ELLIPSIS(loc);
 
 "use"			return Parser::make_USE(loc);
 "cdef"			return Parser::make_CDEF(loc);

@@ -69,6 +69,21 @@ namespace up
             " - " << RED << "Generation Error" << DEFAULT << " :\n" << MSG << '\n';
     }
 
+    Function *Compiler::getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES)
+    {
+        bool isEllipsis = ARG_TYPES.size() == 1 && ARG_TYPES[0] == "...";
+
+        for (auto f : functions)
+            // TODO : Verify arg types (with implicit casts)
+            if (f->id == ID)
+                if (isEllipsis || (f->args.size() == 1 && f->args[0]->isEllipsis()) ||
+                    f->args.size() == ARG_TYPES.size())
+                    return f;
+
+        // Not found
+        return nullptr;
+    }
+
     int Compiler::scan(const std::string &FILE_PATH)
     {
         if (!scanner.beginParse(FILE_PATH))
@@ -107,7 +122,8 @@ namespace up
 
         // Generate all functions
         for (size_t i = 1; i < functions.size(); ++i)
-            program += functions[i]->toString() + "\n";
+            if (!functions[i]->isCDef)
+                program += functions[i]->toString() + "\n";
         
         // Add the main function at the end
         program += main()->toString();

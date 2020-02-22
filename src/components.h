@@ -10,11 +10,16 @@
 namespace up
 {
     class Compiler;
+    class Expression;
 
     // Casts up type to c type in string
     // !!! May return empty string if the type
     // !!! is an auto type
     std::string cType(const std::string &TYPE);
+
+    // Returns the argument types list
+    // All arguments have a c type
+    std::vector<std::string> typeArgList(const std::vector<Expression*> &ARGS);
 
 
     // Interface which provides process and toString virtual functions
@@ -143,6 +148,7 @@ namespace up
     // For example :
     // fun(a1, a2)
     // fun : ID, { a1, a2 } : args
+    // * It is not an argument list to declare functions
     class Call : public Expression
     {
     public:
@@ -155,11 +161,7 @@ namespace up
 
     public:
         virtual std::string toString() const override;
-
-        // Whether the args are an argument declaration list
-        // * Can contain ellipsis
-        // !!! Can raise error if the args are both types (ellipsis and operations)
-        bool isDeclarationList(Compiler *compiler) const;
+        virtual void process(Compiler *compiler) override;
 
     public:
         std::string id;
@@ -261,12 +263,24 @@ namespace up
     class Argument : public ISyntax
     {
     public:
+        // Returns the argument for ...
+        static Argument *createEllipsis(const ErrorInfo &INFO);
+
+    public:
         Argument() = default;
         Argument(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID);
 
     public:
         virtual std::string toString() const override;
         virtual void process(Compiler *compiler) override;
+
+        inline bool isEllipsis() const
+        { return type == "..."; }
+
+    public:
+        // Compares two args (only types)
+        // * Returns true if one argument is the ellipsis argument
+        bool operator==(const Argument &ARG) const;
 
     public:
         std::string type,

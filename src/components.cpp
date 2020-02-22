@@ -14,21 +14,31 @@ namespace up
         if (id == "auto")
             // Empty = error
             return "";
-        
+
         if (id == "num")
             return "float";
-        
+
         // TODO : Custom up string type
         if (id == "str")
             return "const char*";
 
         if (id == "nil")
             return "void";
-        
+
         if (id == "bool")
             return "uint8";
-        
+
         return id;
+    }
+
+    std::vector<std::string> typeArgList(const std::vector<Expression*> &ARGS)
+    {
+        vector<string> args;
+
+        for (auto arg : ARGS)
+            args.push_back(cType(arg->type));
+
+        return args;
     }
 
     Expression::Expression(const std::string &TYPE)
@@ -100,25 +110,29 @@ namespace up
             for (size_t i = 1; i < args.size(); ++i)
                 s += ", " + args[i]->toString();
         }
-        
+
         s += ")";
 
         return s;
     }
 
-    bool Call::isDeclarationList(Compiler *compiler) const
+    void Call::process(Compiler *compiler)
     {
-        // TODO : Ellipsis
-        // TODO : Named arg
-        for (auto expr : args)
+        // Check the function exists
+        Function *func = compiler->getFunction(id, typeArgList(args));
+
+        // Error : No function found
+        if (!func)
         {
-            if (dynamic_cast<VariableUse*>(expr))
-                continue;
-         
-            return false;
+            string msg = "The function '";
+            msg += id;
+            msg += "' doesn't match any other function, verify the name or the arguments";
+
+            compiler->generateError(msg, info);
         }
-        
-        return true;
+
+        // Update the return type
+        type = func->type;
     }
 
     VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const std::string &ID, const std::string &TYPE, Expression *expr)
@@ -219,6 +233,11 @@ namespace up
             instr->process(compiler);
     }
 
+    Argument *Argument::createEllipsis(const ErrorInfo &INFO)
+    {
+        return new Argument(INFO, "...", "...");
+    }
+
     Argument::Argument(const ErrorInfo &INFO, const string &TYPE, const string &ID)
         : ISyntax(INFO), type(TYPE), id(ID)
     {}
@@ -231,6 +250,11 @@ namespace up
     void Argument::process(Compiler *compiler)
     {
         // TODO : Check type (exists)
+    }
+    
+    bool Argument::operator==(const Argument &ARG) const
+    {
+        return type == "..." || ARG.type == "..." || ARG.type == type;
     }
 
     Function::Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID, const vector<Argument*> &ARGS, const bool IS_C_DEF)
@@ -247,7 +271,7 @@ namespace up
     {
         for (auto arg : args)
             arg->process(compiler);
-        
+
         // TODO : Verify return type (exists)
     }
 
@@ -301,7 +325,7 @@ namespace up
     void UpFunction::process(Compiler *compiler)
     {
         Function::process(compiler);
-        
+
         body->process(compiler);
     }
 

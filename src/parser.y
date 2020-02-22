@@ -81,7 +81,8 @@
 	PAR_BEGIN				"("
 	PAR_END					")"
 	COMMA					","
-	AUTO					"Auto type ($)"
+	ELLIPSIS				"..."
+	AUTO					"$"
 	USE						"use keyword"
 	CDEF					"cdef keyword"
 	<int> INDENT_UPDT		"Indentation update"
@@ -141,6 +142,7 @@ block_start:
 
 args:
 	PAR_BEGIN PAR_END				{ $$ = {}; }
+	| PAR_BEGIN ELLIPSIS PAR_END	{ $$ = { Argument::createEllipsis(ERROR_INFO) }; }
 	| args_start PAR_END			{ $$ = $1; }
 	;
 
@@ -160,7 +162,7 @@ stmt:
 expr:
 	literal							{ $$ = $1; }
 	| unary_op						{ $$ = $1; }
-	/* | call { $$ = $1; } // TODO */
+	| call							{ $$ = $1; }
 	| ID							{ $$ = new VariableUse($1); }
 	;
 
@@ -191,8 +193,6 @@ unary_op:
 	| DEC ID						{ $$ = new UnaryOperation($2, "--", true); }
 	;
 
-/*
-// TODO
 call:
 	call_start PAR_END				{ $$ = $1; }
 	| call_start expr PAR_END		{ $$ = $1; $$->args.push_back($2); }
@@ -202,7 +202,6 @@ call_start:
 	ID PAR_BEGIN					{ $$ = new Call($1); }
 	| call_start expr COMMA			{ $$ = $1; $$->args.push_back($2); }
 	;
-*/
 
 new_line:
 	NL								{}

@@ -1,8 +1,8 @@
 # To have functions from stdio.h, stdlib.h and math.h
 use libc
 
+cdef nil printf(...)
 cdef num cosf(num a, int b, bool c)
-
 
 # $ means auto type
 $a = 42
@@ -28,4 +28,4 @@ b = 8
 a += --b
 
 # Functions
-# printf('Result : %f\n', cosf(3.14))
+printf('Result : %f\n', cosf(3.14))

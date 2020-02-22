@@ -32,6 +32,10 @@ namespace up
         // Returns the main function
         inline Function *main()
         { return functions[0]; }
+    
+        // Finds a function
+        // !!! Can return nullptr if the function is not found
+        Function *getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES);
 
     public:
         // The first function is the main function
