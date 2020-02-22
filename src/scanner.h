@@ -2,6 +2,7 @@
 
 #include <string>
 #include <fstream>
+#include <queue>
 
 #include "components.h"
 #include "module.h"
@@ -33,6 +34,10 @@ namespace up
         {}
 
     public:
+        // This function returns the next token
+        // * Calls next if the virtual stack is empty
+        Parser::symbol_type nextToken();
+
         // Equivalent to yylex
         virtual Parser::symbol_type next();
 
@@ -55,6 +60,7 @@ namespace up
         // Updates the indentation
         // - TEXT : The "\n\t\t\t..." sequence
         // - LEN : Length of the whole text (LEN >= 1)
+        // * TEXT may be nullptr if LEN == 0, the indent is reset
         void updateIndent(const char *TEXT, const int LEN);
 
         // Counts the number of tabs in TEXT
@@ -71,12 +77,8 @@ namespace up
         // Current indentation
         int indent;
 
-        // To add multiple indent or dedent tokens at once
-        // indentsToAdd > 0 for INDENT, DEDENT otherwise
-        int indentsToAdd;
-
-        // To add the START token
-        bool isStartOfFile;
+        // Additional tokens
+        std::queue<Parser::symbol_type> tokens;
     };
 
 }

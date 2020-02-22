@@ -38,37 +38,14 @@ tabs ^(\t|[ ]{4})*
 /* After the line begining */
 space [ \t]
 
+
 %%
 
-%{
-	if (isStartOfFile)
-	{
-		isStartOfFile = false;
-		return Parser::make_START(loc);
-	}
-
-	// Executed for each token
-	// Update indents
-	if (indentsToAdd > 0)
-	{
-        // std::cout << "INDENT\n";
-		--indentsToAdd;
-		return Parser::make_INDENT(loc);
-	}
-	else if (indentsToAdd < 0)
-	{
-        // std::cout << "DEDENT\n";
-		++indentsToAdd;
-		return Parser::make_DEDENT(loc);
-	}
-%}
-
 {comment}		; // Ignored
+{empty_line}	; // Ignored
+{comment_line}	; // Ignored
 
-{empty_line}	{ /* loc.lines(); */ }
-{comment_line}	{ /* loc.lines(); */ }
-
-{tabs}			updateIndent(yytext, yyleng);
+{tabs}			{ updateIndent(yytext, yyleng); return Parser::make_PASS(loc); }
 
 {str}			return Parser::make_STR(yytext, loc);
 {int}			return Parser::make_INT(yytext, loc);
@@ -94,7 +71,7 @@ space [ \t]
 
 {id}			return Parser::make_ID(yytext, loc);
 
-"\n"			{ loc.lines(); return Parser::make_NL(loc); }	
+"\n"			{ loc.lines(); /* // TODO : UPDATE INDENT to 0 */ return Parser::make_NL(loc); }	
 ";"				return Parser::make_NL(loc);
 
 {space}			; // Ignored

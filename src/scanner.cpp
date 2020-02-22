@@ -8,13 +8,64 @@ namespace up
         : compiler(compiler)
     {}
 
+    Parser::symbol_type Scanner::nextToken()
+    {
+        do
+        {
+            // Push token if necessary
+            if (!tokens.empty())
+            {
+                auto tok = tokens.front();
+                tokens.pop();
+
+                // Check next token and update indent
+                if (tok.token() == Parser::token::TOKEN_NL)
+                {
+                    auto nextTok = tokens.front();
+
+                    if (nextTok.token() != Parser::token::TOKEN_PASS)
+                    {
+                        // Set indent to 0
+                        updateIndent(nullptr, 0);
+                    }
+                    else
+                        // Ignore pass token
+                        tokens.pop();
+                }
+
+                return tok;
+            }
+
+            Parser::symbol_type sym = next();
+
+            // Special tokens
+            switch (sym.token())
+            {
+            case Parser::token::TOKEN_NL:
+                // Used to update indents if there is no tabs after
+                tokens.push(sym);
+                // Push next token
+                tokens.push(next());
+                break;
+
+            case Parser::token::TOKEN_PASS:
+                // Ignore token if the token is the pass token
+                break;
+
+            default:
+                // Normal token, return it
+                return sym;
+            }
+        } while (true);
+    }
+
     bool Scanner::beginParse(const std::string &FILE_PATH)
     {
         loc = Parser::location_type();
         indent = 0;
-        indentsToAdd = 0;
         file = FILE_PATH;
-        isStartOfFile = true;
+        tokens = std::queue<Parser::symbol_type>();
+        tokens.push(Parser::make_START(loc));
 
         fileInput.open(FILE_PATH);
 
@@ -36,15 +87,32 @@ namespace up
 
     void Scanner::updateIndent(const char *TEXT, const int LEN)
     {
-        const int TABS = countTabs(TEXT, LEN);
-
         // How many tabs have been added since the last line
-        const int GAP = TABS - indent;
+        int gap;
 
-        indentsToAdd = GAP;
+        if (LEN == 0)
+        {
+            // There is no tabs
+            gap = -indent;
+            indent = 0;
+        }
+        else
+        {
+            const int TABS = countTabs(TEXT, LEN);
+            gap = TABS - indent;
 
-        // Update indentation
-        indent = TABS;
+            // Update indentation
+            indent = TABS;
+        }
+
+        // Push indents
+        if (gap > 0)
+            for (int i = 0; i < gap; ++i)
+                tokens.push(Parser::make_INDENT(loc));
+        else
+            for (int i = 0; i < -gap; ++i)
+                tokens.push(Parser::make_DEDENT(loc));
+
     }
 
     int Scanner::countTabs(const char *TEXT, const int LEN) const
