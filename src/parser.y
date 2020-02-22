@@ -94,6 +94,7 @@
 
 %type <Statement*>			stmt;
 %type <Expression*>			expr;
+%type <Function*>			function;
 %type <Literal*>			literal;
 %type <UnaryOperation*>		unary_op;
 %type <Module>				import;
@@ -103,7 +104,6 @@
 %type <Block*>				block_start;
 %type <string>				assign_op;
 %type <char>				new_line;
-
 
 %start program
 
@@ -115,8 +115,8 @@
 
 %%
 program:
-	| program block { cout << $2->toString() << endl; }
-	| program stmt { compiler.main()->statements.push_back($2); }
+	| program stmt { compiler.main()->content->statements.push_back($2); }
+	| program function { compiler.functions.push_back($2); }
 	| program import { compiler.import($2); }
 	| program START new_line {}
 	| program START {}
@@ -128,10 +128,13 @@ block:
 	;
 
 block_start:
-	INDENT stmt { $$ = new Block(); $$->statements.push_back($2); }
-	| block_start stmt { $$ = $1; $$->statements.push_back($2); }
+	INDENT stmt						{ $$ = new Block(); $$->statements.push_back($2); }
+	| block_start stmt				{ $$ = $1; $$->statements.push_back($2); }
 	;
 
+function:
+	ID call new_line block			{ $$ = new Function(ERROR_INFO, $1, $2, $4); }
+	;
 
 stmt:
 	ID ID EQ expr new_line 			{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }

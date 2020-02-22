@@ -216,14 +216,60 @@ namespace up
         cout << endl;
     }
 
-    Function::Function(const std::string &TYPE, const std::string &NAME, const bool C_DEF)
-        : type(TYPE), name(NAME), isCDef(C_DEF)
-    {}
-
-    Function::~Function()
+    Block::~Block()
     {
         for (auto s : statements)
             delete s;
+    }
+
+    string Block::toString() const
+    {
+        string s = "{\n";
+
+        // Add statements
+        for (auto stmt : statements)
+            s += "\t" + stmt->toString() + "\n";
+
+        s += "}\n";
+
+        return s;
+    }
+
+    void Block::process(Compiler *compiler)
+    {
+        for (auto s : statements)
+            s->process(compiler);
+    }
+
+    Function *Function::createMain()
+    {
+        Function *main = new Function(ErrorInfo("main.c", 0, 0), "int", "main");
+
+        main->isCDef = false;
+        main->content = new Block(ErrorInfo("main.c", 0, 0));
+
+        return main;
+    }
+
+    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &NAME)
+        : ISyntax(INFO), type(TYPE), name(NAME), isCDef(true), content(nullptr)
+    {}
+
+    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *content)
+        : ISyntax(INFO), type(TYPE), name(call->id), isCDef(false), content(content)
+    {
+        // TODO change args type to be type/id tuples
+        // TODO in process
+        for (auto a : call->args)
+            args.push_back(a->toString());
+
+        delete call;
+    }
+
+    Function::~Function()
+    {
+        if (content)
+            delete content;
     }
 
     string Function::signature() const
@@ -250,48 +296,16 @@ namespace up
         // Signature
         string s = signature();
 
-        // Block
-        s += "\n{\n";
-
-        // Statements
-        for (auto stmt : statements)
-            s += "\t" + stmt->toString() + "\n";
-
-        s += "}";
+        // Content
+        s += content->toString();
 
         return s;
     }
 
     void Function::process(Compiler *compiler)
     {
-        for (auto s : statements)
-            s->process(compiler);
+        content->process(compiler);
 
         // TODO : Verify return value
-    }
-
-    Block::~Block()
-    {
-        for (auto s : statements)
-            delete s;
-    }
-
-    string Block::toString() const
-    {
-        string s = "{\n";
-
-        // Add statements
-        for (auto stmt : statements)
-            s += "\t" + stmt->toString() + "\n";
-
-        s += "}";
-
-        return s;
-    }
-
-    void Block::process(Compiler *compiler)
-    {
-        for (auto s : statements)
-            s->process(compiler);
     }
 } // namespace up

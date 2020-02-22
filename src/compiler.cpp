@@ -22,7 +22,7 @@ namespace up
         generationError = false;
         modules.clear();
         clearFunctions();
-        functions.push_back(new Function("int", "main"));
+        functions.push_back(Function::createMain());
 
         // Scan
         int ret = 0;
@@ -30,6 +30,9 @@ namespace up
 
         if (ret != 0)
             return ret;
+
+        // TODO : Remove
+        cout << "Program parsed\n";
 
         // Generate
         generate();

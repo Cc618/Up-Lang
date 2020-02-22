@@ -22,6 +22,9 @@ namespace up
     {
     public:
         ISyntax() = default;
+        ISyntax(const ErrorInfo &INFO)
+            : info(INFO)
+        {}
         virtual ~ISyntax() = default;
 
     public:
@@ -33,6 +36,10 @@ namespace up
         // Like a constructor with the compiler as argument
         virtual void process(Compiler *compiler)
         {}
+
+    public:
+        // To obtain details when there is an error (file, location...)
+        ErrorInfo info;
     };
 
     // Gives a result
@@ -66,12 +73,9 @@ namespace up
     public:
         Statement() = default;
         Statement(const ErrorInfo &INFO)
-            : info(INFO)
+            : ISyntax(INFO)
         {}
         virtual ~Statement() = default;
-
-    public:
-        ErrorInfo info;
     };
 
     // Used to convert expression to statement
@@ -253,16 +257,41 @@ namespace up
         Call *call;
     };
 
+    // A block is like the body of a function or a if statement
+    // This gathers indented statements
+    class Block : public ISyntax
+    {
+    public:
+        Block() = default;
+        Block(const ErrorInfo &INFO)
+            : ISyntax(INFO)
+        {}
+        ~Block();
 
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
 
-
+    public:
+        // The content
+        // TODO : Change with ISyntax (gathers blocks, statements...)
+        std::vector<Statement*> statements;
+    };
+   
     // A function describes a function with
     // instructions or a function declaration (cdef)
     class Function : public ISyntax
     {
     public:
+        // Returns the main function
+        static Function *createMain();
+
+    public:
         Function() = default;
-        Function(const std::string &TYPE, const std::string &NAME, const bool C_DEF=false);
+        // For cdefs
+        Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &NAME);
+        // For up defs
+        Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *content);
         ~Function();
 
     public:
@@ -293,9 +322,8 @@ namespace up
         std::string type;
         bool isCDef;
 
-        // TODO : Change statement with block (can contain statement + blocks)
         // The content
-        std::vector<Statement*> statements;
+        Block *content;
 
     private:
         // Base name
@@ -304,20 +332,4 @@ namespace up
         std::vector<std::string> args;
     };
 
-    // A block is like the body of a function or a if statement
-    // This gathers indented statements
-    class Block : public ISyntax
-    {
-    public:
-        Block() = default;
-        ~Block();
-
-    public:
-        virtual std::string toString() const override;
-        virtual void process(Compiler *compiler) override;
-
-    public:
-        // The content
-        std::vector<Statement*> statements;
-    };
 }
