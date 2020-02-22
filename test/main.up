@@ -5,18 +5,18 @@
 
 
 
-# # $ means auto type
-# $a = 42
+# $ means auto type
+$a = 42
 
-# # num stands for floating point
-# num b = -618.32
+# num stands for floating point
+num b = -618.32
 
-# # Booleans are set with yes or no
-# bool c = yes
-# $yesOrNo = no
-# $x = 'I am a string'
+# Booleans are set with yes or no
+bool c = yes
+$yesOrNo = no
+$x = 'I am a string'
 
-# nil c
+nil c
 
     $s = 'I am INDENTED'
     $s2 = 'I am INDENTED2'

@@ -18,10 +18,6 @@ namespace up
                 auto tok = tokens.front();
                 tokens.pop_front();
 
-                // Ignore pass token
-                if (tok.token() == Parser::token::TOKEN_PASS)
-                    continue;
-                
                 // Update indentation
                 if (tok.token() == Parser::token::TOKEN_INDENT_UPDT)
                 {
@@ -34,14 +30,8 @@ namespace up
                 {
                     auto nextTok = tokens.front();
 
-                    bool isPass = nextTok.token() == Parser::token::TOKEN_PASS,
-                        isIndentUpdate = nextTok.token() == Parser::token::TOKEN_INDENT_UPDT;
-
-                    if (isPass)
-                        // Ignore pass token
-                        tokens.pop_front();
                     // Update indentation only if the next token is not an indent update
-                    else if (!isIndentUpdate)
+                    if (nextTok.token() != Parser::token::TOKEN_INDENT_UPDT)
                         // Set indent to 0
                         updateIndent(0);
                 }
@@ -76,11 +66,6 @@ namespace up
             case Parser::token::TOKEN_INDENT_UPDT:
                 // Parse it in tokens part
                 tokens.push_back(sym);
-                break;
-
-            // TODO : Useless ?
-            case Parser::token::TOKEN_PASS:
-                // Ignore token if the token is the pass token
                 break;
 
             default:
@@ -122,16 +107,13 @@ namespace up
         int gap = NEW_INDENT - indent;
         indent = NEW_INDENT;
 
-        // Push indents
+        // Push indents before next token
         if (gap > 0)
             for (int i = 0; i < gap; ++i)
                 tokens.push_front(Parser::make_INDENT(loc));
         else
             for (int i = 0; i < -gap; ++i)
                 tokens.push_front(Parser::make_DEDENT(loc));
-
-        // TODO
-        // std::cout << gap << " updt " <<  "\n";
     }
 
     int Scanner::countTabs(const char *TEXT, const int LEN) const

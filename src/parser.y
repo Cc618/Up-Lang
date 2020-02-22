@@ -66,7 +66,6 @@
 
 %token
 	END 0					"End of file"
-	PASS					"Pass token"
 	START					"Start of file"
 	NL						"New line"
 	TERMINATE				"Terminate (;)"
@@ -116,7 +115,7 @@
 
 %%
 program:
-	| program block { cout << "BLOCK" << $2->statements.size() << endl; /* << $2->toString(); */ }
+	| program block { cout << $2->toString() << endl; }
 	| program stmt { compiler.main()->statements.push_back($2); }
 	| program import { compiler.import($2); }
 	| program START new_line {}
