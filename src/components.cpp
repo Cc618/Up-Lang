@@ -194,28 +194,6 @@ namespace up
             return id + operand;
     }
 
-    CDef::CDef(const ErrorInfo &INFO, const std::string &TYPE, Call *call)
-        : Statement(INFO), type(TYPE), call(call)
-    {}
-
-    void CDef::process(Compiler *compiler)
-    {
-        // Verify args
-        if (!call->isDeclarationList(compiler))
-        {
-            compiler->generateError("Invalid argument list", info);
-            return;
-        }
-
-        // TODO : Add function
-        cout << "C function, id : " << call->id << ", type : " << type << ", args : ";
-
-        for (auto a : call->args)
-            cout << a->toString() << " ";
-
-        cout << endl;
-    }
-
     Block::~Block()
     {
         for (auto instr : content)
@@ -241,35 +219,36 @@ namespace up
             instr->process(compiler);
     }
 
-    Function *Function::createMain()
-    {
-        Function *main = new Function(ErrorInfo("main.c", 0, 0), "int", "main");
-
-        main->isCDef = false;
-        main->body = new Block(ErrorInfo("main.c", 0, 0));
-
-        return main;
-    }
-
-    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &NAME)
-        : ISyntax(INFO), type(TYPE), name(NAME), isCDef(true), body(nullptr)
+    Argument::Argument(const ErrorInfo &INFO, const string &TYPE, const string &ID)
+        : ISyntax(INFO), type(TYPE), id(ID)
     {}
 
-    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *body)
-        : ISyntax(INFO), type(TYPE), name(call->id), isCDef(false), body(body)
+    string Argument::toString() const
     {
-        // TODO change args type to be type/id tuples
-        // TODO in process
-        for (auto a : call->args)
-            args.push_back(a->toString());
-
-        delete call;
+        return type + " " + id;
     }
+
+    void Argument::process(Compiler *compiler)
+    {
+        // TODO : Check type (exists)
+    }
+
+    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID, const vector<Argument*> &ARGS, const bool IS_C_DEF)
+        : ISyntax(INFO), type(TYPE), id(ID), args(ARGS), isCDef(IS_C_DEF)
+    {}
 
     Function::~Function()
     {
-        if (body)
-            delete body;
+        for (auto arg : args)
+            delete arg;
+    }
+
+    void Function::process(Compiler *compiler)
+    {
+        for (auto arg : args)
+            arg->process(compiler);
+        
+        // TODO : Verify return type (exists)
     }
 
     string Function::signature() const
@@ -278,9 +257,9 @@ namespace up
 
         if (!args.empty())
         {
-            s += args[0];
+            s += args[0]->toString();
             for (size_t i = 1; i < args.size(); ++i)
-                s += ", " + args[i];
+                s += ", " + args[i]->toString();
         }
 
         s += ")";
@@ -288,11 +267,28 @@ namespace up
         return s;
     }
 
-    std::string Function::toString() const
+    UpFunction *UpFunction::createMain()
     {
-        if (isCDef)
-            return "";
-        
+        auto info = ErrorInfo("main.c", 0, 0);
+
+        UpFunction *main = new UpFunction(info, "int", "main",
+            { new Argument(info, "int", "argc"), new Argument(info, "char**", "argv") },
+            new Block(info));
+
+        return main;
+    }
+
+    UpFunction::UpFunction(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID, const vector<Argument*> &ARGS, Block *body)
+        : Function(INFO, TYPE, ID, ARGS, false), body(body)
+    {}
+
+    UpFunction::~UpFunction()
+    {
+        delete body;
+    }
+
+    string UpFunction::toString() const
+    {
         // Signature
         string s = signature() + " ";
 
@@ -302,10 +298,11 @@ namespace up
         return s;
     }
 
-    void Function::process(Compiler *compiler)
+    void UpFunction::process(Compiler *compiler)
     {
+        Function::process(compiler);
+        
         body->process(compiler);
-
-        // TODO : Verify return value
     }
+
 } // namespace up

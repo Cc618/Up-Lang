@@ -22,7 +22,7 @@ namespace up
         generationError = false;
         modules.clear();
         clearFunctions();
-        functions.push_back(Function::createMain());
+        functions.push_back(UpFunction::createMain());
 
         // Scan
         int ret = 0;

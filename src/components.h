@@ -193,7 +193,7 @@ namespace up
 
     // For example :
     // $a += 6
-    // a : ID, + : OPERAND, 6 : expr 
+    // a : ID, + : OPERAND, 6 : expr
     class VariableAssignement : public Statement
     {
     public:
@@ -233,30 +233,6 @@ namespace up
         bool prefix;
     };
 
-    // For example :
-    // cdef num cosf(num)
-    // TYPE : num, ID : cosf, args : { num }
-    // TODO : Statement ? Not like import (compiler.import)
-    class CDef : public Statement
-    {
-    public:
-        CDef() = default;
-        // * TYPE can be auto
-        // TODO : * call.args might have ellipsis type at the end ("...")
-        CDef(const ErrorInfo &INFO, const std::string &TYPE, Call *call);
-        ~CDef()
-        { delete call; }
-
-    public:
-        virtual std::string toString() const
-        { return ""; }
-        virtual void process(Compiler *compiler) override;
-
-    public:
-        std::string type;
-        Call *call;
-    };
-
     // A block is like the body of a function or a if statement
     // This gathers indented statements and other instructions
     class Block : public ISyntax
@@ -276,59 +252,81 @@ namespace up
         // The content
         std::vector<Statement*> content;
     };
-   
-    // A function describes a function with
-    // instructions or a function declaration (cdef)
-    class Function : public ISyntax
+
+    // An argument within a function definition
+    // For example :
+    // int main(int argc)
+    // int argc is an argument
+    // int : TYPE, argc : ID
+    class Argument : public ISyntax
     {
     public:
-        // Returns the main function
-        static Function *createMain();
+        Argument() = default;
+        Argument(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID);
 
     public:
-        Function() = default;
-        // For cdefs
-        Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &NAME);
-        // For up defs
-        Function(const ErrorInfo &INFO, const std::string &TYPE, Call *call, Block *body);
-        ~Function();
-
-    public:
-        // Getter for name
-        inline std::string upName() const
-        { return name; }
-        // Returns the mangled name
-        std::string cName() const
-        {
-            // TODO : Name mangling with args, ...
-            return upName();
-        }
-
-        // Returns the signature of the function
-        // For example :
-        // int main(int, char**)
-        // !!! ; is not added at the end of the line
-        std::string signature() const;
-
-        // If isCDef, the function will return an empty string
-        // Otherwise : Returns the function with its signature
-        // and all statements
         virtual std::string toString() const override;
         virtual void process(Compiler *compiler) override;
 
     public:
-        // Can be auto if and only if isCDef
-        std::string type;
-        bool isCDef;
-
-        // The content
-        Block *body;
-
-    private:
-        // Base name
-        std::string name;
-        // Args (only type names)
-        std::vector<std::string> args;
+        std::string type,
+            id;
     };
 
+    // Describes a function, can be a cdef or updef
+    // For updef, use UpFunction
+    class Function : public ISyntax
+    {
+
+    public:
+        Function() = default;
+        Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID,
+            const std::vector<Argument*> &ARGS, const bool IS_C_DEF=true);
+        virtual ~Function();
+
+    public:
+        virtual void process(Compiler *compiler) override;
+
+    public:
+        // The c signature (without ;)
+        std::string signature() const;
+        // Returns the mangled name
+        std::string cName() const
+        {
+            // TODO : Name mangling with args, ...
+            return id;
+        }
+
+    public:
+        // To check whether this function is defined in c or up
+        bool isCDef;
+        std::vector<Argument*> args;
+        // Return type
+        std::string type;
+        // Name
+        std::string id;
+    };
+
+    // A function defined in up
+    // (Function with instructions within and string representation)
+    class UpFunction : public Function
+    {
+    public:
+        // Returns the main function
+        static UpFunction *createMain();
+
+    public:
+        UpFunction() = default;
+        UpFunction(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID,
+            const std::vector<Argument*> &ARGS, Block *body);
+        ~UpFunction();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    public:
+        // Instructions
+        Block *body;
+    };
 }
