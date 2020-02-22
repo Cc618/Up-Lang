@@ -4,3 +4,4 @@ parser.cpp
 parser.hpp
 position.hh
 stack.hh
+parser.output

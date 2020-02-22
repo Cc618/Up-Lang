@@ -10,32 +10,46 @@ namespace up
 
     Parser::symbol_type Scanner::nextToken()
     {
-        do
+        while (true)
         {
             // Push token if necessary
             if (!tokens.empty())
             {
                 auto tok = tokens.front();
-                tokens.pop();
+                tokens.pop_front();
+
+                // Ignore pass token
+                if (tok.token() == Parser::token::TOKEN_PASS)
+                    continue;
+                
+                // Update indentation
+                if (tok.token() == Parser::token::TOKEN_INDENT_UPDT)
+                {
+                    updateIndent(tok.value.as<int>());
+                    continue;
+                }
 
                 // Check next token and update indent
                 if (tok.token() == Parser::token::TOKEN_NL)
                 {
                     auto nextTok = tokens.front();
 
-                    if (nextTok.token() != Parser::token::TOKEN_PASS)
-                    {
-                        // Set indent to 0
-                        updateIndent(nullptr, 0);
-                    }
-                    else
+                    bool isPass = nextTok.token() == Parser::token::TOKEN_PASS,
+                        isIndentUpdate = nextTok.token() == Parser::token::TOKEN_INDENT_UPDT;
+
+                    if (isPass)
                         // Ignore pass token
-                        tokens.pop();
+                        tokens.pop_front();
+                    // Update indentation only if the next token is not an indent update
+                    else if (!isIndentUpdate)
+                        // Set indent to 0
+                        updateIndent(0);
                 }
 
                 return tok;
             }
 
+            // Find the next token, tokens is empty
             Parser::symbol_type sym = next();
 
             // Special tokens
@@ -43,11 +57,28 @@ namespace up
             {
             case Parser::token::TOKEN_NL:
                 // Used to update indents if there is no tabs after
-                tokens.push(sym);
-                // Push next token
-                tokens.push(next());
+                tokens.push_back(sym);
+
+                // Ignore consecutive new lines
+                while (true)
+                {
+                    auto nextSym = next();
+
+                    if (nextSym.token() != Parser::token::TOKEN_NL)
+                    {
+                        // Push next token
+                        tokens.push_back(nextSym);
+                        break;
+                    }
+                };
                 break;
 
+            case Parser::token::TOKEN_INDENT_UPDT:
+                // Parse it in tokens part
+                tokens.push_back(sym);
+                break;
+
+            // TODO : Useless ?
             case Parser::token::TOKEN_PASS:
                 // Ignore token if the token is the pass token
                 break;
@@ -56,7 +87,7 @@ namespace up
                 // Normal token, return it
                 return sym;
             }
-        } while (true);
+        }
     }
 
     bool Scanner::beginParse(const std::string &FILE_PATH)
@@ -64,8 +95,8 @@ namespace up
         loc = Parser::location_type();
         indent = 0;
         file = FILE_PATH;
-        tokens = std::queue<Parser::symbol_type>();
-        tokens.push(Parser::make_START(loc));
+        tokens = std::deque<Parser::symbol_type>();
+        tokens.push_back(Parser::make_START(loc));
 
         fileInput.open(FILE_PATH);
 
@@ -85,34 +116,22 @@ namespace up
         fileInput.close();
     }
 
-    void Scanner::updateIndent(const char *TEXT, const int LEN)
+    void Scanner::updateIndent(const int NEW_INDENT)
     {
         // How many tabs have been added since the last line
-        int gap;
-
-        if (LEN == 0)
-        {
-            // There is no tabs
-            gap = -indent;
-            indent = 0;
-        }
-        else
-        {
-            const int TABS = countTabs(TEXT, LEN);
-            gap = TABS - indent;
-
-            // Update indentation
-            indent = TABS;
-        }
+        int gap = NEW_INDENT - indent;
+        indent = NEW_INDENT;
 
         // Push indents
         if (gap > 0)
             for (int i = 0; i < gap; ++i)
-                tokens.push(Parser::make_INDENT(loc));
+                tokens.push_front(Parser::make_INDENT(loc));
         else
             for (int i = 0; i < -gap; ++i)
-                tokens.push(Parser::make_DEDENT(loc));
+                tokens.push_front(Parser::make_DEDENT(loc));
 
+        // TODO
+        // std::cout << gap << " updt " <<  "\n";
     }
 
     int Scanner::countTabs(const char *TEXT, const int LEN) const

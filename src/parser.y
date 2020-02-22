@@ -46,7 +46,8 @@
 	{
 		auto tok = scanner.nextToken();
 
-		// TODO
+		// TODO : Remove debug
+		// cout << "@" << scanner.loc.begin.line << " : ";
 		// if (tok.token() == Parser::token::TOKEN_NL)
 		// 	cout << "NL\n";
 		// else if (tok.token() == Parser::token::TOKEN_DEDENT)
@@ -68,6 +69,7 @@
 	PASS					"Pass token"
 	START					"Start of file"
 	NL						"New line"
+	TERMINATE				"Terminate (;)"
 	INDENT					"Indentation"
 	DEDENT					"Unindentation"
 	EQ						"="
@@ -83,6 +85,7 @@
 	AUTO					"Auto type ($)"
 	USE						"use keyword"
 	CDEF					"cdef keyword"
+	<int> INDENT_UPDT		"Indentation update"
 	<string> ID				"Identifier"
 	<string> INT			"Integer (int)"
 	<string> NUM			"Float number (num)"
@@ -113,7 +116,7 @@
 
 %%
 program:
-	| program block { cout << "BLOCK\n"; /* << $2->toString(); */ }
+	| program block { cout << "BLOCK" << $2->statements.size() << endl; /* << $2->toString(); */ }
 	| program stmt { compiler.main()->statements.push_back($2); }
 	| program import { compiler.import($2); }
 	| program START new_line {}
@@ -121,16 +124,14 @@ program:
 	;
 
 block:
-	INDENT AUTO new_line DEDENT { $$ = nullptr; }
+	block_start DEDENT { $$ = $1; }
+	| block new_line { $$ = $1; /* New line after unindentation is ignored */ }
 	;
 
-/*
 block_start:
-	INDENT stmt { cout << "ok\n"; $$ = new Block(); $$->statements.push_back($2); }
-	| INDENT AUTO { $$ = nullptr; cout << "ok\n"; }
+	INDENT stmt { $$ = new Block(); $$->statements.push_back($2); }
 	| block_start stmt { $$ = $1; $$->statements.push_back($2); }
 	;
-*/
 
 
 stmt:
@@ -188,6 +189,7 @@ call_start:
 
 new_line:
 	NL {}
+	| TERMINATE {}
 	| new_line NL {}
 	| END {}
 	;

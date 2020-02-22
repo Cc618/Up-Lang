@@ -45,7 +45,7 @@ space [ \t]
 {empty_line}	; // Ignored
 {comment_line}	; // Ignored
 
-{tabs}			{ updateIndent(yytext, yyleng); return Parser::make_PASS(loc); }
+{tabs}			return Parser::make_INDENT_UPDT(countTabs(yytext, yyleng), loc);
 
 {str}			return Parser::make_STR(yytext, loc);
 {int}			return Parser::make_INT(yytext, loc);
@@ -71,8 +71,8 @@ space [ \t]
 
 {id}			return Parser::make_ID(yytext, loc);
 
-"\n"			{ loc.lines(); /* // TODO : UPDATE INDENT to 0 */ return Parser::make_NL(loc); }	
-";"				return Parser::make_NL(loc);
+"\n"			{ loc.lines(); return Parser::make_NL(loc); }	
+";"				return Parser::make_TERMINATE(loc);
 
 {space}			; // Ignored
 

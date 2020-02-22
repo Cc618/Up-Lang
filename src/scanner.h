@@ -2,7 +2,7 @@
 
 #include <string>
 #include <fstream>
-#include <queue>
+#include <deque>
 
 #include "components.h"
 #include "module.h"
@@ -58,10 +58,7 @@ namespace up
 
     private:
         // Updates the indentation
-        // - TEXT : The "\n\t\t\t..." sequence
-        // - LEN : Length of the whole text (LEN >= 1)
-        // * TEXT may be nullptr if LEN == 0, the indent is reset
-        void updateIndent(const char *TEXT, const int LEN);
+        void updateIndent(const int NEW_INDENT);
 
         // Counts the number of tabs in TEXT
         // !!! TEXT must have either tabs or spaces
@@ -78,7 +75,11 @@ namespace up
         int indent;
 
         // Additional tokens
-        std::queue<Parser::symbol_type> tokens;
+        // * Use push_back to add token to parse after
+        // * Use front to have the next token
+        // * Use pop_front to update the next token
+        // * Use push_front add a token before the next token
+        std::deque<Parser::symbol_type> tokens;
     };
 
 }

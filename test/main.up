@@ -18,10 +18,10 @@
 
 # nil c
 
-    $
+    $s = 'I am INDENTED'
+    $s2 = 'I am INDENTED2'
 
-$s = 'I am INDENTED'
-# $s2 = 'I am INDENTED2'
+    b = 248724
 
 # Operations
 b = 8
