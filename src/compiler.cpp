@@ -67,7 +67,6 @@ namespace up
             return 1;
 
         // TODO : Write into a file
-        cout << "Transpiled program :\n\n";
         cout << program;
 
         return ret;

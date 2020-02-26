@@ -1,5 +1,7 @@
 
-.PHONY: all src test clean
+# TODO : Remove fib
+
+.PHONY: all src test clean fib
 
 all: src
 
@@ -15,3 +17,10 @@ test: src
 clean:
 	cd src && make clean
 	rm -rf bin
+
+# Compiles the fibonacci example and executes it in the tmp folder
+fib: all examples/fibonacci.up
+	mkdir -p tmp
+	bin/up examples/fibonacci.up > tmp/main.c
+	gcc -o tmp/a tmp/main.c
+	tmp/a

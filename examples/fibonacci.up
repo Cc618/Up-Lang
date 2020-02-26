@@ -1,0 +1,19 @@
+# Prints the terms of the fibonacci sequence
+
+# TODO : change libc calls
+
+use libc
+
+cdef nil printf(...)
+
+
+nil fib(int rank, int maxRank)
+    rank == maxRank ?
+        ret
+
+    printf('%d\n', rank)
+
+    ret fib(rank + 1, maxRank)
+
+
+fib(0, 10)
