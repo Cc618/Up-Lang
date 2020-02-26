@@ -194,6 +194,29 @@ namespace up
         return id + " " + operand + " " + expr->toString() + ";";
     }
 
+    Return::Return(const ErrorInfo &INFO, Expression *expr)
+        : Statement(INFO), expr(expr)
+    {}
+
+    Return::~Return()
+    {
+        if (expr)
+            delete expr;
+    }
+
+    string Return::toString() const
+    {
+        if (expr)
+            return "return " + expr->toString() + ";";
+        else
+            return "return;";
+    }
+
+    void Return::process(Compiler *compiler)
+    {
+        // TODO : Set block type etc...
+    }
+
     UnaryOperation::UnaryOperation(const std::string &ID, const std::string &OP, const bool PREFIX)
         : Expression("auto"), id(ID), operand(OP), prefix(PREFIX)
     {

@@ -88,6 +88,7 @@
 	AUTO					"$"
 	USE						"use keyword"
 	CDEF					"cdef keyword"
+	RET						"ret keyword"
 	<int> INDENT_UPDT		"Indentation update"
 	<string> ID				"Identifier"
 	<string> INT			"Integer (int)"
@@ -160,6 +161,8 @@ stmt:
 	| AUTO ID EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
 	| ID ID new_line				{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
 	| ID assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
+	| RET expr new_line 			{ $$ = new Return(ERROR_INFO, $2); }
+	| RET new_line	 				{ $$ = new Return(ERROR_INFO, nullptr); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	;
 

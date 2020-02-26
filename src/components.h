@@ -216,6 +216,25 @@ namespace up
     };
 
     // For example :
+    // ret 3.14
+    class Return : public Statement
+    {
+    public:
+        Return() = default;
+        // expr can be nullptr if the return is null
+        Return(const ErrorInfo &INFO, Expression *expr);
+        ~Return();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    private:
+        // The expression which inits the variable
+        Expression *expr;
+    };
+
+    // For example :
     // a++
     // a : ID, ++ : OPERAND
     class UnaryOperation : public Expression

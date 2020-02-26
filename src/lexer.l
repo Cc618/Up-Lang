@@ -69,6 +69,7 @@ space [ \t]
 
 "use"			return Parser::make_USE(loc);
 "cdef"			return Parser::make_CDEF(loc);
+"ret"			return Parser::make_RET(loc);
 
 {id}			return Parser::make_ID(yytext, loc);
 
