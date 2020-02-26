@@ -254,6 +254,26 @@ namespace up
         bool prefix;
     };
 
+    // For example :
+    // a + 42
+    // a : first, 42 : second, + : OPERAND
+    class BinaryOperation : public Expression
+    {
+    public:
+        BinaryOperation() = default;
+        BinaryOperation(Expression *first, Expression *second, const std::string &OPERAND);
+        ~BinaryOperation();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    private:
+        std::string operand;
+        Expression *first;
+        Expression *second;
+    };
+
     // A block is like the body of a function or a if statement
     // This gathers indented statements and other instructions
     class Block : public ISyntax

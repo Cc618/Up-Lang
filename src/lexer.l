@@ -61,6 +61,10 @@ space [ \t]
 "/="			return Parser::make_DIVEQ(loc);
 "++"			return Parser::make_INC(loc);
 "--"			return Parser::make_DEC(loc);
+"+"				return Parser::make_ADD(loc);
+"-"				return Parser::make_SUB(loc);
+"*"				return Parser::make_MUL(loc);
+"/"				return Parser::make_DIV(loc);
 
 "("				return Parser::make_PAR_BEGIN(loc);
 ")"				return Parser::make_PAR_END(loc);

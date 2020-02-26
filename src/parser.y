@@ -81,6 +81,10 @@
 	DIVEQ					"/="
 	INC						"++"
 	DEC						"--"
+	ADD						"+"
+	SUB						"-"
+	MUL						"*"
+	DIV						"/"
 	PAR_BEGIN				"("
 	PAR_END					")"
 	COMMA					","
@@ -119,6 +123,8 @@
 %left START
 %left END
 %left NL
+
+/* TODO : OP precedence */
 
 %%
 program:
@@ -170,6 +176,10 @@ expr:
 	literal							{ $$ = $1; }
 	| unary_op						{ $$ = $1; }
 	| call							{ $$ = $1; }
+	| expr ADD expr					{ $$ = new BinaryOperation($1, $2, "+"); }
+	| expr SUB expr					{ $$ = new BinaryOperation($1, $2, "-"); }
+	| expr MUL expr					{ $$ = new BinaryOperation($1, $2, "*"); }
+	| expr DIV expr					{ $$ = new BinaryOperation($1, $2, "/"); }
 	| ID							{ $$ = new VariableUse($1); }
 	;
 

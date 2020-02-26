@@ -231,6 +231,27 @@ namespace up
             return id + operand;
     }
 
+
+    BinaryOperation::BinaryOperation(Expression *first, Expression *second, const std::string &OP)
+        : Expression("auto"), first(first), second(second), operand(OP)
+    {}
+
+    BinaryOperation::~BinaryOperation()
+    {
+        delete first;
+        delete second;
+    }
+
+    std::string BinaryOperation::toString() const
+    {
+        return first->toString() + " " + operand + " " + second->toString();
+    }
+
+    void BinaryOperation::process(Compiler *compiler)
+    {
+        // TODO : Deduce type compatibility (casts)
+    }
+
     Block::~Block()
     {
         for (auto instr : content)

@@ -12,7 +12,7 @@ cdef num cosf(num a, int b, bool c)
 nil func(int a, num b)
     a = b
     b = 3.14
-    ret
+    ret a + b * 6
 
 # $ means auto type
 $a = 42
