@@ -22,6 +22,7 @@
 
 id [a-zA-Z][a-zA-Z0-9]*
 auto \$
+if \?
 
 int [\-]?[0-9]+
 num [\-]?[0-9]+\.[0-9]*
@@ -53,6 +54,7 @@ space [ \t]
 {bool}			return Parser::make_BOOL(yytext, loc);
 
 {auto}			return Parser::make_AUTO(loc);
+{if}			return Parser::make_IF(loc);
 
 "="				return Parser::make_EQ(loc);
 "+="			return Parser::make_ADDEQ(loc);

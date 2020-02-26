@@ -9,7 +9,7 @@ using namespace std;
 
 namespace up
 {
-    std::string cType(const std::string &id)
+    string cType(const string &id)
     {
         if (id == "auto")
             // Empty = error
@@ -31,7 +31,7 @@ namespace up
         return id;
     }
 
-    std::vector<std::string> typeArgList(const std::vector<Expression*> &ARGS)
+    std::vector<string> typeArgList(const std::vector<Expression*> &ARGS)
     {
         vector<string> args;
 
@@ -41,11 +41,11 @@ namespace up
         return args;
     }
 
-    Expression::Expression(const std::string &TYPE)
+    Expression::Expression(const string &TYPE)
         : type(TYPE)
     {}
 
-    bool Expression::compatibleType(const std::string &TYPE) const
+    bool Expression::compatibleType(const string &TYPE) const
     {
         return TYPE == "auto"
             || TYPE == type;
@@ -60,7 +60,7 @@ namespace up
         delete expr;
     }
 
-    std::string ExpressionStatement::toString() const
+    string ExpressionStatement::toString() const
     {
         // Just terminate the instruction
         return expr->toString() + ";";
@@ -71,7 +71,34 @@ namespace up
         expr->process(compiler);
     }
 
-    std::string Literal::toString() const
+    If::If(const ErrorInfo &INFO, Expression *condition, Block *content)
+        : Statement(INFO), condition(condition), content(content)
+    {}
+
+    If::~If()
+    {
+        delete condition;
+        delete content;
+    }
+
+    string If::toString() const
+    {
+        string s = "if (";
+        s += condition->toString();
+        s += ")\n";
+        s += content->toString();
+
+        return s;
+    }
+
+    void If::process(Compiler *compiler)
+    {
+        // TODO : check expr as type bool
+        condition->process(compiler);
+        content->process(compiler);
+    }
+
+    string Literal::toString() const
     {
         if (type == "bool")
             return data == "yes" ? "true" : "false";
@@ -86,7 +113,7 @@ namespace up
         return data;
     }
 
-    std::string VariableUse::toString() const
+    string VariableUse::toString() const
     {
         return id;
     }
@@ -97,7 +124,7 @@ namespace up
             delete a;
     }
 
-    std::string Call::toString() const
+    string Call::toString() const
     {
         string s = id;
 
@@ -135,7 +162,7 @@ namespace up
         type = func->type;
     }
 
-    VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const std::string &ID, const std::string &TYPE, Expression *expr)
+    VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const string &ID, const string &TYPE, Expression *expr)
         : Statement(INFO), id(ID), type(TYPE), expr(expr)
     {}
 
@@ -145,7 +172,7 @@ namespace up
             delete expr;
     }
 
-    std::string VariableDeclaration::toString() const
+    string VariableDeclaration::toString() const
     {
         if (expr)
             return parsedType + " " + id + " = " + expr->toString() + ";";
@@ -174,11 +201,11 @@ namespace up
         parsedType = cType(type);
 
         if (parsedType.empty())
-            compiler->generateError(std::string("Error for variable '") + BLUE + id + DEFAULT +
+            compiler->generateError(string("Error for variable '") + BLUE + id + DEFAULT +
                 "'\nThe auto type can't be used in this context\n", info);
     }
 
-    VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const std::string &ID, Expression *expr, const std::string &OP)
+    VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const string &ID, Expression *expr, const string &OP)
         : Statement(INFO), id(ID), expr(expr), operand(OP)
     {
         // TODO : Check variable exists + expr and variable types are compatible
@@ -189,7 +216,7 @@ namespace up
         delete expr;
     }
 
-    std::string VariableAssignement::toString() const
+    string VariableAssignement::toString() const
     {
         return id + " " + operand + " " + expr->toString() + ";";
     }
@@ -215,15 +242,18 @@ namespace up
     void Return::process(Compiler *compiler)
     {
         // TODO : Set block type etc...
+
+        if (expr)
+            expr->process(compiler);
     }
 
-    UnaryOperation::UnaryOperation(const std::string &ID, const std::string &OP, const bool PREFIX)
+    UnaryOperation::UnaryOperation(const string &ID, const string &OP, const bool PREFIX)
         : Expression("auto"), id(ID), operand(OP), prefix(PREFIX)
     {
         // TODO : Check variable exists + deduce type compatibility
     }
 
-    std::string UnaryOperation::toString() const
+    string UnaryOperation::toString() const
     {
         if (prefix)
             return operand + id;
@@ -232,7 +262,7 @@ namespace up
     }
 
 
-    BinaryOperation::BinaryOperation(Expression *first, Expression *second, const std::string &OP)
+    BinaryOperation::BinaryOperation(Expression *first, Expression *second, const string &OP)
         : Expression("auto"), first(first), second(second), operand(OP)
     {}
 
@@ -242,7 +272,7 @@ namespace up
         delete second;
     }
 
-    std::string BinaryOperation::toString() const
+    string BinaryOperation::toString() const
     {
         return first->toString() + " " + operand + " " + second->toString();
     }
@@ -250,6 +280,8 @@ namespace up
     void BinaryOperation::process(Compiler *compiler)
     {
         // TODO : Deduce type compatibility (casts)
+        first->process(compiler);
+        second->process(compiler);
     }
 
     Block::~Block()
@@ -301,7 +333,7 @@ namespace up
         return type == "..." || ARG.type == "..." || ARG.type == type;
     }
 
-    Function::Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID, const vector<Argument*> &ARGS, const bool IS_C_DEF)
+    Function::Function(const ErrorInfo &INFO, const string &TYPE, const string &ID, const vector<Argument*> &ARGS, const bool IS_C_DEF)
         : ISyntax(INFO), type(TYPE), id(ID), args(ARGS), isCDef(IS_C_DEF)
     {}
 
@@ -346,7 +378,7 @@ namespace up
         return main;
     }
 
-    UpFunction::UpFunction(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID, const vector<Argument*> &ARGS, Block *body)
+    UpFunction::UpFunction(const ErrorInfo &INFO, const string &TYPE, const string &ID, const vector<Argument*> &ARGS, Block *body)
         : Function(INFO, TYPE, ID, ARGS, false), body(body)
     {}
 

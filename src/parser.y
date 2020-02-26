@@ -90,6 +90,7 @@
 	COMMA					","
 	ELLIPSIS				"..."
 	AUTO					"$"
+	IF						"?"
 	USE						"use keyword"
 	CDEF					"cdef keyword"
 	RET						"ret keyword"
@@ -169,6 +170,7 @@ stmt:
 	| ID assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| RET expr new_line 			{ $$ = new Return(ERROR_INFO, $2); }
 	| RET new_line	 				{ $$ = new Return(ERROR_INFO, nullptr); }
+	| expr IF new_line block		{ $$ = new If(ERROR_INFO, $1, $4); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	;
 

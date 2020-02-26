@@ -11,6 +11,7 @@ namespace up
 {
     class Compiler;
     class Expression;
+    class Block;
 
     // Casts up type to c type in string
     // !!! May return empty string if the type
@@ -102,6 +103,22 @@ namespace up
     private:
         // The expression which inits the variable
         Expression *expr;
+    };
+
+    class If : public Statement
+    {
+    public:
+        If() = default;
+        If(const ErrorInfo &INFO, Expression *condition, Block *content);
+        ~If();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    private:
+        Expression *condition;
+        Block *content;
     };
 
     // A literal expression

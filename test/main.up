@@ -32,5 +32,9 @@ nil c
 b = 8
 a += --b
 
+yes ?
+    printf('ok\n')
+
+
 # Functions
 printf('Result : %f\n', cosf(3.14))
