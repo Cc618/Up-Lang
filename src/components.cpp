@@ -13,7 +13,7 @@ namespace up
     {
         if (id == "auto")
             // Empty = error
-            return "";
+            return "auto";
 
         if (id == "num")
             return "float";
@@ -85,7 +85,7 @@ namespace up
     {
         string s = "if (";
         s += condition->toString();
-        s += ")\n";
+        s += ") ";
         s += content->toString();
 
         return s;

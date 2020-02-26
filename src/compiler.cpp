@@ -73,6 +73,30 @@ namespace up
         return ret;
     }
 
+    void Compiler::generateError(const string &MSG, const ErrorInfo &INFO)
+    {
+        generationError = true;
+
+        cerr << "File " << YELLOW << INFO.file.path() << DEFAULT <<
+            ":" << BLUE << INFO.line << DEFAULT << ":" << BLUE << INFO.column << DEFAULT <<
+            " - " << RED << "Generation Error" << DEFAULT << " :\n" << MSG << '\n';
+    }
+
+    Function *Compiler::getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES)
+    {
+        bool isEllipsis = ARG_TYPES.size() == 1 && ARG_TYPES[0] == "...";
+
+        for (auto f : functions)
+            // TODO : Verify arg types (with implicit casts)
+            if (f->id == ID)
+                if (isEllipsis || (f->args.size() == 1 && f->args[0]->isEllipsis()) ||
+                    f->args.size() == ARG_TYPES.size())
+                    return f;
+
+        // Not found
+        return nullptr;
+    }
+
     void Compiler::import(Module mod)
     {
         // Module already imported
@@ -103,29 +127,12 @@ namespace up
             // Add the extension
             includes.insert(mod.path() + ".h");
     }
-
-    void Compiler::generateError(const string &MSG, const ErrorInfo &INFO)
+    
+    void Compiler::addFunction(Function *f)
     {
-        generationError = true;
+        // TODO : Test whether f is already in functions
 
-        cerr << "File " << YELLOW << INFO.file.path() << DEFAULT <<
-            ":" << BLUE << INFO.line << DEFAULT << ":" << BLUE << INFO.column << DEFAULT <<
-            " - " << RED << "Generation Error" << DEFAULT << " :\n" << MSG << '\n';
-    }
-
-    Function *Compiler::getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES)
-    {
-        bool isEllipsis = ARG_TYPES.size() == 1 && ARG_TYPES[0] == "...";
-
-        for (auto f : functions)
-            // TODO : Verify arg types (with implicit casts)
-            if (f->id == ID)
-                if (isEllipsis || (f->args.size() == 1 && f->args[0]->isEllipsis()) ||
-                    f->args.size() == ARG_TYPES.size())
-                    return f;
-
-        // Not found
-        return nullptr;
+        functions.push_back(f);
     }
 
     int Compiler::scan(const Module &MOD)

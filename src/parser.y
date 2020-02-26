@@ -139,7 +139,7 @@ program:
 	| program START new_line		{}
 	| program START					{}
 	| program stmt					{ ((UpFunction*) compiler.main())->body->content.push_back($2); /* // TODO : Check main file */ }
-	| program function				{ compiler.functions.push_back($2); }
+	| program function				{ compiler.addFunction($2); }
 	| program import				{ compiler.import($2); }
 	;
 

@@ -24,9 +24,6 @@ namespace up
         // Compiles the main up source file
         // Returns 0 if no error
         int parse(const std::string &FILE_PATH);
-        
-        // Adds the module as import
-        void import(Module mod);
 
         // Creates and display a generation error
         void generateError(const std::string &MSG, const ErrorInfo &INFO);
@@ -38,6 +35,12 @@ namespace up
         // Finds a function
         // !!! Can return nullptr if the function is not found
         Function *getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES);
+
+    public: // Functions used in the parser
+        // Adds the module as import
+        void import(Module mod);
+        // Adds a function to the functions list
+        void addFunction(Function *f);
 
     public:
         // The first function is the main function
