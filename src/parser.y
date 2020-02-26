@@ -123,8 +123,8 @@
 %left START
 %left END
 %left NL
-
-/* TODO : OP precedence */
+%left ADD SUB
+%left MUL DIV
 
 %%
 program:
@@ -176,10 +176,10 @@ expr:
 	literal							{ $$ = $1; }
 	| unary_op						{ $$ = $1; }
 	| call							{ $$ = $1; }
-	| expr ADD expr					{ $$ = new BinaryOperation($1, $2, "+"); }
-	| expr SUB expr					{ $$ = new BinaryOperation($1, $2, "-"); }
-	| expr MUL expr					{ $$ = new BinaryOperation($1, $2, "*"); }
-	| expr DIV expr					{ $$ = new BinaryOperation($1, $2, "/"); }
+	| expr ADD expr					{ $$ = new BinaryOperation($1, $3, "+"); }
+	| expr SUB expr					{ $$ = new BinaryOperation($1, $3, "-"); }
+	| expr MUL expr					{ $$ = new BinaryOperation($1, $3, "*"); }
+	| expr DIV expr					{ $$ = new BinaryOperation($1, $3, "/"); }
 	| ID							{ $$ = new VariableUse($1); }
 	;
 
