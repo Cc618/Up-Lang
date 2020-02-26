@@ -32,7 +32,7 @@ nil c
 b = 8
 a += --b
 
-yes ?
+a < b ?
     printf('ok\n')
 
 

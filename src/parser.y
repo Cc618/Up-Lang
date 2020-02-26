@@ -81,6 +81,11 @@
 	DIVEQ					"/="
 	INC						"++"
 	DEC						"--"
+	IS						"=="
+	LEQ						"<="
+	LESS					"<"
+	AEQ						">="
+	ABOV					">"
 	ADD						"+"
 	SUB						"-"
 	MUL						"*"
@@ -124,6 +129,7 @@
 %left START
 %left END
 %left NL
+%left IS LESS LEQ AEQ ABOV
 %left ADD SUB
 %left MUL DIV
 
@@ -182,6 +188,11 @@ expr:
 	| expr SUB expr					{ $$ = new BinaryOperation($1, $3, "-"); }
 	| expr MUL expr					{ $$ = new BinaryOperation($1, $3, "*"); }
 	| expr DIV expr					{ $$ = new BinaryOperation($1, $3, "/"); }
+	| expr IS expr					{ $$ = new BinaryOperation($1, $3, "==", true); }
+	| expr LEQ expr					{ $$ = new BinaryOperation($1, $3, "<=", true); }
+	| expr LESS expr				{ $$ = new BinaryOperation($1, $3, "<", true); }
+	| expr AEQ expr					{ $$ = new BinaryOperation($1, $3, ">=", true); }
+	| expr ABOV expr				{ $$ = new BinaryOperation($1, $3, ">", true); }
 	| ID							{ $$ = new VariableUse($1); }
 	;
 

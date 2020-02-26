@@ -278,7 +278,8 @@ namespace up
     {
     public:
         BinaryOperation() = default;
-        BinaryOperation(Expression *first, Expression *second, const std::string &OPERAND);
+        // If CONDITION, the type is bool
+        BinaryOperation(Expression *first, Expression *second, const std::string &OPERAND, const bool CONDITION=false);
         ~BinaryOperation();
 
     public:
@@ -289,6 +290,8 @@ namespace up
         std::string operand;
         Expression *first;
         Expression *second;
+        // If boolean condition
+        bool condition;
     };
 
     // A block is like the body of a function or a if statement

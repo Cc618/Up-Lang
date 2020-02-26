@@ -262,8 +262,8 @@ namespace up
     }
 
 
-    BinaryOperation::BinaryOperation(Expression *first, Expression *second, const string &OP)
-        : Expression("auto"), first(first), second(second), operand(OP)
+    BinaryOperation::BinaryOperation(Expression *first, Expression *second, const string &OP, const bool COND)
+        : Expression(COND ? "bool" : "auto"), first(first), second(second), operand(OP), condition(COND)
     {}
 
     BinaryOperation::~BinaryOperation()
@@ -279,7 +279,7 @@ namespace up
 
     void BinaryOperation::process(Compiler *compiler)
     {
-        // TODO : Deduce type compatibility (casts)
+        // TODO : Deduce type compatibility (casts), if (condition)
         first->process(compiler);
         second->process(compiler);
     }
