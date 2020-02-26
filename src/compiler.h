@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <string>
+#include <set>
+#include <queue>
 
 #include "scanner.h"
 #include "components.h"
@@ -19,12 +21,12 @@ namespace up
         ~Compiler();
         
     public:
+        // Compiles the main up source file
         // Returns 0 if no error
-        // Calls scan and generate
         int parse(const std::string &FILE_PATH);
         
         // Adds the module as import
-        void import(const Module &MOD);
+        void import(Module mod);
 
         // Creates and display a generation error
         void generateError(const std::string &MSG, const ErrorInfo &INFO);
@@ -43,13 +45,10 @@ namespace up
         
     private:
         // Calls the scanner to create components
-        int scan(const std::string &FILE_PATH);
+        int scan(const Module &MOD);
         
         // Generates the program with all scanned components
         void generate();
-
-        // Add all imports to program
-        void parseModules();
 
         // Removes each function in functions
         void clearFunctions();
@@ -58,8 +57,15 @@ namespace up
         Scanner scanner;
         Parser parser;
 
-        // All depedencies to import
-        std::vector<Module> modules;
+        // Already parsed modules (up / c)
+        std::set<Module> parsedModules;
+        // Up source files to parse 
+        std::queue<Module> toParseModules;
+        // Files to include in the C source
+        std::set<string> includes;
+        
+        // The main file (entry)
+        string mainFile;
 
         // The program in string
         std::string program;

@@ -1,0 +1,5 @@
+# I am a depedency for main.up
+
+nil fn()
+    $b = 0.6
+

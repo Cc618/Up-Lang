@@ -54,6 +54,8 @@
 		// 	cout << "DEDENT\n";
 		// else if (tok.token() == Parser::token::TOKEN_INDENT)
 		// 	cout << "INDENT\n";
+		// else if (tok.token() == Parser::token::TOKEN_END)
+		// 	cout << "END\n";
 		// else
 		// 	cout << tok.token() << endl;
 
@@ -66,6 +68,7 @@
 
 %token
 	END 0					"End of file"
+	DOUBLE_END				"End of file (double state)"
 	START					"Start of file"
 	NL						"New line"
 	TERMINATE				"Terminate (;)"
@@ -118,9 +121,10 @@
 
 %%
 program:
+	| program DOUBLE_END			{ YYACCEPT; /* Avoid infinite ends bug */ }
 	| program START new_line		{}
 	| program START					{}
-	| program stmt					{ ((UpFunction*) compiler.main())->body->content.push_back($2); }
+	| program stmt					{ ((UpFunction*) compiler.main())->body->content.push_back($2); /* // TODO : Check main file */ }
 	| program function				{ compiler.functions.push_back($2); }
 	| program import				{ compiler.import($2); }
 	;
@@ -168,7 +172,7 @@ expr:
 
 import:
 	/* TODO : Imports with . */
-	USE ID new_line					{ $$ = Module($2); }
+	USE ID new_line					{ $$ = Module($2, true, scanner.module.folder); }
 	;
 
 literal:
@@ -214,7 +218,7 @@ new_line:
 
 void Parser::error(const location &_, const string &msg)
 {
-	cerr << scanner.file << ":" <<
+	cerr << scanner.module.path() << ":" <<
 		scanner.loc.begin.line << ":" <<
 		scanner.loc.begin.column << ": " <<
 		msg << endl;

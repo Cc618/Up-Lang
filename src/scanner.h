@@ -43,7 +43,7 @@ namespace up
 
         // Reset attributes to parse a new file
         // Returns whether there is no error
-        bool beginParse(const std::string &FILE_PATH);
+        bool beginParse(const Module &MOD);
         void endParse();
 
         // Moves the cursor
@@ -67,8 +67,8 @@ namespace up
     private:
         Compiler &compiler;
 
-        // File path and content
-        std::string file;
+        // Current file to parse as module
+        Module module;
         std::ifstream fileInput;
 
         // Current indentation
@@ -80,6 +80,9 @@ namespace up
         // * Use pop_front to update the next token
         // * Use push_front add a token before the next token
         std::deque<Parser::symbol_type> tokens;
+
+        // To avoid infinite end loop bug
+        bool ended;
     };
 
 }

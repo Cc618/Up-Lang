@@ -1,8 +1,18 @@
 # To have functions from stdio.h, stdlib.h and math.h
 use libc
 
+# dep.up depedency file
+use dep
+
 cdef nil printf(...)
 cdef num cosf(num a, int b, bool c)
+
+
+# Create function
+nil func(int a, num b)
+    a = b
+    b = 3.14
+
 
 # $ means auto type
 $a = 42
@@ -17,11 +27,6 @@ $x = 'I am a string'
 
 # Declare variable without initialization
 nil c
-
-# Create function
-nil func(int a, num b)
-    a = b
-    b = 3.14
 
 # Operations
 b = 8

@@ -78,10 +78,10 @@ space [ \t]
 {space}			; // Ignored
 
 .				{
-	cerr << file << ":" << loc.begin.line << ":" << loc.begin.column
+	cerr << module.path() << ":" << loc.begin.line << ":" << loc.begin.column
 		<< ": Invalid token : " << yytext << endl;
 }
 
-<<EOF>>		return yyterminate();
+<<EOF>>			return yyterminate();
 
 %%

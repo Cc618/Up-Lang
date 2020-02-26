@@ -18,8 +18,15 @@ namespace up
                 auto tok = tokens.front();
                 tokens.pop_front();
 
+                if (tok.token() == Parser::token::TOKEN_END)
+                {
+                    if (ended)
+                        return Parser::make_DOUBLE_END(loc);
+
+                    ended = true;
+                }
                 // Update indentation
-                if (tok.token() == Parser::token::TOKEN_INDENT_UPDT)
+                else if (tok.token() == Parser::token::TOKEN_INDENT_UPDT)
                 {
                     updateIndent(tok.value.as<int>());
                     continue;
@@ -39,9 +46,11 @@ namespace up
                 return tok;
             }
 
+            // TODO : Bug when only one function in a file : infinite end token
+
             // Find the next token, tokens is empty
             Parser::symbol_type sym = next();
-
+            
             // Special tokens
             switch (sym.token())
             {
@@ -63,6 +72,7 @@ namespace up
                 };
                 break;
 
+            case Parser::token::TOKEN_END:
             case Parser::token::TOKEN_INDENT_UPDT:
                 // Parse it in tokens part
                 tokens.push_back(sym);
@@ -75,15 +85,16 @@ namespace up
         }
     }
 
-    bool Scanner::beginParse(const std::string &FILE_PATH)
+    bool Scanner::beginParse(const Module &MOD)
     {
         loc = Parser::location_type();
         indent = 0;
-        file = FILE_PATH;
+        module = MOD;
         tokens = std::deque<Parser::symbol_type>();
         tokens.push_back(Parser::make_START(loc));
+        ended = false;
 
-        fileInput.open(FILE_PATH);
+        fileInput.open(MOD.path());
 
         if (fileInput.is_open())
         {
@@ -91,7 +102,7 @@ namespace up
             return true;
         }
 
-        cerr << "Error : File " << FILE_PATH << " can't be opened\n";
+        cerr << "Error : File " << MOD.path() << " can't be opened\n";
 
         return false;
     }
@@ -144,6 +155,6 @@ namespace up
 
     ErrorInfo Scanner::errorInfo() const
     {
-        return ErrorInfo(file, loc.begin.line, loc.begin.column);
+        return ErrorInfo(module, loc.begin.line, loc.begin.column);
     }
 } // namespace up
