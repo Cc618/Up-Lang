@@ -31,11 +31,11 @@ a > 0 ?
     exit()
 
 # Loops
-for i to 618:
+for i to 618
     log(i)
-for i=3 to 8:
+for i=3 to 8
     ...
-for i=10 to 1:
+for i=10 to 1
     ..
 
 # yes means true
@@ -118,7 +118,7 @@ $yesOrNo = no
 $x = 'I am a string'
 
 # Declare variable without initialization
-nil c
+$nil c
 
 # Create function
 nil func()

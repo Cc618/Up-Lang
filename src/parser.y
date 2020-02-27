@@ -181,7 +181,7 @@ args_start:
 stmt:
 	ID ID EQ expr new_line 			{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
 	| AUTO ID EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
-	| ID ID new_line				{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, nullptr); }
+	| AUTO ID ID new_line			{ $$ = new VariableDeclaration(ERROR_INFO, $3, $2, nullptr); }
 	| ID assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| RET expr new_line 			{ $$ = new Return(ERROR_INFO, $2); }
 	| RET new_line	 				{ $$ = new Return(ERROR_INFO, nullptr); }

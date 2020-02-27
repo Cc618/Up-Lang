@@ -8,7 +8,7 @@ Declare a variable :
 
 ```
 # Default init
-int a
+$int a
 
 # Init
 int b = 42
@@ -53,6 +53,28 @@ b -= -1
 c /= 42
 ```
 
+## Control Flow
+
+Conditions are specific to this language :
+
+```
+a < b ?
+    fun()
+```
+
+Loops are tiny :
+
+```
+while yes
+    fun()
+
+for i to 42
+    fun()
+
+for i=40 to 42
+    fun()
+```
+
 ## Modules
 
 To import modules :
@@ -75,7 +97,7 @@ To declare extern C functions :
 cdef num cosf(num)
 ```
 
-## LibUp
+## LibUp (_WIP_)
 
 LibUp is the up standard library.
 LibUp is written in C and Up, the up source is libup/libup.up
