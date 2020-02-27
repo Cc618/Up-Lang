@@ -114,7 +114,8 @@ namespace up
     {
     public:
         ControlStatement() = default;
-        ControlStatement(const ErrorInfo &INFO, Expression *condition, Block *content, const std::string &KEYWORD);
+        ControlStatement(const ErrorInfo &INFO, Expression *condition, Block *content,
+            const std::string &KEYWORD);
         ~ControlStatement();
 
     public:
@@ -125,6 +126,35 @@ namespace up
         Expression *condition;
         Block *content;
         std::string keyword;
+    };
+
+    // A for loop
+    // For example :
+    // for i to 42
+    //      block
+    // i : VAR_ID, 0 : begin, 42 : end
+    class ForStatement : public Statement
+    {
+    public:
+        // Creates a for statement with the default initializer (begin)
+        static ForStatement *createDefaultInit(const ErrorInfo &INFO, const std::string &VAR_ID,
+            Expression *end, Block *content);
+
+    public:
+        ForStatement() = default;
+        ForStatement(const ErrorInfo &INFO, const std::string &VAR_ID, Expression *begin,
+            Expression *end, Block *content);
+        ~ForStatement();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    private:
+        Expression *begin;
+        Expression *end;
+        Block *content;
+        std::string varId;
     };
 
     // A literal expression

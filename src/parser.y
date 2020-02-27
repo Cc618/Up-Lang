@@ -97,6 +97,8 @@
 	AUTO					"$"
 	IF						"?"
 	WHILE					"while keyword"
+	FOR						"for keyword"
+	TO						"to keyword"
 	USE						"use keyword"
 	CDEF					"cdef keyword"
 	RET						"ret keyword"
@@ -130,6 +132,7 @@
 %left START
 %left END
 %left NL
+%left FOR WHILE IF
 %left IS LESS LEQ AEQ ABOV
 %left ADD SUB
 %left MUL DIV
@@ -179,6 +182,9 @@ stmt:
 	| RET new_line	 				{ $$ = new Return(ERROR_INFO, nullptr); }
 	| expr IF new_line block		{ $$ = new ControlStatement(ERROR_INFO, $1, $4, "if"); }
 	| WHILE expr new_line block		{ $$ = new ControlStatement(ERROR_INFO, $2, $4, "while"); }
+	| FOR ID EQ expr TO
+		expr new_line block			{ $$ = new ForStatement(ERROR_INFO, $2, $4, $6, $8); }
+	| FOR ID TO expr new_line block	{ $$ = ForStatement::createDefaultInit(ERROR_INFO, $2, $4, $6); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	;
 

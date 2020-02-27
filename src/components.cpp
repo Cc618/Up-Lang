@@ -99,10 +99,48 @@ namespace up
         content->process(compiler);
     }
 
+    ForStatement *ForStatement::createDefaultInit(const ErrorInfo &INFO, const std::string &VAR_ID,
+        Expression *end, Block *content)
+    {
+        return new ForStatement(INFO, VAR_ID, new Literal("0", "int"), end, content);
+    }
+
+    ForStatement::ForStatement(const ErrorInfo &INFO, const string &VAR_ID, Expression *begin,
+        Expression *end, Block *content)
+        : Statement(INFO), varId(VAR_ID), begin(begin), end(end), content(content)
+    {}
+
+    ForStatement::~ForStatement()
+    {
+        delete begin;
+        delete end;
+    }
+
+    string ForStatement::toString() const
+    {
+        string s = "for (int ";
+        s += varId + " = " + begin->toString();
+        s += "; " + varId + " < " + end->toString();
+        s += "; ++" + varId;
+        s += ") " + content->toString();
+
+        return s; 
+    }
+
+    void ForStatement::process(Compiler *compiler)
+    {
+        // TODO : Add the variable to content's scope
+        // TODO : Verify begin + end type (int)
+
+        begin->process(compiler);
+        end->process(compiler);
+    }
+
     string Literal::toString() const
     {
         if (type == "bool")
-            return data == "yes" ? "true" : "false";
+            // Use 1 or 0, not true or false
+            return data == "yes" ? "1" : "0";
 
         if (type == "num")
             return data + "f";

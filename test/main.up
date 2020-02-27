@@ -32,11 +32,20 @@ nil c
 b = 8
 a += --b
 
+# Control flow
 a < b ?
     printf('ok\n')
 
 while i > 88
     printf('ok2\n')
+
+# TODO : down to
+# TODO : num as counter
+for i to b - a
+    printf('ok3 %d\n', i)
+
+for i=a+b to b - a
+    printf('ok4\n')
 
 
 # Functions

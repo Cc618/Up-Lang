@@ -79,6 +79,8 @@ space [ \t]
 "..."			return Parser::make_ELLIPSIS(loc);
 
 "while"			return Parser::make_WHILE(loc);
+"for"			return Parser::make_FOR(loc);
+"to"			return Parser::make_TO(loc);
 "use"			return Parser::make_USE(loc);
 "cdef"			return Parser::make_CDEF(loc);
 "ret"			return Parser::make_RET(loc);
