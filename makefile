@@ -24,3 +24,10 @@ fib: all examples/fibonacci.up
 	bin/up examples/fibonacci.up > tmp/main.c
 	gcc -o tmp/a tmp/main.c
 	tmp/a
+
+# TODO : rm
+fizz: all examples/fizzbuzz.up
+	mkdir -p tmp
+	bin/up examples/fizzbuzz.up > tmp/main.c
+	gcc -o tmp/a tmp/main.c
+	tmp/a

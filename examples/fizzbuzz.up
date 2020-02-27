@@ -1,0 +1,21 @@
+# This example is a FizzBuzz like program (without else statements)
+
+use libc
+
+cdef nil printf(...)
+cdef nil puts(str data)
+
+
+$max = 42
+
+for i to max
+    i % 15 == 0 ?
+        puts('fizzbuzz')
+
+    i % 3 == 0 ?
+        puts('fizz')
+    
+    i % 5 == 0 ?
+        puts('buzz')
+
+    printf('%d\n', i)

@@ -66,7 +66,8 @@ namespace up
         if (ret != 0)
         {
             // Import errors
-            if (mod.name != mainModule.name || mod.folder != mainModule.folder)
+            // TODO : ErrorInfo::isEmpty
+            if (mod.path() != mainFile)
                 generateError("File " + mod.path() + " can't be imported\n", modImportInfo);
 
             return ret;

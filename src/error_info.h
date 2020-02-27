@@ -12,7 +12,7 @@ namespace up
         static inline ErrorInfo empty()
         {
             Module mod;
-            mod.name = "unknown file";
+            mod.folder = "<unknown>";
             return ErrorInfo(mod, 0, 0);
         }
 
