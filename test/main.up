@@ -42,7 +42,7 @@ while i > 88
 # TODO : down to
 # TODO : num as counter
 for i to b - a
-    printf('ok3 %d\n', i)
+    printf('ok3 %d\n', i % 6)
 
 for i=a+b to b - a
     printf('ok4\n')

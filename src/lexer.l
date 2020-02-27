@@ -61,6 +61,7 @@ space [ \t]
 "-="			return Parser::make_SUBEQ(loc);
 "*="			return Parser::make_MULEQ(loc);
 "/="			return Parser::make_DIVEQ(loc);
+"%="			return Parser::make_MODEQ(loc);
 "++"			return Parser::make_INC(loc);
 "--"			return Parser::make_DEC(loc);
 "=="			return Parser::make_IS(loc);
@@ -72,6 +73,7 @@ space [ \t]
 "-"				return Parser::make_SUB(loc);
 "*"				return Parser::make_MUL(loc);
 "/"				return Parser::make_DIV(loc);
+"%"				return Parser::make_MOD(loc);
 
 "("				return Parser::make_PAR_BEGIN(loc);
 ")"				return Parser::make_PAR_END(loc);

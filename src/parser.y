@@ -79,6 +79,7 @@
 	SUBEQ					"-="
 	MULEQ					"*="
 	DIVEQ					"/="
+	MODEQ					"%="
 	INC						"++"
 	DEC						"--"
 	IS						"=="
@@ -90,6 +91,7 @@
 	SUB						"-"
 	MUL						"*"
 	DIV						"/"
+	MOD						"%"
 	PAR_BEGIN				"("
 	PAR_END					")"
 	COMMA					","
@@ -135,7 +137,7 @@
 %left FOR WHILE IF
 %left IS LESS LEQ AEQ ABOV
 %left ADD SUB
-%left MUL DIV
+%left MUL DIV MOD
 
 %%
 program:
@@ -196,6 +198,7 @@ expr:
 	| expr SUB expr					{ $$ = new BinaryOperation($1, $3, "-"); }
 	| expr MUL expr					{ $$ = new BinaryOperation($1, $3, "*"); }
 	| expr DIV expr					{ $$ = new BinaryOperation($1, $3, "/"); }
+	| expr MOD expr					{ $$ = new BinaryOperation($1, $3, "%"); }
 	| expr IS expr					{ $$ = new BinaryOperation($1, $3, "==", true); }
 	| expr LEQ expr					{ $$ = new BinaryOperation($1, $3, "<=", true); }
 	| expr LESS expr				{ $$ = new BinaryOperation($1, $3, "<", true); }
@@ -222,6 +225,7 @@ assign_op:
 	| SUBEQ							{ $$ = "-="; }
 	| MULEQ							{ $$ = "*="; }
 	| DIVEQ							{ $$ = "/="; }
+	| MODEQ							{ $$ = "%="; }
 	;
 
 unary_op:
