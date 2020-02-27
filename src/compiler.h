@@ -38,7 +38,7 @@ namespace up
 
     public: // Functions used in the parser
         // Adds the module as import
-        void import(Module mod);
+        void import(Module mod, const ErrorInfo &INFO);
         // Adds a function to the functions list
         void addFunction(Function *f);
 
@@ -62,8 +62,9 @@ namespace up
 
         // Already parsed modules (up / c)
         std::set<Module> parsedModules;
-        // Up source files to parse 
-        std::queue<Module> toParseModules;
+        // Up source files to parse
+        // (ErrorInfo is the data from where the module is imported)
+        std::queue<std::pair<Module, ErrorInfo>> toParseModules;
         // Files to include in the C source
         std::set<string> includes;
         

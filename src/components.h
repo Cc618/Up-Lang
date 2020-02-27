@@ -56,7 +56,7 @@ namespace up
     {
     public:
         Expression() = default;
-        Expression(const std::string &TYPE);
+        Expression(const ErrorInfo &INFO, const std::string &TYPE);
         virtual ~Expression() = default;
 
     public:
@@ -165,8 +165,8 @@ namespace up
     {
     public:
         Literal() = default;
-        Literal(const std::string &DATA, const std::string &TYPE)
-            : Expression(TYPE), data(DATA)
+        Literal(const ErrorInfo &INFO, const std::string &DATA, const std::string &TYPE)
+            : Expression(INFO, TYPE), data(DATA)
         {}
 
     public:
@@ -184,9 +184,9 @@ namespace up
     {
     public:
         VariableUse() = default;
-        VariableUse(const std::string &ID)
+        VariableUse(const ErrorInfo &INFO, const std::string &ID)
             // TODO : Type
-            : Expression("auto"), id(ID)
+            : Expression(INFO, "auto"), id(ID)
         {}
 
     public:
@@ -206,9 +206,9 @@ namespace up
     {
     public:
         Call() = default;
-        Call(const std::string &ID, const std::vector<Expression*> &ARGS={})
+        Call(const ErrorInfo &INFO, const std::string &ID, const std::vector<Expression*> &ARGS={})
             // TODO : decl type of the function
-            : Expression("auto"), id(ID), args(ARGS)
+            : Expression(INFO, "auto"), id(ID), args(ARGS)
         {}
         ~Call();
 
@@ -294,7 +294,7 @@ namespace up
     {
     public:
         UnaryOperation() = default;
-        UnaryOperation(const std::string &ID, const std::string &OPERAND, const bool PREFIX=false);
+        UnaryOperation(const ErrorInfo &INFO, const std::string &ID, const std::string &OPERAND, const bool PREFIX=false);
 
     public:
         virtual std::string toString() const override;
@@ -315,7 +315,7 @@ namespace up
     public:
         BinaryOperation() = default;
         // If CONDITION, the type is bool
-        BinaryOperation(Expression *first, Expression *second, const std::string &OPERAND, const bool CONDITION=false);
+        BinaryOperation(const ErrorInfo &INFO, Expression *first, Expression *second, const std::string &OPERAND, const bool CONDITION=false);
         ~BinaryOperation();
 
     public:

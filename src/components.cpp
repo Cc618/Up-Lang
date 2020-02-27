@@ -41,8 +41,8 @@ namespace up
         return args;
     }
 
-    Expression::Expression(const string &TYPE)
-        : type(TYPE)
+    Expression::Expression(const ErrorInfo &INFO, const string &TYPE)
+        : ISyntax(INFO), type(TYPE)
     {}
 
     bool Expression::compatibleType(const string &TYPE) const
@@ -102,7 +102,7 @@ namespace up
     ForStatement *ForStatement::createDefaultInit(const ErrorInfo &INFO, const std::string &VAR_ID,
         Expression *end, Block *content)
     {
-        return new ForStatement(INFO, VAR_ID, new Literal("0", "int"), end, content);
+        return new ForStatement(INFO, VAR_ID, new Literal(INFO, "0", "int"), end, content);
     }
 
     ForStatement::ForStatement(const ErrorInfo &INFO, const string &VAR_ID, Expression *begin,
@@ -225,6 +225,8 @@ namespace up
 
         if (expr)
         {
+            expr->process(compiler);
+
             // Verify type compatibility
             if (expr->compatibleType(type))
                 type = expr->type;
@@ -286,8 +288,8 @@ namespace up
             expr->process(compiler);
     }
 
-    UnaryOperation::UnaryOperation(const string &ID, const string &OP, const bool PREFIX)
-        : Expression("auto"), id(ID), operand(OP), prefix(PREFIX)
+    UnaryOperation::UnaryOperation(const ErrorInfo &INFO, const string &ID, const string &OP, const bool PREFIX)
+        : Expression(INFO, "auto"), id(ID), operand(OP), prefix(PREFIX)
     {
         // TODO : Check variable exists + deduce type compatibility
     }
@@ -301,8 +303,8 @@ namespace up
     }
 
 
-    BinaryOperation::BinaryOperation(Expression *first, Expression *second, const string &OP, const bool COND)
-        : Expression(COND ? "bool" : "auto"), first(first), second(second), operand(OP), condition(COND)
+    BinaryOperation::BinaryOperation(const ErrorInfo &INFO, Expression *first, Expression *second, const string &OP, const bool COND)
+        : Expression(INFO, COND ? "bool" : "auto"), first(first), second(second), operand(OP), condition(COND)
     {}
 
     BinaryOperation::~BinaryOperation()

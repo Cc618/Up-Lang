@@ -8,6 +8,14 @@ namespace up
 {
     struct ErrorInfo
     {
+        // Empty error data
+        static inline ErrorInfo empty()
+        {
+            Module mod;
+            mod.name = "unknown file";
+            return ErrorInfo(mod, 0, 0);
+        }
+
         ErrorInfo() = default;
         ErrorInfo(const Module &FILE, const unsigned int LINE, const unsigned int COL)
             : file(FILE), line(LINE), column(COL)

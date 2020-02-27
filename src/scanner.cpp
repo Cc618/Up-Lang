@@ -1,5 +1,7 @@
 #include "scanner.h"
 
+#include "compiler.h"
+
 using namespace std;
 
 namespace up
@@ -101,8 +103,6 @@ namespace up
             switch_streams(fileInput, cout);
             return true;
         }
-
-        cerr << "Error : File " << MOD.path() << " can't be opened\n";
 
         return false;
     }

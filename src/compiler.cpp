@@ -31,7 +31,7 @@ namespace up
         program = "";
         generationError = false;
         parsedModules.clear();
-        toParseModules = queue<Module>();
+        toParseModules = queue<pair<Module, ErrorInfo>>();
         includes.clear();
         mainFile = FILE_PATH;
 
@@ -42,23 +42,35 @@ namespace up
         int lastSlash = mainFile.find_last_of('/');
 
         // This path contains only the name of the file
-        if (lastSlash == string::npos)
-            import(Module(mainFile.substr(0, mainFile.size() - 3), true));
-        else
-            import(Module(mainFile.substr(lastSlash + 1, mainFile.size() - lastSlash - 4), true, mainFile.substr(0, lastSlash)));
+        Module mainModule = lastSlash == string::npos ?
+            Module(mainFile.substr(0, mainFile.size() - 3), true) :
+            Module(mainFile.substr(lastSlash + 1, mainFile.size() - lastSlash - 4), true, mainFile.substr(0, lastSlash));
+
+        import(mainModule, ErrorInfo::empty());
 
         // Scan all modules
         int ret = 0;
+        // Current module being parsed
+        Module mod;
+        ErrorInfo modImportInfo;
         while (ret == 0 && !toParseModules.empty())
         {
-            auto mod = toParseModules.front();
+            auto [first, last] = toParseModules.front();
+            mod = first;
+            modImportInfo = last;
             toParseModules.pop();
 
             ret = scan(mod);
         }
 
         if (ret != 0)
+        {
+            // Import errors
+            if (mod.name != mainModule.name || mod.folder != mainModule.folder)
+                generateError("File " + mod.path() + " can't be imported\n", modImportInfo);
+
             return ret;
+        }
 
         // Generate
         generate();
@@ -96,7 +108,7 @@ namespace up
         return nullptr;
     }
 
-    void Compiler::import(Module mod)
+    void Compiler::import(Module mod, const ErrorInfo &INFO)
     {
         // Module already imported
         if (parsedModules.find(mod) != parsedModules.end())
@@ -119,7 +131,7 @@ namespace up
         else if (mod.up)
         {
             mod.name += ".up";
-            toParseModules.push(mod);
+            toParseModules.push({ mod, INFO });
         }
         // C module
         else

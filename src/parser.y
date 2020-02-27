@@ -62,8 +62,11 @@
 		return tok;
 	}
 
-	// Used for statements
+	// Shortcut for errors
 	#define ERROR_INFO scanner.errorInfo()
+
+	// Error but use another location
+	#define LOC_ERROR(LOC) ErrorInfo(scanner.module, LOC.begin.line, LOC.begin.column)
 }
 
 %token
@@ -146,7 +149,7 @@ program:
 	| program START					{}
 	| program stmt					{ ((UpFunction*) compiler.main())->body->content.push_back($2); /* // TODO : Check main file */ }
 	| program function				{ compiler.addFunction($2); }
-	| program import				{ compiler.import($2); }
+	| program import				{ compiler.import($2, LOC_ERROR(@2)); }
 	;
 
 function:
@@ -160,7 +163,7 @@ block:
 	;
 
 block_start:
-	INDENT stmt						{ $$ = new Block(); $$->content.push_back($2); }
+	INDENT stmt						{ $$ = new Block(ERROR_INFO); $$->content.push_back($2); }
 	| block_start stmt				{ $$ = $1; $$->content.push_back($2); }
 	;
 
@@ -194,17 +197,17 @@ expr:
 	literal							{ $$ = $1; }
 	| unary_op						{ $$ = $1; }
 	| call							{ $$ = $1; }
-	| expr ADD expr					{ $$ = new BinaryOperation($1, $3, "+"); }
-	| expr SUB expr					{ $$ = new BinaryOperation($1, $3, "-"); }
-	| expr MUL expr					{ $$ = new BinaryOperation($1, $3, "*"); }
-	| expr DIV expr					{ $$ = new BinaryOperation($1, $3, "/"); }
-	| expr MOD expr					{ $$ = new BinaryOperation($1, $3, "%"); }
-	| expr IS expr					{ $$ = new BinaryOperation($1, $3, "==", true); }
-	| expr LEQ expr					{ $$ = new BinaryOperation($1, $3, "<=", true); }
-	| expr LESS expr				{ $$ = new BinaryOperation($1, $3, "<", true); }
-	| expr AEQ expr					{ $$ = new BinaryOperation($1, $3, ">=", true); }
-	| expr ABOV expr				{ $$ = new BinaryOperation($1, $3, ">", true); }
-	| ID							{ $$ = new VariableUse($1); }
+	| expr ADD expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "+"); }
+	| expr SUB expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "-"); }
+	| expr MUL expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "*"); }
+	| expr DIV expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "/"); }
+	| expr MOD expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "%"); }
+	| expr IS expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "==", true); }
+	| expr LEQ expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "<=", true); }
+	| expr LESS expr				{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "<", true); }
+	| expr AEQ expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, ">=", true); }
+	| expr ABOV expr				{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, ">", true); }
+	| ID							{ $$ = new VariableUse(ERROR_INFO, $1); }
 	;
 
 import:
@@ -213,10 +216,10 @@ import:
 	;
 
 literal:
-	INT								{ $$ = new Literal($1, "int"); }
-	| NUM							{ $$ = new Literal($1, "num"); }
-	| BOOL							{ $$ = new Literal($1, "bool"); }
-	| STR							{ $$ = new Literal($1, "str"); }
+	INT								{ $$ = new Literal(ERROR_INFO, $1, "int"); }
+	| NUM							{ $$ = new Literal(ERROR_INFO, $1, "num"); }
+	| BOOL							{ $$ = new Literal(ERROR_INFO, $1, "bool"); }
+	| STR							{ $$ = new Literal(ERROR_INFO, $1, "str"); }
 	;
 
 assign_op:
@@ -229,10 +232,10 @@ assign_op:
 	;
 
 unary_op:
-	ID INC							{ $$ = new UnaryOperation($1, "++"); }
-	| ID DEC						{ $$ = new UnaryOperation($1, "--"); }
-	| INC ID						{ $$ = new UnaryOperation($2, "++", true); }
-	| DEC ID						{ $$ = new UnaryOperation($2, "--", true); }
+	ID INC							{ $$ = new UnaryOperation(ERROR_INFO, $1, "++"); }
+	| ID DEC						{ $$ = new UnaryOperation(ERROR_INFO, $1, "--"); }
+	| INC ID						{ $$ = new UnaryOperation(ERROR_INFO, $2, "++", true); }
+	| DEC ID						{ $$ = new UnaryOperation(ERROR_INFO, $2, "--", true); }
 	;
 
 call:
@@ -241,7 +244,7 @@ call:
 	;
 
 call_start:
-	ID PAR_BEGIN					{ $$ = new Call($1); }
+	ID PAR_BEGIN					{ $$ = new Call(ErrorInfo(scanner.module, @1.begin.line, @1.begin.column), $1); }
 	| call_start expr COMMA			{ $$ = $1; $$->args.push_back($2); }
 	;
 
