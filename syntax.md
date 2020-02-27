@@ -74,3 +74,9 @@ To declare extern C functions :
 ```
 cdef num cosf(num)
 ```
+
+## LibUp
+
+LibUp is the up standard library.
+LibUp is written in C and Up, the up source is libup/libup.up
+and the C source is in libup/src

@@ -105,12 +105,17 @@ namespace up
         Expression *expr;
     };
 
-    class If : public Statement
+    // An if or while
+    // For example :
+    // condition ?
+    //      block
+    // if : KEYWORD
+    class ControlStatement : public Statement
     {
     public:
-        If() = default;
-        If(const ErrorInfo &INFO, Expression *condition, Block *content);
-        ~If();
+        ControlStatement() = default;
+        ControlStatement(const ErrorInfo &INFO, Expression *condition, Block *content, const std::string &KEYWORD);
+        ~ControlStatement();
 
     public:
         virtual std::string toString() const override;
@@ -119,6 +124,7 @@ namespace up
     private:
         Expression *condition;
         Block *content;
+        std::string keyword;
     };
 
     // A literal expression

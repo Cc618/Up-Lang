@@ -159,12 +159,3 @@ int main() {
     printf("Result : %f\n", cosf(3.14f));
 }
 ```
-
-## Up specifications
-
-Variable types :
-
-- int : 32 bit integer
-- num : 32 bit float
-- bool : Boolean
-

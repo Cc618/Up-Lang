@@ -71,19 +71,20 @@ namespace up
         expr->process(compiler);
     }
 
-    If::If(const ErrorInfo &INFO, Expression *condition, Block *content)
-        : Statement(INFO), condition(condition), content(content)
+    ControlStatement::ControlStatement(const ErrorInfo &INFO, Expression *condition, Block *content, const string &KEYWORD)
+        : Statement(INFO), condition(condition), content(content), keyword(KEYWORD)
     {}
 
-    If::~If()
+    ControlStatement::~ControlStatement()
     {
         delete condition;
         delete content;
     }
 
-    string If::toString() const
+    string ControlStatement::toString() const
     {
-        string s = "if (";
+        string s = keyword;
+        s += " (";
         s += condition->toString();
         s += ") ";
         s += content->toString();
@@ -91,7 +92,7 @@ namespace up
         return s;
     }
 
-    void If::process(Compiler *compiler)
+    void ControlStatement::process(Compiler *compiler)
     {
         // TODO : check expr as type bool
         condition->process(compiler);

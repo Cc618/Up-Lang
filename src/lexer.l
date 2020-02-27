@@ -78,6 +78,7 @@ space [ \t]
 ","				return Parser::make_COMMA(loc);
 "..."			return Parser::make_ELLIPSIS(loc);
 
+"while"			return Parser::make_WHILE(loc);
 "use"			return Parser::make_USE(loc);
 "cdef"			return Parser::make_CDEF(loc);
 "ret"			return Parser::make_RET(loc);
