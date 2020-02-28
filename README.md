@@ -30,6 +30,14 @@ a > 0 ?
     # Function call
     exit()
 
+# Else if
+or a == b ?
+    fun()
+
+# Else
+or
+    fun()
+
 # Loops
 for i to 618
     log(i)
@@ -39,23 +47,17 @@ for i=10 to 1
     ..
 
 # yes means true
-while yes:
-    ...
-
-# Same as while yes
-loop:
+while yes
     ...
 
 # Functions
-int MyFunc(int a, int b=6)
+int myFunc(int a, int b)
     ...
     ret 42
 
 # C compatibility
 # cdef declares an extern C function
 cdef num cosf(num)
-
-
 ```
 
 ## Depedencies
