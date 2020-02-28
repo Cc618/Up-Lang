@@ -57,3 +57,8 @@ or a == b ?
     $b = 42
 or
     printf('false\n')
+
+b < a ?
+    printf('lol\n')
+
+

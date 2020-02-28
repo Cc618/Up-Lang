@@ -58,7 +58,16 @@ c /= 42
 Conditions are specific to this language :
 
 ```
+# If
 a < b ?
+    fun()
+
+# Else if
+or a == b ?
+    fun()
+
+# Else
+or
     fun()
 ```
 

@@ -373,11 +373,6 @@ namespace up
     class Block : public ISyntax
     {
     public:
-        // Create if - or statement
-        static Block *createOrStatement(const ErrorInfo &IF_INFO, const ErrorInfo &OR_INFO, Expression *condition, Block *ifContent,
-            Block *orContent);
-
-    public:
         Block() = default;
         Block(const ErrorInfo &INFO)
             : ISyntax(INFO)

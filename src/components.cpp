@@ -384,17 +384,6 @@ namespace up
         second->process(compiler);
     }
 
-    Block *Block::createOrStatement(const ErrorInfo &IF_INFO, const ErrorInfo &OR_INFO,
-        Expression *condition, Block *ifContent, Block *orContent)
-    {
-        Block *b = new Block(IF_INFO);
-
-        b->content.push_back(new ControlStatement(IF_INFO, condition, ifContent, "if"));
-        b->content.push_back(new OrStatement(OR_INFO, orContent));
-
-        return b;
-    }
-
     Block::~Block()
     {
         for (auto instr : content)

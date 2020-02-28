@@ -38,6 +38,7 @@
 	#include "compiler.h"
 	#include "components.h"
 	#include "module.h"
+	#include "colors.h"
 
 	using namespace up;
 
@@ -165,19 +166,6 @@ function:
 block:
 	block_start DEDENT				{ $$ = $1; }
 	| block new_line				{ $$ = $1; /* New line after unindentation is ignored */ }
-	/* // TODO
-	| if_stmt OR
-		new_line block		{
-			 
-			// $$ = Block::createOrStatement(LOC_ERROR(@1), LOC_ERROR(@5), $1, $4, $7); 
-
-			$$ = new Block(ERROR_INFO);
-
-			$$->content.push_back($1);
-			$$->content.push_back(new OrStatement(LOC_ERROR(@2), $4));
-			
-			}
-			*/
 	;
 
 block_start:
@@ -208,25 +196,14 @@ stmt:
 		expr new_line block			{ $$ = new ForStatement(ERROR_INFO, $2, $4, $6, $8); }
 	| FOR ID TO expr new_line block	{ $$ = ForStatement::createDefaultInit(ERROR_INFO, $2, $4, $6); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
-
-
 	| conditions					{ $$ = $1; }
-
-
-	/* // TODO
-	| if_stmt						{ $$ = $1; }
-	| if_stmt or_stmt				{ cout << "OK\n"; }
-	*/
 	;
-
-
 
 conditions:
 	if_stmt							{ $$ = new ConditionSequence(ERROR_INFO, $1); }
 	| conditions or_if_stmt			{ $$ = $1; $$->controls.push_back($2); }
 	| conditions or_stmt			{ $$ = $1; $$->controls.push_back($2); }
 	;
-
 
 or_if_stmt:
 	OR expr IF new_line block		{ $$ = new ControlStatement(ERROR_INFO, $2, $5, "else if"); }
@@ -239,10 +216,6 @@ if_stmt:
 or_stmt:
 	OR new_line block				{ $$ = new OrStatement(ERROR_INFO, $3); }
 	;
-
-
-
-
 
 expr:
 	literal							{ $$ = $1; }
@@ -311,8 +284,8 @@ new_line:
 void Parser::error(const location &_, const string &msg)
 {
 	// TODO : Colors
-	cerr << scanner.module.path() << ":" <<
-		scanner.loc.begin.line << ":" <<
-		scanner.loc.begin.column << ": " <<
+	cerr << "File " << YELLOW << scanner.module.path() << DEFAULT <<
+        ":" << BLUE << scanner.loc.begin.line << DEFAULT << ":" << BLUE <<
+		scanner.loc.begin.column << DEFAULT << ": " <<
 		msg << endl;
 }
