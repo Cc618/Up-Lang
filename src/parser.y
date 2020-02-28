@@ -101,6 +101,7 @@
 	ELLIPSIS				"..."
 	AUTO					"$"
 	IF						"?"
+	OR						"or keyword"
 	WHILE					"while keyword"
 	FOR						"for keyword"
 	TO						"to keyword"
@@ -116,6 +117,10 @@
 ;
 
 %type <Statement*>				stmt;
+%type <ConditionSequence*>		conditions;
+%type <ControlStatement*>		or_if_stmt;
+%type <ControlStatement*>		if_stmt;
+%type <OrStatement*>			or_stmt;
 %type <Expression*>				expr;
 %type <Function*>				function;
 %type <Literal*>				literal;
@@ -133,11 +138,11 @@
 %start program
 
 %nonassoc INC DEC USE CDEF
-
 %left START
 %left END
 %left NL
 %left FOR WHILE IF
+%left OR
 %left IS LESS LEQ AEQ ABOV
 %left ADD SUB
 %left MUL DIV MOD
@@ -160,6 +165,19 @@ function:
 block:
 	block_start DEDENT				{ $$ = $1; }
 	| block new_line				{ $$ = $1; /* New line after unindentation is ignored */ }
+	/* // TODO
+	| if_stmt OR
+		new_line block		{
+			 
+			// $$ = Block::createOrStatement(LOC_ERROR(@1), LOC_ERROR(@5), $1, $4, $7); 
+
+			$$ = new Block(ERROR_INFO);
+
+			$$->content.push_back($1);
+			$$->content.push_back(new OrStatement(LOC_ERROR(@2), $4));
+			
+			}
+			*/
 	;
 
 block_start:
@@ -185,13 +203,46 @@ stmt:
 	| ID assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| RET expr new_line 			{ $$ = new Return(ERROR_INFO, $2); }
 	| RET new_line	 				{ $$ = new Return(ERROR_INFO, nullptr); }
-	| expr IF new_line block		{ $$ = new ControlStatement(ERROR_INFO, $1, $4, "if"); }
 	| WHILE expr new_line block		{ $$ = new ControlStatement(ERROR_INFO, $2, $4, "while"); }
 	| FOR ID EQ expr TO
 		expr new_line block			{ $$ = new ForStatement(ERROR_INFO, $2, $4, $6, $8); }
 	| FOR ID TO expr new_line block	{ $$ = ForStatement::createDefaultInit(ERROR_INFO, $2, $4, $6); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
+
+
+	| conditions					{ $$ = $1; }
+
+
+	/* // TODO
+	| if_stmt						{ $$ = $1; }
+	| if_stmt or_stmt				{ cout << "OK\n"; }
+	*/
 	;
+
+
+
+conditions:
+	if_stmt							{ $$ = new ConditionSequence(ERROR_INFO, $1); }
+	| conditions or_if_stmt			{ $$ = $1; $$->controls.push_back($2); }
+	| conditions or_stmt			{ $$ = $1; $$->controls.push_back($2); }
+	;
+
+
+or_if_stmt:
+	OR expr IF new_line block		{ $$ = new ControlStatement(ERROR_INFO, $2, $5, "else if"); }
+	;
+
+if_stmt:
+	expr IF new_line block			{ $$ = new ControlStatement(ERROR_INFO, $1, $4, "if"); }
+	;
+
+or_stmt:
+	OR new_line block				{ $$ = new OrStatement(ERROR_INFO, $3); }
+	;
+
+
+
+
 
 expr:
 	literal							{ $$ = $1; }
@@ -259,6 +310,7 @@ new_line:
 
 void Parser::error(const location &_, const string &msg)
 {
+	// TODO : Colors
 	cerr << scanner.module.path() << ":" <<
 		scanner.loc.begin.line << ":" <<
 		scanner.loc.begin.column << ": " <<

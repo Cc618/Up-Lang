@@ -128,6 +128,44 @@ namespace up
         std::string keyword;
     };
 
+    // Sequence of if / or if / or
+    // * Starts with a if
+    class ConditionSequence : public Statement
+    {
+    public:
+        ConditionSequence() = default;
+        ConditionSequence(const ErrorInfo &INFO, ControlStatement *ifStmt);
+        ~ConditionSequence();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    public:
+        // If / or if / or block statements
+        std::vector<Statement*> controls;
+    };
+
+    // The or block
+    // For example :
+    // or
+    //      block
+    // !!! Used only in Block::createOrStatement
+    class OrStatement : public Statement
+    {
+    public:
+        OrStatement() = default;
+        OrStatement(const ErrorInfo &INFO, Block *content);
+        ~OrStatement();
+
+    public:
+        virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
+
+    private:
+        Block *content;
+    };
+
     // A for loop
     // For example :
     // for i to 42
@@ -334,6 +372,11 @@ namespace up
     // This gathers indented statements and other instructions
     class Block : public ISyntax
     {
+    public:
+        // Create if - or statement
+        static Block *createOrStatement(const ErrorInfo &IF_INFO, const ErrorInfo &OR_INFO, Expression *condition, Block *ifContent,
+            Block *orContent);
+
     public:
         Block() = default;
         Block(const ErrorInfo &INFO)

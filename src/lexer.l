@@ -80,6 +80,7 @@ space [ \t]
 ","				return Parser::make_COMMA(loc);
 "..."			return Parser::make_ELLIPSIS(loc);
 
+"or"			return Parser::make_OR(loc);
 "while"			return Parser::make_WHILE(loc);
 "for"			return Parser::make_FOR(loc);
 "to"			return Parser::make_TO(loc);

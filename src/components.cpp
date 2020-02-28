@@ -99,6 +99,65 @@ namespace up
         content->process(compiler);
     }
 
+    ConditionSequence::ConditionSequence(const ErrorInfo &INFO, ControlStatement *ifStmt)
+        : Statement(INFO)
+    {
+        controls.push_back(ifStmt);
+    }
+
+    ConditionSequence::~ConditionSequence()
+    {
+        for (auto s : controls)
+            delete s;
+    }
+
+    string ConditionSequence::toString() const
+    {
+        // Create block to avoid ambiguity
+        string s = "{\n";
+
+        for (auto c : controls)
+            s += c->toString();
+
+        s += "}\n";
+
+        return s;
+    }
+
+    void ConditionSequence::process(Compiler *compiler)
+    {
+        int i = 0;
+        for (auto s : controls)
+        {
+            // An or is always at the end
+            if (dynamic_cast<OrStatement*>(s) && i != controls.size() - 1)
+                compiler->generateError("An or statement must be at the end of a control sequence", info);
+
+            s->process(compiler);
+
+            ++i;
+        }
+    }
+
+    OrStatement::OrStatement(const ErrorInfo &INFO, Block *content)
+        : Statement(INFO), content(content)
+    {}
+
+    OrStatement::~OrStatement()
+    {
+        delete content;
+    }
+
+    string OrStatement::toString() const
+    {
+        return "else " + content->toString();
+    }
+
+    void OrStatement::process(Compiler *compiler)
+    {
+        content->process(compiler);
+    }
+
     ForStatement *ForStatement::createDefaultInit(const ErrorInfo &INFO, const std::string &VAR_ID,
         Expression *end, Block *content)
     {
@@ -323,6 +382,17 @@ namespace up
         // TODO : Deduce type compatibility (casts), if (condition)
         first->process(compiler);
         second->process(compiler);
+    }
+
+    Block *Block::createOrStatement(const ErrorInfo &IF_INFO, const ErrorInfo &OR_INFO,
+        Expression *condition, Block *ifContent, Block *orContent)
+    {
+        Block *b = new Block(IF_INFO);
+
+        b->content.push_back(new ControlStatement(IF_INFO, condition, ifContent, "if"));
+        b->content.push_back(new OrStatement(OR_INFO, orContent));
+
+        return b;
     }
 
     Block::~Block()

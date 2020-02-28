@@ -1,51 +1,59 @@
 # To have functions from stdio.h, stdlib.h and math.h
-use libc
+# use libc
 
 # dep.up depedency file
-use dep
+# use dep
 
 cdef nil printf(...)
-cdef num cosf(num a, int b, bool c)
+# cdef num cosf(num a, int b, bool c)
 
 
-# Create function
-nil func(int a, num b)
-    a = b
-    b = 3.14
-    ret a + b * 6
+# # Create function
+# nil func(int a, num b)
+#     a = b
+#     b = 3.14
+#     ret a + b * 6
 
-# $ means auto type
-$a = 42
+# # $ means auto type
+# $a = 42
 
-# num stands for floating point
-num b = -618.32
+# # num stands for floating point
+# num b = -618.32
 
-# Booleans are set with yes or no
-bool c = yes
-$yesOrNo = no
-$x = 'I am a string'
+# # Booleans are set with yes or no
+# bool c = yes
+# $yesOrNo = no
+# $x = 'I am a string'
 
-# Declare variable without initialization
-$nil c
+# # Declare variable without initialization
+# $nil c
 
-# Operations
-b = 8
-a += --b
+# # Operations
+# b = 8
+# a += --b
 
-# Control flow
+# # Control flow
+# a < b ?
+#     printf('ok\n')
+
+# while i > 88
+#     printf('ok2\n')
+
+# # TODO : down to
+# # TODO : num as counter
+# for i to b - a
+#     printf('ok3 %d\n', i % 6)
+
+# for i=a+b to b - a
+#     printf('ok4\n')
+
+# # Functions
+# printf('Result : %f\n', cosf(3.14))
+
 a < b ?
-    printf('ok\n')
-
-while i > 88
-    printf('ok2\n')
-
-# TODO : down to
-# TODO : num as counter
-for i to b - a
-    printf('ok3 %d\n', i % 6)
-
-for i=a+b to b - a
-    printf('ok4\n')
-
-# Functions
-printf('Result : %f\n', cosf(3.14))
+    $a = 42
+    $b = 58
+or a == b ?
+    $b = 42
+or
+    printf('false\n')
