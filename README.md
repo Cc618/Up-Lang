@@ -58,6 +58,11 @@ int myFunc(int a, int b)
 # C compatibility
 # cdef declares an extern C function
 cdef num cosf(num)
+
+%{
+    // This code is in the global scope
+    int myNb = 128;
+%}
 ```
 
 ## Depedencies

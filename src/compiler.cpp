@@ -34,6 +34,7 @@ namespace up
         toParseModules = queue<pair<Module, ErrorInfo>>();
         includes.clear();
         mainFile = FILE_PATH;
+        globalCCode = "";
 
         clearFunctions();
         functions.push_back(UpFunction::createMain());
@@ -85,13 +86,14 @@ namespace up
         return ret;
     }
 
-    void Compiler::generateError(const string &MSG, const ErrorInfo &INFO)
+    void Compiler::generateError(const string &MSG, const ErrorInfo &INFO, const bool IS_LEX_ERROR)
     {
         generationError = true;
 
         cerr << "File " << YELLOW << INFO.file.path() << DEFAULT <<
             ":" << BLUE << INFO.line << DEFAULT << ":" << BLUE << INFO.column << DEFAULT <<
-            " - " << RED << "Generation Error" << DEFAULT << " :\n" << MSG << '\n';
+            " - " << RED << (IS_LEX_ERROR ? "Syntax Error" : "Generation Error") <<
+            DEFAULT << " :\n" << MSG << '\n';
     }
 
     Function *Compiler::getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES)
@@ -159,6 +161,9 @@ namespace up
 
         scanner.endParse();
 
+        if (ret == 0 && generationError)
+            return 1;
+
         return ret;
     }
 
@@ -172,6 +177,10 @@ namespace up
         for (auto inc : includes)
             program += "#include \"" + inc + "\"\n";
 
+        program += '\n';
+
+        // Globals C Sections //
+        program += globalCCode;
         program += '\n';
 
         // Functions //

@@ -113,13 +113,12 @@ namespace up
 
     string ConditionSequence::toString() const
     {
-        // Create block to avoid ambiguity
-        string s = "{\n";
+        string s;
 
         for (auto c : controls)
             s += c->toString();
 
-        s += "}\n";
+        s += "\n";
 
         return s;
     }

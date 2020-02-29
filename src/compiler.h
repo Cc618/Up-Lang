@@ -26,7 +26,7 @@ namespace up
         int parse(const std::string &FILE_PATH);
 
         // Creates and display a generation error
-        void generateError(const std::string &MSG, const ErrorInfo &INFO);
+        void generateError(const std::string &MSG, const ErrorInfo &INFO, const bool IS_LEX_ERROR=false);
 
         // Returns the main function
         inline Function *main()
@@ -39,8 +39,13 @@ namespace up
     public: // Functions used in the parser
         // Adds the module as import
         void import(Module mod, const ErrorInfo &INFO);
+        
         // Adds a function to the functions list
         void addFunction(Function *f);
+
+        // Add c section in global scope
+        inline void addGlobalCCode(const std::string &CODE)
+        { globalCCode += "\n" + CODE + "\n"; }
 
     public:
         // The first function is the main function
@@ -69,10 +74,13 @@ namespace up
         std::set<string> includes;
         
         // The main file (entry)
-        string mainFile;
+        std::string mainFile;
 
         // The program in string
         std::string program;
+        
+        // C code sections (global scope)
+        std::string globalCCode;
 
         // Whether the generation contains errors
         bool generationError = false;

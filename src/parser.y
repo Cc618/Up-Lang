@@ -115,6 +115,7 @@
 	<string> NUM			"Float number (num)"
 	<string> BOOL			"Boolean (bool)"
 	<string> STR			"String (str)"
+	<string> CCODE			"C Code section"
 ;
 
 %type <Statement*>				stmt;
@@ -132,6 +133,7 @@
 %type <Block*>					block;
 %type <Block*>					block_start;
 %type <string>					assign_op;
+%type <string>					ccode;
 %type <char>					new_line;
 %type <std::vector<Argument*>>	args;
 %type <std::vector<Argument*>>	args_start;
@@ -156,6 +158,11 @@ program:
 	| program stmt					{ ((UpFunction*) compiler.main())->body->content.push_back($2); /* // TODO : Check main file */ }
 	| program function				{ compiler.addFunction($2); }
 	| program import				{ compiler.import($2, LOC_ERROR(@2)); }
+	| program ccode					{ compiler.addGlobalCCode($2); }
+	;
+
+ccode:
+	CCODE new_line					{ $$ = $1.substr(2, $1.size() - 4); }
 	;
 
 function:
@@ -283,7 +290,6 @@ new_line:
 
 void Parser::error(const location &_, const string &msg)
 {
-	// TODO : Colors
 	cerr << "File " << YELLOW << scanner.module.path() << DEFAULT <<
         ":" << BLUE << scanner.loc.begin.line << DEFAULT << ":" << BLUE <<
 		scanner.loc.begin.column << DEFAULT << ": " <<

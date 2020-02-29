@@ -1,7 +1,10 @@
 %{
 	#include <iostream>
+	#include <string>
 
 	#include "scanner.h"
+	#include "compiler.h"
+	#include "error_info.h"
 	#include "parser.hpp"
 
 	using namespace std;
@@ -38,9 +41,14 @@ comment_line ^[ \t]*#.*$
 tabs ^(\t|[ ]{4})*
 /* After the line begining */
 space [ \t]
+/* C section */
+ccode %\{([^%]|%[^\}])*%\}
+/* ccode \%\{^(\%\})*\%\} */
 
 
 %%
+
+{ccode}			return Parser::make_CCODE(yytext, loc);
 
 {comment}		; // Ignored
 {empty_line}	; // Ignored
@@ -96,8 +104,7 @@ space [ \t]
 {space}			; // Ignored
 
 .				{
-	cerr << module.path() << ":" << loc.begin.line << ":" << loc.begin.column
-		<< ": Invalid token : " << yytext << endl;
+	compiler.generateError(std::string("Invalid token : ") + yytext, ErrorInfo(module, loc.begin.line, loc.begin.column), true);
 }
 
 <<EOF>>			return yyterminate();

@@ -106,6 +106,14 @@ To declare extern C functions :
 cdef num cosf(num)
 ```
 
+To add C sections in global scope :
+```
+%{
+    // C Code
+    int myNumber = 128;
+%}
+```
+
 ## LibUp (_WIP_)
 
 LibUp is the up standard library.
