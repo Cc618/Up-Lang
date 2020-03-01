@@ -233,7 +233,7 @@ expr:
 	| expr LESS expr				{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "<", true); }
 	| expr AEQ expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, ">=", true); }
 	| expr ABOV expr				{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, ">", true); }
-	| ID							{ $$ = new VariableUse(ERROR_INFO, $1); }
+	| ID							{ $$ = new VariableUsage(ERROR_INFO, $1); }
 	;
 
 import:

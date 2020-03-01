@@ -62,6 +62,23 @@ cdef nil printf(...)
 #     printf('lol\n')
 
 
+# TODO : Tests for types
+# int iAmInt = 42
+# int iAmInt2 = 422
+# num iAmNum = 32
+# num iAmNum2 = 322
+
+# $v1 = iAmInt
+# $v2 = v1
+# $v2 = v1
+
+
+$var1 = 42
+$var2 = 32
+
+printf(var1)
+
+# int var3 = 1 + 2
 
 
 

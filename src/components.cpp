@@ -220,7 +220,7 @@ namespace up
         return data;
     }
 
-    string VariableUse::toString() const
+    string VariableUsage::toString() const
     {
         return id;
     }

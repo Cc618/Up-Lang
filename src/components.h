@@ -234,11 +234,11 @@ namespace up
     // For example :
     // int a = b
     // Variable use : b (ID)
-    class VariableUse : public Expression
+    class VariableUsage : public Expression
     {
     public:
-        VariableUse() = default;
-        VariableUse(const ErrorInfo &INFO, const std::string &ID)
+        VariableUsage() = default;
+        VariableUsage(const ErrorInfo &INFO, const std::string &ID)
             // TODO : Type
             : Expression(INFO, "auto"), id(ID)
         {}
