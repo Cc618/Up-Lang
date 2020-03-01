@@ -96,6 +96,15 @@ namespace up
             DEFAULT << " :\n" << MSG << '\n';
     }
 
+    void Compiler::pushGlobalStatement(Statement *s)
+    {
+        // This is a C section
+        if (auto cSection = dynamic_cast<CStatement*>(s))
+            addGlobalCCode(cSection->toString());
+        else
+            ((UpFunction*) main())->body->content.push_back(s);
+    }
+
     Function *Compiler::getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES)
     {
         bool isEllipsis = ARG_TYPES.size() == 1 && ARG_TYPES[0] == "...";

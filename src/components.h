@@ -105,6 +105,22 @@ namespace up
         Expression *expr;
     };
 
+    // A C section within a block
+    // For example :
+    // %{ int myNb = 42; %}
+    class CStatement : public Statement
+    {
+    public:
+        CStatement() = default;
+        CStatement(const ErrorInfo &INFO, const std::string &CODE);
+
+    public:
+        virtual std::string toString() const override;
+
+    private:
+        std::string code;
+    };
+
     // An if or while
     // For example :
     // condition ?

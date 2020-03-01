@@ -71,6 +71,16 @@ namespace up
         expr->process(compiler);
     }
 
+
+    CStatement::CStatement(const ErrorInfo &INFO, const string &CODE)
+        : Statement(INFO), code(CODE)
+    {}
+
+    string CStatement::toString() const
+    {
+        return "\n" + code + "\n";
+    }
+
     ControlStatement::ControlStatement(const ErrorInfo &INFO, Expression *condition, Block *content, const string &KEYWORD)
         : Statement(INFO), condition(condition), content(content), keyword(KEYWORD)
     {}

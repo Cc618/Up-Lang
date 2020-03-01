@@ -28,10 +28,12 @@ namespace up
         // Creates and display a generation error
         void generateError(const std::string &MSG, const ErrorInfo &INFO, const bool IS_LEX_ERROR=false);
 
-        // Returns the main function
-        inline Function *main()
-        { return functions[0]; }
-    
+        // TODO : Do this only for main module (error otherwise)
+        // Appends a statement to the main function
+        // If the statement is a C section, this
+        // section will be global
+        void pushGlobalStatement(Statement *s);
+
         // Finds a function
         // !!! Can return nullptr if the function is not found
         Function *getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES);
@@ -52,6 +54,10 @@ namespace up
         std::vector<Function*> functions;
         
     private:
+        // Returns the main function
+        inline Function *main()
+        { return functions[0]; }
+
         // Calls the scanner to create components
         int scan(const Module &MOD);
         

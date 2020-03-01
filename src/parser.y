@@ -133,7 +133,6 @@
 %type <Block*>					block;
 %type <Block*>					block_start;
 %type <string>					assign_op;
-%type <string>					ccode;
 %type <char>					new_line;
 %type <std::vector<Argument*>>	args;
 %type <std::vector<Argument*>>	args_start;
@@ -155,14 +154,9 @@ program:
 	| program DOUBLE_END			{ YYACCEPT; /* Avoid infinite ends bug */ }
 	| program START new_line		{}
 	| program START					{}
-	| program stmt					{ ((UpFunction*) compiler.main())->body->content.push_back($2); /* // TODO : Check main file */ }
+	| program stmt					{ compiler.pushGlobalStatement($2); }
 	| program function				{ compiler.addFunction($2); }
 	| program import				{ compiler.import($2, LOC_ERROR(@2)); }
-	| program ccode					{ compiler.addGlobalCCode($2); }
-	;
-
-ccode:
-	CCODE new_line					{ $$ = $1.substr(2, $1.size() - 4); }
 	;
 
 function:
@@ -204,6 +198,7 @@ stmt:
 	| FOR ID TO expr new_line block	{ $$ = ForStatement::createDefaultInit(ERROR_INFO, $2, $4, $6); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	| conditions					{ $$ = $1; }
+	| CCODE new_line				{ $$ = new CStatement(ERROR_INFO, $1.substr(2, $1.size() - 4)); }
 	;
 
 conditions:
