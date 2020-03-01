@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "error_info.h"
+#include "variable.h"
 
 namespace up
 {
@@ -245,6 +246,7 @@ namespace up
 
     public:
         virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
 
     private:
         std::string id;
@@ -400,8 +402,13 @@ namespace up
         virtual void process(Compiler *compiler) override;
 
     public:
+        // !!! Can return nullptr
+        Variable *getVar(const std::string &ID);
+
+    public:
         // The content
         std::vector<Statement*> content;
+        std::vector<Variable*> vars;
     };
 
     // An argument within a function definition
@@ -440,7 +447,6 @@ namespace up
     // For updef, use UpFunction
     class Function : public ISyntax
     {
-
     public:
         Function() = default;
         Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID,

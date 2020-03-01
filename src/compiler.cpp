@@ -33,6 +33,7 @@ namespace up
         parsedModules.clear();
         toParseModules = queue<pair<Module, ErrorInfo>>();
         includes.clear();
+        scopes.clear();
         mainFile = FILE_PATH;
         globalCCode = "";
 
@@ -156,6 +157,15 @@ namespace up
         // TODO : Test whether f is already in functions
 
         functions.push_back(f);
+    }
+
+    Variable *Compiler::getVariable(const string &ID)
+    {
+        for (auto i = scopes.rbegin(); i != scopes.rend(); ++i)
+            if (auto v = (*i)->getVar(ID))
+                return v;
+        
+        return nullptr;
     }
 
     int Compiler::scan(const Module &MOD)

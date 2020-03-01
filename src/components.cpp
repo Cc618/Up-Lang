@@ -192,7 +192,7 @@ namespace up
         s += "; ++" + varId;
         s += ") " + content->toString();
 
-        return s; 
+        return s;
     }
 
     void ForStatement::process(Compiler *compiler)
@@ -224,6 +224,18 @@ namespace up
     {
         return id;
     }
+
+    void VariableUsage::process(Compiler *compiler)
+    {
+        // Check exists
+        if (Variable *v = compiler->getVariable(id))
+            // Retrieve type
+            type = v->type;
+        else
+            // Error
+            compiler->generateError("The variable named '" + id + "' is not declared in this scope", info);
+    }
+
 
     Call::~Call()
     {
@@ -289,7 +301,12 @@ namespace up
 
     void VariableDeclaration::process(Compiler *compiler)
     {
-        // TODO : Check variable exists
+        // Error : Variable exists already in this scope
+        if (compiler->scopes.back()->getVar(id))
+        {
+            compiler->generateError("The variable '" + id + "' exists already in this scope", info);
+            return;
+        }
 
         if (expr)
         {
@@ -301,7 +318,8 @@ namespace up
             else
             {
                 compiler->generateError("Error for variable '" + id + "'\n" \
-                    "Literal initialization must match the type of the variable\n", info);
+                    "The initialization expression of type '" + expr->type +
+                    "' must match the type of the variable\n", info);
 
                 return;
             }
@@ -310,8 +328,14 @@ namespace up
         parsedType = cType(type);
 
         if (parsedType.empty())
+        {
             compiler->generateError(string("Error for variable '") + BLUE + id + DEFAULT +
                 "'\nThe auto type can't be used in this context\n", info);
+            return;
+        }
+
+        // Push the variable in the scope
+        compiler->scopes.back()->vars.push_back(new Variable(id, type));
     }
 
     VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const string &ID, Expression *expr, const string &OP)
@@ -389,6 +413,14 @@ namespace up
     void BinaryOperation::process(Compiler *compiler)
     {
         // TODO : Deduce type compatibility (casts), if (condition)
+        // TMP
+        // if (!first->compatibleType(second->type))
+        //     compiler->generateError("Types '" + first->type +
+        //         "' and '" + second->type + "' are incompatible for '" + operand + "' operation", info);
+
+        // Set type
+        type = first->type;
+
         first->process(compiler);
         second->process(compiler);
     }
@@ -397,6 +429,9 @@ namespace up
     {
         for (auto instr : content)
             delete instr;
+        
+        for (auto v : vars)
+            delete v;
     }
 
     string Block::toString() const
@@ -414,8 +449,22 @@ namespace up
 
     void Block::process(Compiler *compiler)
     {
+        // Push scope
+        compiler->scopes.push_back(this);
+
         for (auto instr : content)
             instr->process(compiler);
+
+        compiler->scopes.pop_back();
+    }
+
+    Variable *Block::getVar(const string &ID)
+    {
+        for (auto v : vars)
+            if (v->id == ID)
+                return v;
+
+        return nullptr;
     }
 
     Argument *Argument::createEllipsis(const ErrorInfo &INFO)
@@ -436,7 +485,7 @@ namespace up
     {
         // TODO : Check type (exists)
     }
-    
+
     bool Argument::operator==(const Argument &ARG) const
     {
         return type == "..." || ARG.type == "..." || ARG.type == type;

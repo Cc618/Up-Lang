@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 #include <set>
 #include <queue>
 
@@ -49,10 +49,18 @@ namespace up
         inline void addGlobalCCode(const std::string &CODE)
         { globalCCode += "\n" + CODE + "\n"; }
 
+        // Returns the variable in the current scope
+        // !!! Might return nullptr
+        Variable *getVariable(const std::string &ID);
+
     public:
         // The first function is the main function
         std::vector<Function*> functions;
         
+        // Gathers all blocks in the process function
+        // Used to find variables in the process function
+        std::vector<Block*> scopes;
+
     private:
         // Returns the main function
         inline Function *main()
@@ -78,7 +86,7 @@ namespace up
         std::queue<std::pair<Module, ErrorInfo>> toParseModules;
         // Files to include in the C source
         std::set<string> includes;
-        
+
         // The main file (entry)
         std::string mainFile;
 
