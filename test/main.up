@@ -126,10 +126,11 @@ num var4 = 1.618
 
 $c = var1 + ++var2
 
-c ?
-    fun()
+c < 3 ?
+    printf()
 
-
+for c=45.0 to 314.0
+    printf()
 
 
 

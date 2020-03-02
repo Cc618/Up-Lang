@@ -208,11 +208,29 @@ namespace up
 
     void ForStatement::process(Compiler *compiler)
     {
-        // TODO : Add the variable to content's scope
-        // TODO : Verify begin + end type (int)
+        // TODO : Update target type with num support
+        string targetType = "int";
+        
+        // Add the variable to the content's scope
+        content->vars.push_back(new Variable(varId, targetType));
+
+        if (!begin->compatibleType(targetType))
+        {
+            compiler->generateError("The begin expression of the for statement must have '" +
+                AS_BLUE(targetType) + "' type but has '" + AS_BLUE(begin->type) + "' type", info);
+            return;
+        }
+
+        if (!end->compatibleType(targetType))
+        {
+            compiler->generateError("The end expression of the for statement must have '" +
+                AS_BLUE(targetType) + "' type but has '" + AS_BLUE(end->type) + "' type", info);
+            return;
+        }
 
         begin->process(compiler);
         end->process(compiler);
+        content->process(compiler);
     }
 
     string Literal::toString() const
@@ -312,7 +330,8 @@ namespace up
         // Error : The variable exists already in this scope
         if (compiler->scopes.back()->getVar(id))
         {
-            compiler->generateError("The variable '" + AS_BLUE(id) + "' exists already in this scope", info);
+            compiler->generateError("The variable '" + AS_BLUE(id) +
+                "' already exists in this scope", info);
             return;
         }
 
