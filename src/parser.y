@@ -223,16 +223,16 @@ expr:
 	literal							{ $$ = $1; }
 	| unary_op						{ $$ = $1; }
 	| call							{ $$ = $1; }
-	| expr ADD expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "+"); }
-	| expr SUB expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "-"); }
-	| expr MUL expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "*"); }
-	| expr DIV expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "/"); }
-	| expr MOD expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "%"); }
-	| expr IS expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "==", true); }
-	| expr LEQ expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "<=", true); }
-	| expr LESS expr				{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, "<", true); }
-	| expr AEQ expr					{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, ">=", true); }
-	| expr ABOV expr				{ $$ = new BinaryOperation(ERROR_INFO, $1, $3, ">", true); }
+	| expr ADD expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "+"); }
+	| expr SUB expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "-"); }
+	| expr MUL expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "*"); }
+	| expr DIV expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "/"); }
+	| expr MOD expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "%"); }
+	| expr IS expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "==", true); }
+	| expr LEQ expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "<=", true); }
+	| expr LESS expr				{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "<", true); }
+	| expr AEQ expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, ">=", true); }
+	| expr ABOV expr				{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, ">", true); }
 	| ID							{ $$ = new VariableUsage(ERROR_INFO, $1); }
 	;
 
@@ -258,10 +258,10 @@ assign_op:
 	;
 
 unary_op:
-	ID INC							{ $$ = new UnaryOperation(ERROR_INFO, $1, "++"); }
-	| ID DEC						{ $$ = new UnaryOperation(ERROR_INFO, $1, "--"); }
-	| INC ID						{ $$ = new UnaryOperation(ERROR_INFO, $2, "++", true); }
-	| DEC ID						{ $$ = new UnaryOperation(ERROR_INFO, $2, "--", true); }
+	ID INC							{ $$ = new UnaryOperation(LOC_ERROR(@2), $1, "++"); }
+	| ID DEC						{ $$ = new UnaryOperation(LOC_ERROR(@2), $1, "--"); }
+	| INC ID						{ $$ = new UnaryOperation(LOC_ERROR(@1), $2, "++", true); }
+	| DEC ID						{ $$ = new UnaryOperation(LOC_ERROR(@1), $2, "--", true); }
 	;
 
 call:

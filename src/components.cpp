@@ -5,6 +5,11 @@
 #include "compiler.h"
 #include "colors.h"
 
+// Colors for one variable
+#define AS_BLUE(s) (BLUE + s + DEFAULT)
+#define AS_RED(s) (RED + s + DEFAULT)
+#define AS_GREEN(s) (GREEN + s + DEFAULT)
+
 using namespace std;
 
 namespace up
@@ -233,9 +238,8 @@ namespace up
             type = v->type;
         else
             // Error
-            compiler->generateError("The variable named '" + BLUE + id + DEFAULT + "' is not declared in this scope", info);
+            compiler->generateError("The variable named '" + AS_BLUE(id) + "' is not declared in this scope", info);
     }
-
 
     Call::~Call()
     {
@@ -304,7 +308,7 @@ namespace up
         // Error : The variable exists already in this scope
         if (compiler->scopes.back()->getVar(id))
         {
-            compiler->generateError("The variable '" + BLUE + id + DEFAULT + "' exists already in this scope", info);
+            compiler->generateError("The variable '" + AS_BLUE(id) + "' exists already in this scope", info);
             return;
         }
 
@@ -317,7 +321,7 @@ namespace up
                 type = expr->type;
             else
             {
-                compiler->generateError("Error for variable '" + BLUE + id + DEFAULT + "'\n" \
+                compiler->generateError("Error for variable '" + AS_BLUE(id) + "'\n" \
                     "The initialization expression of type '" + expr->type +
                     "' must match the type of the variable\n", info);
 
@@ -329,7 +333,7 @@ namespace up
 
         if (parsedType.empty())
         {
-            compiler->generateError("Error for variable '" + BLUE + id + DEFAULT +
+            compiler->generateError("Error for variable '" + AS_BLUE(id) +
                 "'\nThe auto type can't be used in this context\n", info);
             return;
         }
@@ -361,15 +365,17 @@ namespace up
         // Check exists   
         if (!v)
         {
-            compiler->generateError("The variable '" + BLUE + id + DEFAULT + "' exists already in this scope", info);
+            compiler->generateError("The variable '" + AS_BLUE(id) + "' exists already in this scope", info);
             return;
         }
+
+        expr->process(compiler);
 
         // Check compatible types
         if (!expr->compatibleType(v->type))
         {
             compiler->generateError("The type '" + BLUE + v->type + DEFAULT + "' of the variable '" +
-                BLUE + id + DEFAULT + "' is not compatible with the type '" + BLUE + expr->type + DEFAULT + "'", info);
+                AS_BLUE(id) + "' is not compatible with the type '" + BLUE + expr->type + DEFAULT + "'", info);
             return;
         }
     }
@@ -437,8 +443,9 @@ namespace up
 
         // Type compatibility
         if (!first->compatibleType(second->type))
-            compiler->generateError("Types '" + first->type +
-                "' and '" + second->type + "' are incompatible for '" + operand + "' operation", info);
+            compiler->generateError("Types '" + AS_BLUE(first->type) +
+                "' and '" + AS_BLUE(second->type) + "' are incompatible for '" +
+                AS_BLUE(operand) + "' operation", info);
 
         // Set type
         if (condition)
