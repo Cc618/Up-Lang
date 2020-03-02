@@ -409,7 +409,6 @@ namespace up
     UnaryOperation::UnaryOperation(const ErrorInfo &INFO, const string &ID, const string &OP, const bool PREFIX)
         : Expression(INFO, "auto"), id(ID), operand(OP), prefix(PREFIX)
     {
-        // TODO : Check variable exists + deduce type compatibility
     }
 
     string UnaryOperation::toString() const
@@ -420,6 +419,20 @@ namespace up
             return id + operand;
     }
 
+    void UnaryOperation::process(Compiler *compiler)
+    {
+        Variable *v = compiler->getVariable(id);
+
+        // Check variable exists
+        if (!v)
+        {
+            compiler->generateError("Variable '" + AS_BLUE(id) + "' is not declared in this scope", info);
+            return;
+        }
+
+        // Set type
+        type = v->type;
+    }
 
     BinaryOperation::BinaryOperation(const ErrorInfo &INFO, Expression *first, Expression *second, const string &OP, const bool COND)
         : Expression(INFO, COND ? "bool" : "auto"), first(first), second(second), operand(OP), condition(COND)

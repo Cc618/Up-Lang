@@ -240,7 +240,6 @@ namespace up
     public:
         VariableUsage() = default;
         VariableUsage(const ErrorInfo &INFO, const std::string &ID)
-            // TODO : Type
             : Expression(INFO, "auto"), id(ID)
         {}
 
@@ -355,6 +354,7 @@ namespace up
 
     public:
         virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
 
     public:
         std::string id;

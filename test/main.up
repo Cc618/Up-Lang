@@ -124,8 +124,7 @@ num var4 = 1.618
 # int a = var1
 # int b = var42
 
-$c = var1 + var2 + var3
-$d = var1 + var2 + var3
+$c = var1 + ++var2
 
 
 
