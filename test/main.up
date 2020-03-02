@@ -117,13 +117,14 @@ cdef nil printf(...)
 
 int var1 = 42
 $var2 = 32
-
-int var3 = var1
-int var4 = var42
-
+num var3 = 3.14
+num var4 = 1.618
 
 
+# int a = var1
+# int b = var42
 
+$c = var1 + var2
 
 
 

@@ -314,6 +314,7 @@ namespace up
 
     public:
         virtual std::string toString() const override;
+        virtual void process(Compiler *compiler) override;
 
     public:
         std::string id;

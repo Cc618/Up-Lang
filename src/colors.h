@@ -2,10 +2,12 @@
 
 // Definitions to use colors
 
+#include <string>
+
 namespace up
 {
-    static const char *DEFAULT = "\e[0m";
-    static const char *RED = "\e[31m";
-    static const char *YELLOW = "\e[33m";    
-    static const char *BLUE = "\e[34m";    
+    static const std::string DEFAULT = "\e[0m";
+    static const std::string RED = "\e[31m";
+    static const std::string YELLOW = "\e[33m";    
+    static const std::string BLUE = "\e[34m";    
 } // namespace up

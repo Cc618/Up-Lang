@@ -13,7 +13,7 @@ namespace up
     {
         if (id == "auto")
             // Empty = error
-            return "auto";
+            return "";
 
         if (id == "num")
             return "float";
@@ -233,7 +233,7 @@ namespace up
             type = v->type;
         else
             // Error
-            compiler->generateError("The variable named '" + id + "' is not declared in this scope", info);
+            compiler->generateError("The variable named '" + BLUE + id + DEFAULT + "' is not declared in this scope", info);
     }
 
 
@@ -301,10 +301,10 @@ namespace up
 
     void VariableDeclaration::process(Compiler *compiler)
     {
-        // Error : Variable exists already in this scope
+        // Error : The variable exists already in this scope
         if (compiler->scopes.back()->getVar(id))
         {
-            compiler->generateError("The variable '" + id + "' exists already in this scope", info);
+            compiler->generateError("The variable '" + BLUE + id + DEFAULT + "' exists already in this scope", info);
             return;
         }
 
@@ -317,7 +317,7 @@ namespace up
                 type = expr->type;
             else
             {
-                compiler->generateError("Error for variable '" + id + "'\n" \
+                compiler->generateError("Error for variable '" + BLUE + id + DEFAULT + "'\n" \
                     "The initialization expression of type '" + expr->type +
                     "' must match the type of the variable\n", info);
 
@@ -329,7 +329,7 @@ namespace up
 
         if (parsedType.empty())
         {
-            compiler->generateError(string("Error for variable '") + BLUE + id + DEFAULT +
+            compiler->generateError("Error for variable '" + BLUE + id + DEFAULT +
                 "'\nThe auto type can't be used in this context\n", info);
             return;
         }
@@ -341,7 +341,6 @@ namespace up
     VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const string &ID, Expression *expr, const string &OP)
         : Statement(INFO), id(ID), expr(expr), operand(OP)
     {
-        // TODO : Check variable exists + expr and variable types are compatible
     }
 
     VariableAssignement::~VariableAssignement()
@@ -352,6 +351,27 @@ namespace up
     string VariableAssignement::toString() const
     {
         return id + " " + operand + " " + expr->toString() + ";";
+    }
+
+    void VariableAssignement::process(Compiler *compiler)
+    {
+        // Error : The variable doesn't exists
+        Variable *v = compiler->getVariable(id);
+
+        // Check exists   
+        if (!v)
+        {
+            compiler->generateError("The variable '" + BLUE + id + DEFAULT + "' exists already in this scope", info);
+            return;
+        }
+
+        // Check compatible types
+        if (!expr->compatibleType(v->type))
+        {
+            compiler->generateError("The type '" + BLUE + v->type + DEFAULT + "' of the variable '" +
+                BLUE + id + DEFAULT + "' is not compatible with the type '" + BLUE + expr->type + DEFAULT + "'", info);
+            return;
+        }
     }
 
     Return::Return(const ErrorInfo &INFO, Expression *expr)
@@ -412,17 +432,19 @@ namespace up
 
     void BinaryOperation::process(Compiler *compiler)
     {
-        // TODO : Deduce type compatibility (casts), if (condition)
-        // TMP
-        // if (!first->compatibleType(second->type))
-        //     compiler->generateError("Types '" + first->type +
-        //         "' and '" + second->type + "' are incompatible for '" + operand + "' operation", info);
-
-        // Set type
-        type = first->type;
-
         first->process(compiler);
         second->process(compiler);
+
+        // Type compatibility
+        if (!first->compatibleType(second->type))
+            compiler->generateError("Types '" + first->type +
+                "' and '" + second->type + "' are incompatible for '" + operand + "' operation", info);
+
+        // Set type
+        if (condition)
+            type = "bool";
+        else
+            type = first->type;
     }
 
     Block::~Block()
