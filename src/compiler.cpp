@@ -91,8 +91,8 @@ namespace up
     {
         generationError = true;
 
-        cerr << "File " << YELLOW << INFO.file.path() << DEFAULT <<
-            ":" << BLUE << INFO.line << DEFAULT << ":" << BLUE << INFO.column << DEFAULT <<
+        cerr << "File " << GREEN << INFO.file.path() << DEFAULT <<
+            ":" << YELLOW << INFO.line << DEFAULT << ":" << YELLOW << INFO.column << DEFAULT <<
             " - " << RED << (IS_LEX_ERROR ? "Syntax Error" : "Generation Error") <<
             DEFAULT << " :\n" << MSG << '\n';
     }
@@ -159,7 +159,7 @@ namespace up
         functions.push_back(f);
     }
 
-    Variable *Compiler::getVariable(const string &ID)
+    Variable *Compiler::getVar(const string &ID)
     {
         for (auto i = scopes.rbegin(); i != scopes.rend(); ++i)
             if (auto v = (*i)->getVar(ID))

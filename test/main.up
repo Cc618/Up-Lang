@@ -126,7 +126,8 @@ num var4 = 1.618
 
 $c = var1 + ++var2
 
-
+c ?
+    fun()
 
 
 

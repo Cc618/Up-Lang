@@ -51,7 +51,7 @@ namespace up
 
         // Returns the variable in the current scope
         // !!! Might return nullptr
-        Variable *getVariable(const std::string &ID);
+        Variable *getVar(const std::string &ID);
 
     public:
         // The first function is the main function

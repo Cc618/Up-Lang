@@ -63,11 +63,12 @@
 		return tok;
 	}
 
-	// Shortcut for errors
-	#define ERROR_INFO scanner.errorInfo()
-
 	// Error but use another location
 	#define LOC_ERROR(LOC) ErrorInfo(scanner.module, LOC.begin.line, LOC.begin.column)
+
+	// Shortcut for errors
+	// !!! TODO : DEPRECATED
+	#define ERROR_INFO scanner.errorInfo()
 }
 
 %token
@@ -170,7 +171,7 @@ block:
 	;
 
 block_start:
-	INDENT stmt						{ $$ = new Block(ERROR_INFO); $$->content.push_back($2); }
+	INDENT stmt						{ $$ = new Block(LOC_ERROR(@2)); $$->content.push_back($2); }
 	| block_start stmt				{ $$ = $1; $$->content.push_back($2); }
 	;
 
@@ -202,21 +203,21 @@ stmt:
 	;
 
 conditions:
-	if_stmt							{ $$ = new ConditionSequence(ERROR_INFO, $1); }
+	if_stmt							{ $$ = new ConditionSequence(LOC_ERROR(@1), $1); }
 	| conditions or_if_stmt			{ $$ = $1; $$->controls.push_back($2); }
 	| conditions or_stmt			{ $$ = $1; $$->controls.push_back($2); }
 	;
 
 or_if_stmt:
-	OR expr IF new_line block		{ $$ = new ControlStatement(ERROR_INFO, $2, $5, "else if"); }
+	OR expr IF new_line block		{ $$ = new ControlStatement(LOC_ERROR(@1), $2, $5, "else if"); }
 	;
 
 if_stmt:
-	expr IF new_line block			{ $$ = new ControlStatement(ERROR_INFO, $1, $4, "if"); }
+	expr IF new_line block			{ $$ = new ControlStatement(LOC_ERROR(@1), $1, $4, "if"); }
 	;
 
 or_stmt:
-	OR new_line block				{ $$ = new OrStatement(ERROR_INFO, $3); }
+	OR new_line block				{ $$ = new OrStatement(LOC_ERROR(@1), $3); }
 	;
 
 expr:

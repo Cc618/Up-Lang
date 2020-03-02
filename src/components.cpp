@@ -109,9 +109,15 @@ namespace up
 
     void ControlStatement::process(Compiler *compiler)
     {
-        // TODO : check expr as type bool
         condition->process(compiler);
         content->process(compiler);
+
+        if (condition->type != "bool")
+        {
+            compiler->generateError("The condition must have type '" + AS_BLUE("bool") + "' but has type '" +
+                AS_BLUE(condition->type) + "'", info);
+            return;
+        }
     }
 
     ConditionSequence::ConditionSequence(const ErrorInfo &INFO, ControlStatement *ifStmt)
@@ -233,7 +239,7 @@ namespace up
     void VariableUsage::process(Compiler *compiler)
     {
         // Check exists
-        if (Variable *v = compiler->getVariable(id))
+        if (Variable *v = compiler->getVar(id))
             // Retrieve type
             type = v->type;
         else
@@ -274,11 +280,9 @@ namespace up
         // Error : No function found
         if (!func)
         {
-            string msg = "The function '";
-            msg += id;
-            msg += "' doesn't match any other function, verify the name or the arguments";
-
-            compiler->generateError(msg, info);
+            compiler->generateError("The function '" + AS_BLUE(id) +
+                + "' doesn't match any other function, verify the name or the arguments", info);
+            return;
         }
 
         // Update the return type
@@ -360,9 +364,9 @@ namespace up
     void VariableAssignement::process(Compiler *compiler)
     {
         // Error : The variable doesn't exists
-        Variable *v = compiler->getVariable(id);
+        Variable *v = compiler->getVar(id);
 
-        // Check exists   
+        // Check exists
         if (!v)
         {
             compiler->generateError("The variable '" + AS_BLUE(id) + "' exists already in this scope", info);
@@ -374,8 +378,8 @@ namespace up
         // Check compatible types
         if (!expr->compatibleType(v->type))
         {
-            compiler->generateError("The type '" + BLUE + v->type + DEFAULT + "' of the variable '" +
-                AS_BLUE(id) + "' is not compatible with the type '" + BLUE + expr->type + DEFAULT + "'", info);
+            compiler->generateError("The type '" + AS_BLUE(v->type) + "' of the variable '" +
+                AS_BLUE(id) + "' is not compatible with the type '" + AS_BLUE(expr->type) + "'", info);
             return;
         }
     }
@@ -421,7 +425,7 @@ namespace up
 
     void UnaryOperation::process(Compiler *compiler)
     {
-        Variable *v = compiler->getVariable(id);
+        Variable *v = compiler->getVar(id);
 
         // Check variable exists
         if (!v)
@@ -471,7 +475,7 @@ namespace up
     {
         for (auto instr : content)
             delete instr;
-        
+
         for (auto v : vars)
             delete v;
     }

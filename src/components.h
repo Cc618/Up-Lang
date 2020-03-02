@@ -262,7 +262,6 @@ namespace up
     public:
         Call() = default;
         Call(const ErrorInfo &INFO, const std::string &ID, const std::vector<Expression*> &ARGS={})
-            // TODO : decl type of the function
             : Expression(INFO, "auto"), id(ID), args(ARGS)
         {}
         ~Call();
