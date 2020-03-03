@@ -75,7 +75,7 @@ namespace up
             return "void";
 
         if (id == "bool")
-            return "uint8";
+            return "unsigned char";
 
         return id;
     }

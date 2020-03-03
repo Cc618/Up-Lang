@@ -413,8 +413,6 @@ namespace up
 
     void UnaryOperation::process(Compiler *compiler)
     {
-        // TODO : Check type operator
-
         Variable *v = compiler->getVar(id);
 
         // Check variable exists
@@ -426,6 +424,13 @@ namespace up
 
         // Set type
         type = v->type;
+
+        if (!operatorExists(type, operand))
+            compiler->generateError("The operator '" + AS_BLUE(operand) +
+                "' can't be used with the type '" + AS_BLUE(type) + "'",
+                info);
+
+        // TODO : Call custom function for non builtin types
     }
 
     BinaryOperation::BinaryOperation(const ErrorInfo &INFO, Expression *first, Expression *second, const string &OP, const bool COND)
@@ -459,6 +464,8 @@ namespace up
             compiler->generateError("The operator '" + AS_BLUE(operand) +
                 "' can't be used with the type '" + AS_BLUE(first->type) + "'",
                 info);
+
+        // TODO : Call custom function for non builtin types
 
         // Set type
         if (condition)
