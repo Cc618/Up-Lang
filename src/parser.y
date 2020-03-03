@@ -221,7 +221,8 @@ or_stmt:
 	;
 
 expr:
-	literal							{ $$ = $1; }
+	PAR_BEGIN expr PAR_END			{ $$ = $2; }
+	| literal						{ $$ = $1; }
 	| unary_op						{ $$ = $1; }
 	| call							{ $$ = $1; }
 	| expr ADD expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "+"); }
