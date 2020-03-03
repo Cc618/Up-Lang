@@ -352,6 +352,8 @@ namespace up
 
     void VariableAssignement::process(Compiler *compiler)
     {
+        // TODO : Constructors / Destructors
+
         // Error : The variable doesn't exists
         Variable *v = compiler->getVar(id);
 
@@ -371,6 +373,24 @@ namespace up
                 AS_BLUE(id) + "' is not compatible with the type '" + AS_BLUE(expr->type) + "'", info);
             return;
         }
+
+        // Check operator declared (or expression operator)
+        if (operand.size() > 1)
+        {
+            const string OP = string(1, operand[0]);
+            if (!operatorExists(expr->type, OP))
+                compiler->generateError("The operator '" + AS_BLUE(operand) +
+                    "' (or '" + AS_BLUE(OP) + "') can't be used with the type '" +
+                    AS_BLUE(expr->type) + "'",
+                    info);
+        }
+        else if (!operatorExists(expr->type, operand))
+            compiler->generateError("The operator '" + AS_BLUE(operand) +
+                "' can't be used with the type '" + AS_BLUE(expr->type) + "'",
+                info);
+
+        // TODO : Generate function for non builtin types
+        // TODO : Generate the good function for +=...
     }
 
     Return::Return(const ErrorInfo &INFO, Expression *expr)

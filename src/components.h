@@ -291,7 +291,7 @@ namespace up
     };
 
     // For example :
-    // $a += 6
+    // a += 6
     // a : ID, + : OPERAND, 6 : expr
     class VariableAssignement : public Statement
     {
