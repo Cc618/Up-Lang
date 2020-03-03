@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "compiler.h"
+#include "types.h"
 #include "colors.h"
 
 // Colors for one variable
@@ -14,45 +15,6 @@ using namespace std;
 
 namespace up
 {
-    string cType(const string &id)
-    {
-        if (id == "auto")
-            // Empty = error
-            return "";
-
-        if (id == "num")
-            return "float";
-
-        // TODO : Custom up string type
-        if (id == "str")
-            return "const char*";
-
-        if (id == "nil")
-            return "void";
-
-        if (id == "bool")
-            return "uint8";
-
-        return id;
-    }
-
-    std::vector<string> typeArgList(const std::vector<Expression*> &ARGS)
-    {
-        vector<string> args;
-
-        for (auto arg : ARGS)
-            args.push_back(arg->type);
-
-        return args;
-    }
-
-    bool compatibleType(const string &a, const string &b)
-    {
-        // TODO : Implicit casts (require cast...)
-        return a == b;
-    }
-
-
     Expression::Expression(const ErrorInfo &INFO, const string &TYPE)
         : ISyntax(INFO), type(TYPE)
     {}
@@ -439,8 +401,7 @@ namespace up
 
     UnaryOperation::UnaryOperation(const ErrorInfo &INFO, const string &ID, const string &OP, const bool PREFIX)
         : Expression(INFO, "auto"), id(ID), operand(OP), prefix(PREFIX)
-    {
-    }
+    {}
 
     string UnaryOperation::toString() const
     {
@@ -452,6 +413,8 @@ namespace up
 
     void UnaryOperation::process(Compiler *compiler)
     {
+        // TODO : Check type operator
+
         Variable *v = compiler->getVar(id);
 
         // Check variable exists
@@ -490,6 +453,12 @@ namespace up
             compiler->generateError("Types '" + AS_BLUE(first->type) +
                 "' and '" + AS_BLUE(second->type) + "' are incompatible for '" +
                 AS_BLUE(operand) + "' operation", info);
+
+        // Check operator declared
+        if (!operatorExists(first->type, operand))
+            compiler->generateError("The operator '" + AS_BLUE(operand) +
+                "' can't be used with the type '" + AS_BLUE(first->type) + "'",
+                info);
 
         // Set type
         if (condition)

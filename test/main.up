@@ -119,24 +119,15 @@ cdef nil printf(...)
 # $c = (42 + 33) * 28
 
 
+$a = 42 + 42
+$b = 42 / 42
+$c = 42 * 42
+$d = 42 - 42
+$e = 42 == 42
+$f = 42 > 42
+bool g = yes
 
-# int myFun(int a, int b)
-#     ret 42
-
-int myFun2(int a, num b)
-    ret 42
-
-
-# $a = myFun(34, 42)
-# $b = myFun(34, 42.0)
-# $c = myFun(34.0, 42)
-$d = myFun2(34, 42.0)
-# $e = myFun2(34.0, 42.0)
-# $f = myFun2(34)
-
-
-
-
+$h = g + 1
 
 
 
