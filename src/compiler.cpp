@@ -111,11 +111,27 @@ namespace up
         bool isEllipsis = ARG_TYPES.size() == 1 && ARG_TYPES[0] == "...";
 
         for (auto f : functions)
-            // TODO : Verify arg types (with implicit casts)
             if (f->id == ID)
-                if (isEllipsis || (f->args.size() == 1 && f->args[0]->isEllipsis()) ||
-                    f->args.size() == ARG_TYPES.size())
+            {
+                // Ellipsis case
+                if (isEllipsis || (f->args.size() == 1 && f->args[0]->isEllipsis()))
                     return f;
+
+                // Check types
+                if (f->args.size() == ARG_TYPES.size())
+                {
+                    bool compatible = true;
+                    for (size_t i = 0; i < ARG_TYPES.size(); ++i)
+                        if (!compatibleType(f->args[i]->type, ARG_TYPES[i]))
+                        {
+                            compatible = false;
+                            break;
+                        }
+
+                    if (compatible)
+                        return f;
+                }
+            }
 
         // Not found
         return nullptr;

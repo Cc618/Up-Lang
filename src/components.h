@@ -23,6 +23,8 @@ namespace up
     // All arguments have a c type
     std::vector<std::string> typeArgList(const std::vector<Expression*> &ARGS);
 
+    // Whether both types are compatible
+    bool compatibleType(const std::string &a, const std::string &b);
 
     // Interface which provides process and toString virtual functions
     class ISyntax
@@ -439,6 +441,7 @@ namespace up
         bool operator==(const Argument &ARG) const;
 
     public:
+        // The up type and id
         std::string type,
             id;
     };

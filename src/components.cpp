@@ -41,10 +41,17 @@ namespace up
         vector<string> args;
 
         for (auto arg : ARGS)
-            args.push_back(cType(arg->type));
+            args.push_back(arg->type);
 
         return args;
     }
+
+    bool compatibleType(const string &a, const string &b)
+    {
+        // TODO : Implicit casts (require cast...)
+        return a == b;
+    }
+
 
     Expression::Expression(const ErrorInfo &INFO, const string &TYPE)
         : ISyntax(INFO), type(TYPE)
@@ -52,6 +59,7 @@ namespace up
 
     bool Expression::compatibleType(const string &TYPE) const
     {
+        // TODO Change func by global one
         return TYPE == "auto"
             || TYPE == type;
     }
@@ -357,7 +365,7 @@ namespace up
         if (parsedType.empty())
         {
             compiler->generateError("Error for variable '" + AS_BLUE(id) +
-                "'\nThe auto type can't be used in this context\n", info);
+                "'\nThe auto type can't be used in this context", info);
             return;
         }
 
@@ -543,7 +551,7 @@ namespace up
 
     string Argument::toString() const
     {
-        return type + " " + id;
+        return cType(type) + " " + id;
     }
 
     void Argument::process(Compiler *compiler)

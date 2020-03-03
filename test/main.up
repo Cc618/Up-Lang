@@ -109,13 +109,34 @@ cdef nil printf(...)
 
 
 
-int var1 = 42
-$var2 = 32
-num var3 = 3.14
-num var4 = 1.618
+# int var1 = 42
+# $var2 = 32
+# num var3 = 3.14
+# num var4 = 1.618
 
-$a = 42 * 33 + 28
-$b = 42 + 33 * 28
-$c = (42 + 33) * 28
+# $a = 42 * 33 + 28
+# $b = 42 + 33 * 28
+# $c = (42 + 33) * 28
+
+
+
+# int myFun(int a, int b)
+#     ret 42
+
+int myFun2(int a, num b)
+    ret 42
+
+
+# $a = myFun(34, 42)
+# $b = myFun(34, 42.0)
+# $c = myFun(34.0, 42)
+$d = myFun2(34, 42.0)
+# $e = myFun2(34.0, 42.0)
+# $f = myFun2(34)
+
+
+
+
+
 
 
