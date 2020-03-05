@@ -140,10 +140,14 @@ namespace up
     
     void Compiler::addFunction(Function *f)
     {
+        // Find same function
+        auto i = std::find_if(functions.cbegin(), functions.cend(), [f](const Function* a) -> bool { return *a == *f; });
+
         // f is already in functions
-        if (std::find_if(functions.cbegin(), functions.cend(), [f](const Function* a) -> bool { return *a == *f; }) != functions.cend())
+        if (i != functions.cend())
         {
-            generateError("The function '" + AS_BLUE(f->id.toUp()) + "' already exists (declared ", f->info);
+            generateError("The function '" + AS_BLUE(f->id.toUp()) +
+                "' already exists (declared at " + (*i)->info.toString() + ")", f->info);
             return;
         }
 
