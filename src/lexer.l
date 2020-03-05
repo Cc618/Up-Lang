@@ -105,7 +105,8 @@ ccode %\{([^%]|%[^\}])*%\}
 {space}			; // Ignored
 
 .				{
-	compiler.generateError(std::string("Invalid token : ") + yytext, ErrorInfo(module, loc.begin.line, loc.begin.column), true);
+	compiler.generateError(std::string("Invalid token : ") + yytext,
+		ErrorInfo(module, loc.begin.line, loc.begin.column), "Token");
 }
 
 <<EOF>>			return yyterminate();

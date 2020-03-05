@@ -89,12 +89,12 @@ namespace up
         return ret;
     }
 
-    void Compiler::generateError(const string &MSG, const ErrorInfo &INFO, const bool IS_LEX_ERROR)
+    void Compiler::generateError(const string &MSG, const ErrorInfo &INFO, const string &REASON)
     {
         generationError = true;
 
         cerr << INFO.toString() <<
-            " - " << AS_RED_S(IS_LEX_ERROR ? "Syntax Error" : "Generation Error") <<
+            " - " << AS_RED_S(REASON + " Error") <<
             " :\n" << MSG << '\n';
     }
 

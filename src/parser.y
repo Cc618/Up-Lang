@@ -295,8 +295,11 @@ new_line:
 
 void Parser::error(const location &_, const string &msg)
 {
-	cerr << "File " << YELLOW << scanner.module.path() << DEFAULT <<
-        ":" << BLUE << scanner.loc.begin.line << DEFAULT << ":" << BLUE <<
-		scanner.loc.begin.column << DEFAULT << ": " <<
-		msg << endl;
+	// cerr << "File " << YELLOW << scanner.module.path() << DEFAULT <<
+    //     ":" << BLUE << scanner.loc.begin.line << DEFAULT << ":" << BLUE <<
+	// 	scanner.loc.begin.column << DEFAULT << ": " <<
+	// 	msg << endl;
+	compiler.generateError(msg,
+		ErrorInfo(scanner.module, scanner.loc.begin.line, scanner.loc.begin.column),
+		"Syntax");
 }

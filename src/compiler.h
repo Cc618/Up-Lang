@@ -26,7 +26,7 @@ namespace up
         int parse(const std::string &FILE_PATH);
 
         // Creates and display a generation error
-        void generateError(const std::string &MSG, const ErrorInfo &INFO, const bool IS_LEX_ERROR=false);
+        void generateError(const std::string &MSG, const ErrorInfo &INFO, const std::string &REASON="Generation");
 
         // TODO : Do this only for main module (error otherwise)
         // Appends a statement to the main function
