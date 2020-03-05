@@ -182,7 +182,7 @@ namespace up
         if (!varId.isSimple())
         {
             compiler->generateError("The iterator '" +
-                AS_BLUE(varId.toUp()) + "' must have a simple id (no prefix) ", info);
+                AS_BLUE(varId.toUp()) + "' must have a simple id (no prefix)", info);
             return;
         }
 
@@ -287,7 +287,6 @@ namespace up
         type = func->type;
     }
 
-    // TODO : Id must be simple
     VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const Id &ID, const Id &TYPE, Expression *expr)
         : Statement(INFO), id(ID), type(TYPE), expr(expr)
     {}
@@ -309,6 +308,22 @@ namespace up
 
     void VariableDeclaration::process(Compiler *compiler)
     {
+        // Check simple id
+        if (!id.isSimple())
+        {
+            compiler->generateError("The variable '" +
+                AS_BLUE(id.toUp()) + "' must have a simple id (no prefix)", info);
+            return;
+        }
+
+        // Check type
+        if (!type.isSimple())
+        {
+            compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the variable '" +
+                AS_BLUE(id.toUp()) + "' must have a simple name (no prefix)", info);
+            return;
+        }
+
         // Error : The variable exists already in this scope
         if (compiler->scopes.back()->getVar(id))
         {
@@ -365,6 +380,14 @@ namespace up
 
     void VariableAssignement::process(Compiler *compiler)
     {
+        // Check simple id
+        if (!id.isSimple())
+        {
+            compiler->generateError("The variable '" +
+                AS_BLUE(id.toUp()) + "' must have a simple id (no prefix)", info);
+            return;
+        }
+
         // TODO : Constructors / Destructors
 
         // Error : The variable doesn't exists
@@ -446,6 +469,14 @@ namespace up
 
     void UnaryOperation::process(Compiler *compiler)
     {
+        // Check simple id
+        if (!id.isSimple())
+        {
+            compiler->generateError("The variable '" +
+                AS_BLUE(id.toUp()) + "' must have a simple id (no prefix)", info);
+            return;
+        }
+
         Variable *v = compiler->getVar(id);
 
         // Check variable exists
@@ -567,6 +598,16 @@ namespace up
     void Argument::process(Compiler *compiler)
     {
         // TODO : Check type (exists)
+
+        // Check simple id
+        if (!id.isSimple())
+            compiler->generateError("The variable '" +
+                AS_BLUE(id.toUp()) + "' must have a simple id (no prefix)", info);
+
+        // Check simple type
+        if (!type.isSimple())
+            compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the variable '" +
+                AS_BLUE(id.toUp()) + "' must have a simple id (no prefix)", info);
     }
 
     bool Argument::operator==(const Argument &ARG) const
@@ -586,6 +627,14 @@ namespace up
 
     void Function::process(Compiler *compiler)
     {
+        // Check simple type
+        if (!type.isSimple())
+        {
+            compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the function '" +
+                AS_BLUE(id.toUp()) + "' must have a simple id (no prefix)", info);
+            return;
+        }
+
         for (auto arg : args)
             arg->process(compiler);
 
