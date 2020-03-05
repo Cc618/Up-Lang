@@ -4,6 +4,8 @@
 
 #include <string>
 
+#include "id.h"
+
 namespace up
 {
     class Variable

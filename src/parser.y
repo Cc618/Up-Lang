@@ -39,6 +39,7 @@
 	#include "components.h"
 	#include "module.h"
 	#include "colors.h"
+	#include "id.h"
 
 	using namespace up;
 
@@ -191,7 +192,7 @@ args_start:
 
 stmt:
 	id id EQ expr new_line 			{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
-	| AUTO id EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
+	| AUTO id EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, Id::createAuto(), $4); }
 	| AUTO id id new_line			{ $$ = new VariableDeclaration(ERROR_INFO, $3, $2, nullptr); }
 	| id assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| RET expr new_line 			{ $$ = new Return(ERROR_INFO, $2); }
@@ -242,15 +243,15 @@ expr:
 	;
 
 import:
-	/* TODO : Imports with . (id) */
+	/* // TODO : Imports with . (id) */
 	USE ID new_line					{ $$ = Module($2, true, scanner.module.folder); }
 	;
 
 literal:
-	INT								{ $$ = new Literal(ERROR_INFO, $1, "int"); }
-	| NUM							{ $$ = new Literal(ERROR_INFO, $1, "num"); }
-	| BOOL							{ $$ = new Literal(ERROR_INFO, $1, "bool"); }
-	| STR							{ $$ = new Literal(ERROR_INFO, $1, "str"); }
+	INT								{ $$ = new Literal(ERROR_INFO, $1, Id("int")); }
+	| NUM							{ $$ = new Literal(ERROR_INFO, $1, Id("num")); }
+	| BOOL							{ $$ = new Literal(ERROR_INFO, $1, Id("bool")); }
+	| STR							{ $$ = new Literal(ERROR_INFO, $1, Id("str")); /* // TODO : str change */ }
 	;
 
 assign_op:
@@ -281,7 +282,7 @@ call_start:
 
 id:
 	ID								{ $$ = Id($1); }
-	| id PERIOD ID					{ $$ = $1; $1.ids.push_back($3); }
+	| id PERIOD ID					{ $$ = $1; $$.ids.push_back($3); }
 	;
 
 new_line:

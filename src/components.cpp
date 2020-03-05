@@ -148,13 +148,13 @@ namespace up
         content->process(compiler);
     }
 
-    ForStatement *ForStatement::createDefaultInit(const ErrorInfo &INFO, const string &VAR_ID,
+    ForStatement *ForStatement::createDefaultInit(const ErrorInfo &INFO, const Id &VAR_ID,
         Expression *end, Block *content)
     {
         return new ForStatement(INFO, VAR_ID, new Literal(INFO, "0", Id("int")), end, content);
     }
 
-    ForStatement::ForStatement(const ErrorInfo &INFO, const string &VAR_ID, Expression *begin,
+    ForStatement::ForStatement(const ErrorInfo &INFO, const Id &VAR_ID, Expression *begin,
         Expression *end, Block *content)
         : Statement(INFO), varId(VAR_ID), begin(begin), end(end), content(content)
     {}
@@ -168,9 +168,9 @@ namespace up
     string ForStatement::toString() const
     {
         string s = "for (int ";
-        s += varId + " = " + begin->toString();
-        s += "; " + varId + " < " + end->toString();
-        s += "; ++" + varId;
+        s += varId.name() + " = " + begin->toString();
+        s += "; " + varId.name() + " < " + end->toString();
+        s += "; ++" + varId.name();
         s += ") " + content->toString();
 
         return s;
@@ -178,6 +178,14 @@ namespace up
 
     void ForStatement::process(Compiler *compiler)
     {
+        // The iterator must have a simple id
+        if (!varId.isSimple())
+        {
+            compiler->generateError("The iterator '" +
+                AS_BLUE(varId.toUp()) + "' must have a simple id (no prefix) ", info);
+            return;
+        }
+
         // TODO : Update target type with num support
         string targetType = "int";
         
@@ -279,6 +287,7 @@ namespace up
         type = func->type;
     }
 
+    // TODO : Id must be simple
     VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const Id &ID, const Id &TYPE, Expression *expr)
         : Statement(INFO), id(ID), type(TYPE), expr(expr)
     {}

@@ -183,12 +183,12 @@ namespace up
     {
     public:
         // Creates a for statement with the default initializer (begin)
-        static ForStatement *createDefaultInit(const ErrorInfo &INFO, const std::string &VAR_ID,
+        static ForStatement *createDefaultInit(const ErrorInfo &INFO, const Id &VAR_ID,
             Expression *end, Block *content);
 
     public:
         ForStatement() = default;
-        ForStatement(const ErrorInfo &INFO, const std::string &VAR_ID, Expression *begin,
+        ForStatement(const ErrorInfo &INFO, const Id &VAR_ID, Expression *begin,
             Expression *end, Block *content);
         ~ForStatement();
 
@@ -200,7 +200,7 @@ namespace up
         Expression *begin;
         Expression *end;
         Block *content;
-        std::string varId;
+        Id varId;
     };
 
     // A literal expression
