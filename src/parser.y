@@ -243,8 +243,7 @@ expr:
 	;
 
 import:
-	/* // TODO : Imports with . (id) */
-	USE ID new_line					{ $$ = Module($2, true, scanner.module.folder); }
+	USE id new_line					{ $$ = Module($2, true, scanner.module.folder); }
 	;
 
 literal:

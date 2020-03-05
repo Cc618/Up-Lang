@@ -127,6 +127,7 @@
 # $bool b
 # b+=yes
 
+use dir.dep
 
 cdef nil Str.set()
 

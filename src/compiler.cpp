@@ -120,7 +120,7 @@ namespace up
         parsedModules.insert(mod);
 
         // Special module that gathers multiple modules
-        if (mod.name == "libc")
+        if (mod.id == "libc")
         {
             includes.insert("stdio.h");
             includes.insert("stdlib.h");
@@ -129,7 +129,7 @@ namespace up
         // Up module
         else if (mod.up)
         {
-            mod.name += ".up";
+            mod.id.name() += ".up";
             toParseModules.push({ mod, INFO });
         }
         // C module

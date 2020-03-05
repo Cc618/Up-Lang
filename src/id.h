@@ -36,6 +36,8 @@ namespace up
         // Last id
         inline std::string name() const
         { return ids.back(); }
+        inline std::string &name()
+        { return ids.back(); }
 
         // Return the up string representation (dots)
         // !!! Must have at least one id
@@ -44,6 +46,10 @@ namespace up
         // Return the c string representation (underscores)
         // TODO : Better mangling
         std::string toC() const;
+
+        // Returns the path for modules
+        // TODO : Parent folder
+        std::string toPath() const;
 
     public:
         bool operator==(const Id &OTHER) const;

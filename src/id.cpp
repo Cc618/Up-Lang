@@ -46,4 +46,15 @@ namespace up
         return s;
     }
 
+    string Id::toPath() const
+    {
+        string s;
+
+        for (int i = 0; i < ids.size() - 1; ++i)
+            s += ids[i] + '/';
+        
+        s += name();
+
+        return s;
+    }
 } // namespace up

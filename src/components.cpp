@@ -660,7 +660,7 @@ namespace up
 
     UpFunction *UpFunction::createMain()
     {
-        auto info = ErrorInfo(Module("main.c"), 0, 0);
+        auto info = ErrorInfo(Module(Id("main.c")), 0, 0);
 
         UpFunction *main = new UpFunction(info, Id("int"), Id("main"),
             { new Argument(info, Id("int"), Id("argc")), new Argument(info, Id("char**"), Id("argv")) },
