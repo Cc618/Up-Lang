@@ -27,12 +27,12 @@
 		class Scanner;
 		class Compiler;
 	}
+
+	#include "types.h"
 }
 
 %code top
 {
-	#include <iostream>
-
 	#include "scanner.h"
 	#include "parser.hpp"
 	#include "compiler.h"
@@ -111,6 +111,7 @@
 	TO						"to keyword"
 	USE						"use keyword"
 	CDEF					"cdef keyword"
+	OBJ						"obj keyword"
 	RET						"ret keyword"
 	<int> INDENT_UPDT		"Indentation update"
 	<string> ID				"Identifier"
@@ -135,6 +136,7 @@
 %type <Call*>					call_start;
 %type <Block*>					block;
 %type <Block*>					block_start;
+%type <TypeDecl>				type_decl;
 %type <Id>						id;
 %type <string>					assign_op;
 %type <char>					new_line;
@@ -162,6 +164,11 @@ program:
 	| program stmt					{ compiler.pushGlobalStatement($2); }
 	| program function				{ compiler.addFunction($2); }
 	| program import				{ compiler.import($2, LOC_ERROR(@2)); }
+	| program type_decl				{ compiler.newType($2); }
+	;
+
+type_decl:
+	OBJ id new_line					{ $$ = TypeDecl(LOC_ERROR(@2), $2); }
 	;
 
 function:

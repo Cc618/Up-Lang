@@ -5,6 +5,7 @@
 
 #include "compiler.h"
 #include "components.h"
+#include "colors.h"
 
 using namespace std;
 
@@ -63,6 +64,30 @@ namespace up
         Id("str"),
     };
 
+    TypeDecl::TypeDecl(const ErrorInfo &INFO, const Id &ID)
+        : info(INFO), id(ID)
+    {}
+
+    void TypeDecl::process(Compiler *compiler)
+    {
+        // Check simple type
+        if (!id.isSimple())
+        {
+            compiler->generateError("The type '" + AS_BLUE(id.toUp()) +
+                "' must have a simple id (no prefix)", info);
+            return;
+        }
+
+        if (typeExists(id))
+        {
+            compiler->generateError("The type '" + AS_BLUE(id.toUp()) +
+                "' already exists", info);
+            return;
+        }
+
+        types.insert(id);
+    }
+
     string cType(const string &id)
     {
         if (id == "auto")
@@ -96,6 +121,7 @@ namespace up
         return args;
     }
 
+    // TODO : rm
     void newType(const Id &ID, Compiler *compiler)
     {
         // Check already exists

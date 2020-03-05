@@ -13,6 +13,8 @@
 
 namespace up
 {
+    class TypeDecl;
+
     // Main class which parses and then transpile the up code
     class Compiler
     {
@@ -37,6 +39,9 @@ namespace up
     public: // Functions used in the parser
         // Adds the module as import
         void import(Module mod, const ErrorInfo &INFO);
+
+        // Adds a new type (with obj keyword)
+        void newType(TypeDecl &type);
         
         // Adds a function to the functions list
         void addFunction(Function *f);

@@ -137,6 +137,11 @@ namespace up
             includes.insert(mod.path() + ".h");
     }
     
+    void Compiler::newType(TypeDecl &type)
+    {
+        type.process(this);
+    }
+    
     void Compiler::addFunction(Function *f)
     {
         // Find same function

@@ -653,8 +653,6 @@ namespace up
 
         for (auto arg : args)
             arg->process(compiler);
-
-        // TODO : Verify return type (exists)
     }
 
     string Function::signature() const
@@ -685,7 +683,7 @@ namespace up
         auto info = ErrorInfo(Module(Id("main.c")), 0, 0);
 
         UpFunction *main = new UpFunction(info, Id("int"), Id("main"),
-            { new Argument(info, Id("int"), Id("argc")), new Argument(info, Id("char**"), Id("argv")) },
+            {},
             new Block(info));
 
         return main;

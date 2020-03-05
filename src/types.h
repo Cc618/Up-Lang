@@ -6,11 +6,29 @@
 #include <vector>
 
 #include "id.h"
+#include "error_info.h"
 
 namespace up
 {
     class Expression;
     class Compiler;
+
+    // For example :
+    // obj MyObj
+    // ID : MyObj
+    class TypeDecl
+    {
+    public:
+        TypeDecl() = default;
+        TypeDecl(const ErrorInfo &INFO, const Id &ID);
+    
+    public:
+        void process(Compiler *compiler);
+
+    public:
+        ErrorInfo info;
+        Id id;
+    };
 
     // Casts up type to c type in string
     // !!! May return empty string if the type

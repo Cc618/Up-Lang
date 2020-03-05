@@ -129,14 +129,17 @@
 
 use dir.dep
 
-cdef nil Str.set()
+# cdef nil Str.set()
 
-nil a()
-    ret
+# nil a()
+#     ret
 
 
 
-int var = 42
-$abc var2
+# int var = 42
+# $abc var2
+
+
+$o = MyObj.new(42)
 
 

@@ -95,6 +95,7 @@ ccode %\{([^%]|%[^\}])*%\}
 "to"			return Parser::make_TO(loc);
 "use"			return Parser::make_USE(loc);
 "cdef"			return Parser::make_CDEF(loc);
+"obj"			return Parser::make_OBJ(loc);
 "ret"			return Parser::make_RET(loc);
 
 {id}			return Parser::make_ID(yytext, loc);

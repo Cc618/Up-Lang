@@ -1,0 +1,45 @@
+# I am a depedency for main.up
+
+
+obj MyObj
+
+# Constructor
+cdef MyObj MyObj.new(int)
+# Destructor
+cdef nil MyObj.del()
+
+%{
+    #include <stdio.h>
+    #include <stdlib.h>
+
+    typedef struct
+    {
+        int val;
+    } MyObj;
+
+    // Constructor
+    MyObj* new_MyObj(int val)
+    {
+        MyObj *obj = malloc(sizeof(MyObj));
+        
+        obj->val = val;
+
+        return obj;
+    }
+
+    // Destructor
+    void del_MyObj(MyObj* obj)
+    {
+        free(obj);
+    }
+
+// Test
+//    int main()
+//    {
+//        MyObj *obj = new_MyObj(42);
+//
+//        printf("%d\n", obj->val);
+//
+//        del_MyObj(obj);
+//    }
+%}
