@@ -327,7 +327,7 @@ namespace up
             return;
         }
 
-        // Error : The variable exists already in this scope
+        // Error : The variable already exists in this scope
         if (compiler->scopes.back()->getVar(id))
         {
             compiler->generateError("The variable '" + AS_BLUE(id.toUp()) +
@@ -368,8 +368,7 @@ namespace up
 
     VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const Id &ID, Expression *expr, const string &OP)
         : Statement(INFO), id(ID), expr(expr), operand(OP)
-    {
-    }
+    {}
 
     VariableAssignement::~VariableAssignement()
     {
@@ -600,7 +599,13 @@ namespace up
 
     void Argument::process(Compiler *compiler)
     {
-        // TODO : Check type (exists)
+        // Check type exists
+        if (!typeExists(type))
+        {
+            compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the argument '" +
+                AS_BLUE(id.toUp()) + "' isn't declared", info);
+            return;
+        }
 
         // Check simple id
         if (!id.isSimple())
@@ -635,6 +640,14 @@ namespace up
         {
             compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the function '" +
                 AS_BLUE(id.toUp()) + "' must have a simple id (no prefix)", info);
+            return;
+        }
+
+        // Check type exists
+        if (!typeExists(type))
+        {
+            compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the function '" +
+                AS_BLUE(id.toUp()) + "' isn't declared", info);
             return;
         }
 
