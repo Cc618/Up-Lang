@@ -99,6 +99,7 @@
 	MOD						"%"
 	PAR_BEGIN				"("
 	PAR_END					")"
+	PERIOD					"."
 	COMMA					","
 	ELLIPSIS				"..."
 	AUTO					"$"
@@ -133,6 +134,7 @@
 %type <Call*>					call_start;
 %type <Block*>					block;
 %type <Block*>					block_start;
+%type <Id*>						id;
 %type <string>					assign_op;
 %type <char>					new_line;
 %type <std::vector<Argument*>>	args;
@@ -149,6 +151,7 @@
 %left IS LESS LEQ AEQ ABOV
 %left ADD SUB
 %left MUL DIV MOD
+%left ID
 
 %%
 program:
@@ -161,8 +164,8 @@ program:
 	;
 
 function:
-	ID ID args new_line block		{ $$ = new UpFunction(ERROR_INFO, $1, $2, $3, $5); }
-	| CDEF ID ID args new_line 		{ $$ = new Function(ERROR_INFO, $2, $3, $4); }
+	id id args new_line block		{ $$ = new UpFunction(ERROR_INFO, $1, $2, $3, $5); }
+	| CDEF id id args new_line 		{ $$ = new Function(ERROR_INFO, $2, $3, $4); }
 	;
 
 block:
@@ -182,21 +185,21 @@ args:
 	;
 
 args_start:
-	PAR_BEGIN ID ID					{ $$ = { new Argument(ERROR_INFO, $2, $3) }; }
-	| args_start COMMA ID ID		{ $$ = $1; $$.push_back(new Argument(ERROR_INFO, $3, $4)); }
+	PAR_BEGIN id id					{ $$ = { new Argument(ERROR_INFO, $2, $3) }; }
+	| args_start COMMA id id		{ $$ = $1; $$.push_back(new Argument(ERROR_INFO, $3, $4)); }
 	;
 
 stmt:
-	ID ID EQ expr new_line 			{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
-	| AUTO ID EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
-	| AUTO ID ID new_line			{ $$ = new VariableDeclaration(ERROR_INFO, $3, $2, nullptr); }
-	| ID assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
+	id id EQ expr new_line 			{ $$ = new VariableDeclaration(ERROR_INFO, $2, $1, $4); }
+	| AUTO id EQ expr new_line 		{ $$ = new VariableDeclaration(ERROR_INFO, $2, "auto", $4); }
+	| AUTO id id new_line			{ $$ = new VariableDeclaration(ERROR_INFO, $3, $2, nullptr); }
+	| id assign_op expr new_line 	{ $$ = new VariableAssignement(ERROR_INFO, $1, $3, $2); }
 	| RET expr new_line 			{ $$ = new Return(ERROR_INFO, $2); }
 	| RET new_line	 				{ $$ = new Return(ERROR_INFO, nullptr); }
 	| WHILE expr new_line block		{ $$ = new ControlStatement(ERROR_INFO, $2, $4, "while"); }
-	| FOR ID EQ expr TO
+	| FOR id EQ expr TO
 		expr new_line block			{ $$ = new ForStatement(ERROR_INFO, $2, $4, $6, $8); }
-	| FOR ID TO expr new_line block	{ $$ = ForStatement::createDefaultInit(ERROR_INFO, $2, $4, $6); }
+	| FOR id TO expr new_line block	{ $$ = ForStatement::createDefaultInit(ERROR_INFO, $2, $4, $6); }
 	| expr new_line 				{ $$ = new ExpressionStatement(ERROR_INFO, $1); }
 	| conditions					{ $$ = $1; }
 	| CCODE new_line				{ $$ = new CStatement(ERROR_INFO, $1.substr(2, $1.size() - 4)); }
@@ -235,11 +238,11 @@ expr:
 	| expr LESS expr				{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, "<", true); }
 	| expr AEQ expr					{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, ">=", true); }
 	| expr ABOV expr				{ $$ = new BinaryOperation(LOC_ERROR(@2), $1, $3, ">", true); }
-	| ID							{ $$ = new VariableUsage(ERROR_INFO, $1); }
+	| id							{ $$ = new VariableUsage(ERROR_INFO, $1); }
 	;
 
 import:
-	/* TODO : Imports with . */
+	/* TODO : Imports with . (id) */
 	USE ID new_line					{ $$ = Module($2, true, scanner.module.folder); }
 	;
 
@@ -260,10 +263,10 @@ assign_op:
 	;
 
 unary_op:
-	ID INC							{ $$ = new UnaryOperation(LOC_ERROR(@2), $1, "++"); }
-	| ID DEC						{ $$ = new UnaryOperation(LOC_ERROR(@2), $1, "--"); }
-	| INC ID						{ $$ = new UnaryOperation(LOC_ERROR(@1), $2, "++", true); }
-	| DEC ID						{ $$ = new UnaryOperation(LOC_ERROR(@1), $2, "--", true); }
+	id INC							{ $$ = new UnaryOperation(LOC_ERROR(@2), $1, "++"); }
+	| id DEC						{ $$ = new UnaryOperation(LOC_ERROR(@2), $1, "--"); }
+	| INC id						{ $$ = new UnaryOperation(LOC_ERROR(@1), $2, "++", true); }
+	| DEC id						{ $$ = new UnaryOperation(LOC_ERROR(@1), $2, "--", true); }
 	;
 
 call:
@@ -272,8 +275,13 @@ call:
 	;
 
 call_start:
-	ID PAR_BEGIN					{ $$ = new Call(ErrorInfo(scanner.module, @1.begin.line, @1.begin.column), $1); }
+	id PAR_BEGIN					{ $$ = new Call(ErrorInfo(scanner.module, @1.begin.line, @1.begin.column), $1); }
 	| call_start expr COMMA			{ $$ = $1; $$->args.push_back($2); }
+	;
+
+id:
+	ID								{ $$ = new Id($1); }
+	| id PERIOD ID					{ $$ = $1; $1.ids.push_back($3); }
 	;
 
 new_line:

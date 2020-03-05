@@ -4,7 +4,7 @@
 # dep.up depedency file
 # use dep
 
-cdef nil printf(...)
+# cdef nil printf(...)
 # cdef num cosf(num a, int b, bool c)
 
 
@@ -119,11 +119,15 @@ cdef nil printf(...)
 # $c = (42 + 33) * 28
 
 
-$a = 42 + 42
+# $a = 42 + 42
 
 
-a += 314
-a *= 314
-$bool b
-b+=yes
+# a += 314
+# a *= 314
+# $bool b
+# b+=yes
+
+
+int my.var = 42
+
 

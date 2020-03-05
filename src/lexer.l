@@ -83,6 +83,7 @@ ccode %\{([^%]|%[^\}])*%\}
 "/"				return Parser::make_DIV(loc);
 "%"				return Parser::make_MOD(loc);
 
+"."				return Parser::make_PERIOD(loc);
 "("				return Parser::make_PAR_BEGIN(loc);
 ")"				return Parser::make_PAR_END(loc);
 ","				return Parser::make_COMMA(loc);

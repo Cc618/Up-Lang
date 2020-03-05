@@ -7,6 +7,7 @@
 
 #include "error_info.h"
 #include "variable.h"
+#include "id.h"
 
 namespace up
 {
