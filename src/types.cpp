@@ -85,34 +85,37 @@ namespace up
         vector<string> args;
 
         for (auto arg : ARGS)
-            args.push_back(arg->type);
+            // TODO : Better mangling
+            args.push_back(arg->type.toC());
 
         return args;
     }
 
-    bool compatibleType(const string &a, const string &b)
+    bool compatibleType(const Id &a, const Id &b)
     {
         // TODO : Implicit casts (require cast...)
         return a == b;
     }
 
-    void declareOperator(const string &TYPE, const string &OP)
+    void declareOperator(const Id &TYPE, const string &OP)
     {
         // TODO : When templates / function overloading, add args as param and change MANGLED (also in operatorExists)
-        const string MANGLED = TYPE + OP;
+        // TODO : Up when mangled ?
+        const string MANGLED = TYPE.toUp() + OP;
 
         typeOperators.insert(MANGLED);
     }
 
-    bool operatorExists(const string &TYPE, const string &OP)
+    bool operatorExists(const Id &TYPE, const string &OP)
     {
         // TODO : When templates / function overloading, add args as param and change MANGLED (also in declareOperator)
-        const string MANGLED = TYPE + OP;
+        // TODO : Up when mangled ?
+        const string MANGLED = TYPE.toUp() + OP;
 
         return typeOperators.find(MANGLED) != typeOperators.end();
     }
 
-    bool isBuiltin(const string &TYPE)
+    bool isBuiltin(const Id &TYPE)
     {
         return TYPE == "int" || TYPE == "num" || TYPE == "bool" || TYPE == "nil";
     }

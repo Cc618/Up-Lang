@@ -134,7 +134,7 @@
 %type <Call*>					call_start;
 %type <Block*>					block;
 %type <Block*>					block_start;
-%type <Id*>						id;
+%type <Id>						id;
 %type <string>					assign_op;
 %type <char>					new_line;
 %type <std::vector<Argument*>>	args;
@@ -280,7 +280,7 @@ call_start:
 	;
 
 id:
-	ID								{ $$ = new Id($1); }
+	ID								{ $$ = Id($1); }
 	| id PERIOD ID					{ $$ = $1; $1.ids.push_back($3); }
 	;
 

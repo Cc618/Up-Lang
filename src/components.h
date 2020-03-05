@@ -48,18 +48,18 @@ namespace up
     {
     public:
         Expression() = default;
-        Expression(const ErrorInfo &INFO, const std::string &TYPE);
+        Expression(const ErrorInfo &INFO, const Id &TYPE);
         virtual ~Expression() = default;
 
     public:
         // Whether the type is compatible to this type
         // * TYPE belongs to a Variable
         // !!! TYPE is a Up type
-        bool compatibleType(const std::string &TYPE) const;
+        bool compatibleType(const Id &TYPE) const;
 
     public:
         // Up type (can be auto)
-        std::string type;
+        Id type;
     };
 
     // A statement is like an instruction but
@@ -211,7 +211,7 @@ namespace up
     {
     public:
         Literal() = default;
-        Literal(const ErrorInfo &INFO, const std::string &DATA, const std::string &TYPE)
+        Literal(const ErrorInfo &INFO, const std::string &DATA, const Id &TYPE)
             : Expression(INFO, TYPE), data(DATA)
         {}
 
@@ -230,8 +230,8 @@ namespace up
     {
     public:
         VariableUsage() = default;
-        VariableUsage(const ErrorInfo &INFO, const std::string &ID)
-            : Expression(INFO, "auto"), id(ID)
+        VariableUsage(const ErrorInfo &INFO, const Id &ID)
+            : Expression(INFO, Id::createAuto()), id(ID)
         {}
 
     public:
@@ -239,7 +239,7 @@ namespace up
         virtual void process(Compiler *compiler) override;
 
     private:
-        std::string id;
+        Id id;
     };
 
     // A function call with arg list
@@ -252,8 +252,8 @@ namespace up
     {
     public:
         Call() = default;
-        Call(const ErrorInfo &INFO, const std::string &ID, const std::vector<Expression*> &ARGS={})
-            : Expression(INFO, "auto"), id(ID), args(ARGS)
+        Call(const ErrorInfo &INFO, const Id &ID, const std::vector<Expression*> &ARGS={})
+            : Expression(INFO, Id::createAuto()), id(ID), args(ARGS)
         {}
         ~Call();
 
@@ -262,7 +262,7 @@ namespace up
         virtual void process(Compiler *compiler) override;
 
     public:
-        std::string id;
+        Id id;
         std::vector<Expression*> args;
     };
 
@@ -273,7 +273,7 @@ namespace up
     public:
         VariableDeclaration() = default;
         // expr can be nullptr if the variable is not init
-        VariableDeclaration(const ErrorInfo &INFO, const std::string &ID, const std::string &TYPE, Expression *expr);
+        VariableDeclaration(const ErrorInfo &INFO, const Id &ID, const Id &TYPE, Expression *expr);
         ~VariableDeclaration();
 
     public:
@@ -281,10 +281,11 @@ namespace up
         virtual void process(Compiler *compiler) override;
 
     public:
+        // TODO : Remove parsedType (generate only in toString) ?
         // C type
         std::string parsedType;
-        std::string type;
-        std::string id;
+        Id type;
+        Id id;
 
     private:
         // The expression which inits the variable
@@ -298,7 +299,7 @@ namespace up
     {
     public:
         VariableAssignement() = default;
-        VariableAssignement(const ErrorInfo &INFO, const std::string &ID, Expression *expr, const std::string &OPERAND);
+        VariableAssignement(const ErrorInfo &INFO, const Id &ID, Expression *expr, const std::string &OPERAND);
         ~VariableAssignement();
 
     public:
@@ -306,7 +307,7 @@ namespace up
         virtual void process(Compiler *compiler) override;
 
     public:
-        std::string id;
+        Id id;
 
     private:
         // The expression which modifies the variable
@@ -340,14 +341,14 @@ namespace up
     {
     public:
         UnaryOperation() = default;
-        UnaryOperation(const ErrorInfo &INFO, const std::string &ID, const std::string &OPERAND, const bool PREFIX=false);
+        UnaryOperation(const ErrorInfo &INFO, const Id &ID, const std::string &OPERAND, const bool PREFIX=false);
 
     public:
         virtual std::string toString() const override;
         virtual void process(Compiler *compiler) override;
 
     public:
-        std::string id;
+        Id id;
 
     private:
         std::string operand;
@@ -394,7 +395,7 @@ namespace up
 
     public:
         // !!! Can return nullptr
-        Variable *getVar(const std::string &ID);
+        Variable *getVar(const Id &ID);
 
     public:
         // The content
@@ -415,7 +416,7 @@ namespace up
 
     public:
         Argument() = default;
-        Argument(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID);
+        Argument(const ErrorInfo &INFO, const Id &TYPE, const Id &ID);
 
     public:
         virtual std::string toString() const override;
@@ -431,7 +432,7 @@ namespace up
 
     public:
         // The up type and id
-        std::string type,
+        Id type,
             id;
     };
 
@@ -441,7 +442,7 @@ namespace up
     {
     public:
         Function() = default;
-        Function(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID,
+        Function(const ErrorInfo &INFO, const Id &TYPE, const Id &ID,
             const std::vector<Argument*> &ARGS, const bool IS_C_DEF=true);
         virtual ~Function();
 
@@ -455,7 +456,8 @@ namespace up
         std::string cName() const
         {
             // TODO : Name mangling with args, ...
-            return id;
+            // TODO : Better mangling
+            return id.toC();
         }
 
     public:
@@ -463,9 +465,9 @@ namespace up
         bool isCDef;
         std::vector<Argument*> args;
         // Return type
-        std::string type;
+        Id type;
         // Name
-        std::string id;
+        Id id;
     };
 
     // A function defined in up
@@ -478,7 +480,7 @@ namespace up
 
     public:
         UpFunction() = default;
-        UpFunction(const ErrorInfo &INFO, const std::string &TYPE, const std::string &ID,
+        UpFunction(const ErrorInfo &INFO, const Id &TYPE, const Id &ID,
             const std::vector<Argument*> &ARGS, Block *body);
         ~UpFunction();
 

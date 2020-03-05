@@ -10,12 +10,12 @@ namespace up
     {
     public:
         // !!! The type is the Up type
-        Variable(const std::string &ID, const std::string &TYPE)
+        Variable(const Id &ID, const Id &TYPE)
             : id(ID), type(TYPE)
         {}
 
     public:
-        std::string id;
-        std::string type;
+        Id id;
+        Id type;
     }; 
 } // namespace up

@@ -34,10 +34,6 @@ namespace up
         // section will be global
         void pushGlobalStatement(Statement *s);
 
-        // Finds a function
-        // !!! Can return nullptr if the function is not found
-        Function *getFunction(const std::string &ID, const std::vector<std::string> &ARG_TYPES);
-
     public: // Functions used in the parser
         // Adds the module as import
         void import(Module mod, const ErrorInfo &INFO);
@@ -49,9 +45,14 @@ namespace up
         inline void addGlobalCCode(const std::string &CODE)
         { globalCCode += "\n" + CODE + "\n"; }
 
+        // Finds a function
+        // !!! Can return nullptr if the function is not found
+        // TODO : ARG_TYPES with Id
+        Function *getFunction(const Id &ID, const std::vector<std::string> &ARG_TYPES);
+
         // Returns the variable in the current scope
         // !!! Might return nullptr
-        Variable *getVar(const std::string &ID);
+        Variable *getVar(const Id &ID);
 
     public:
         // The first function is the main function

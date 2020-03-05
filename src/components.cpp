@@ -15,11 +15,11 @@ using namespace std;
 
 namespace up
 {
-    Expression::Expression(const ErrorInfo &INFO, const string &TYPE)
+    Expression::Expression(const ErrorInfo &INFO, const Id &TYPE)
         : ISyntax(INFO), type(TYPE)
     {}
 
-    bool Expression::compatibleType(const string &TYPE) const
+    bool Expression::compatibleType(const Id &TYPE) const
     {
         // TODO Change func by global one
         return TYPE == "auto"
@@ -85,7 +85,7 @@ namespace up
         if (condition->type != "bool")
         {
             compiler->generateError("The condition must have type '" + AS_BLUE("bool") + "' but has type '" +
-                AS_BLUE(condition->type) + "'", info);
+                AS_BLUE(condition->type.toUp()) + "'", info);
             return;
         }
     }
@@ -148,10 +148,10 @@ namespace up
         content->process(compiler);
     }
 
-    ForStatement *ForStatement::createDefaultInit(const ErrorInfo &INFO, const std::string &VAR_ID,
+    ForStatement *ForStatement::createDefaultInit(const ErrorInfo &INFO, const string &VAR_ID,
         Expression *end, Block *content)
     {
-        return new ForStatement(INFO, VAR_ID, new Literal(INFO, "0", "int"), end, content);
+        return new ForStatement(INFO, VAR_ID, new Literal(INFO, "0", Id("int")), end, content);
     }
 
     ForStatement::ForStatement(const ErrorInfo &INFO, const string &VAR_ID, Expression *begin,
@@ -187,14 +187,14 @@ namespace up
         if (!begin->compatibleType(targetType))
         {
             compiler->generateError("The begin expression of the for statement must have '" +
-                AS_BLUE(targetType) + "' type but has '" + AS_BLUE(begin->type) + "' type", info);
+                AS_BLUE(targetType) + "' type but has '" + AS_BLUE(begin->type.toUp()) + "' type", info);
             return;
         }
 
         if (!end->compatibleType(targetType))
         {
             compiler->generateError("The end expression of the for statement must have '" +
-                AS_BLUE(targetType) + "' type but has '" + AS_BLUE(end->type) + "' type", info);
+                AS_BLUE(targetType) + "' type but has '" + AS_BLUE(end->type.toUp()) + "' type", info);
             return;
         }
 
@@ -221,7 +221,8 @@ namespace up
 
     string VariableUsage::toString() const
     {
-        return id;
+        // TODO : Better mangling
+        return id.toC();
     }
 
     void VariableUsage::process(Compiler *compiler)
@@ -232,7 +233,7 @@ namespace up
             type = v->type;
         else
             // Error
-            compiler->generateError("The variable named '" + AS_BLUE(id) + "' is not declared in this scope", info);
+            compiler->generateError("The variable named '" + AS_BLUE(id.toUp()) + "' is not declared in this scope", info);
     }
 
     Call::~Call()
@@ -243,7 +244,8 @@ namespace up
 
     string Call::toString() const
     {
-        string s = id;
+        // TODO : Better mangling
+        string s = id.toC();
 
         s += "(";
 
@@ -268,7 +270,7 @@ namespace up
         // Error : No function found
         if (!func)
         {
-            compiler->generateError("The function '" + AS_BLUE(id) +
+            compiler->generateError("The function '" + AS_BLUE(id.toUp()) +
                 + "' doesn't match any other function, verify the name or the arguments", info);
             return;
         }
@@ -277,7 +279,7 @@ namespace up
         type = func->type;
     }
 
-    VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const string &ID, const string &TYPE, Expression *expr)
+    VariableDeclaration::VariableDeclaration(const ErrorInfo &INFO, const Id &ID, const Id &TYPE, Expression *expr)
         : Statement(INFO), id(ID), type(TYPE), expr(expr)
     {}
 
@@ -289,10 +291,11 @@ namespace up
 
     string VariableDeclaration::toString() const
     {
+        // TODO : Better mangling (*2)
         if (expr)
-            return parsedType + " " + id + " = " + expr->toString() + ";";
+            return parsedType + " " + id.toC() + " = " + expr->toString() + ";";
         else
-            return parsedType + " " + id + ";";
+            return parsedType + " " + id.toC() + ";";
     }
 
     void VariableDeclaration::process(Compiler *compiler)
@@ -300,7 +303,7 @@ namespace up
         // Error : The variable exists already in this scope
         if (compiler->scopes.back()->getVar(id))
         {
-            compiler->generateError("The variable '" + AS_BLUE(id) +
+            compiler->generateError("The variable '" + AS_BLUE(id.toUp()) +
                 "' already exists in this scope", info);
             return;
         }
@@ -314,19 +317,20 @@ namespace up
                 type = expr->type;
             else
             {
-                compiler->generateError("Error for variable '" + AS_BLUE(id) + "'\n" \
-                    "The initialization expression of type '" + expr->type +
+                compiler->generateError("Error for variable '" + AS_BLUE(id.toUp()) + "'\n" \
+                    "The initialization expression of type '" + expr->type.toUp() +
                     "' must match the type of the variable\n", info);
 
                 return;
             }
         }
 
-        parsedType = cType(type);
+        // TODO : Move cType in Id
+        parsedType = cType(type.toUp());
 
         if (parsedType.empty())
         {
-            compiler->generateError("Error for variable '" + AS_BLUE(id) +
+            compiler->generateError("Error for variable '" + AS_BLUE(id.toUp()) +
                 "'\nThe auto type can't be used in this context", info);
             return;
         }
@@ -335,7 +339,7 @@ namespace up
         compiler->scopes.back()->vars.push_back(new Variable(id, type));
     }
 
-    VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const string &ID, Expression *expr, const string &OP)
+    VariableAssignement::VariableAssignement(const ErrorInfo &INFO, const Id &ID, Expression *expr, const string &OP)
         : Statement(INFO), id(ID), expr(expr), operand(OP)
     {
     }
@@ -347,7 +351,7 @@ namespace up
 
     string VariableAssignement::toString() const
     {
-        return id + " " + operand + " " + expr->toString() + ";";
+        return id.toC() + " " + operand + " " + expr->toString() + ";";
     }
 
     void VariableAssignement::process(Compiler *compiler)
@@ -360,7 +364,7 @@ namespace up
         // Check exists
         if (!v)
         {
-            compiler->generateError("The variable '" + AS_BLUE(id) + "' exists already in this scope", info);
+            compiler->generateError("The variable '" + AS_BLUE(id.toUp()) + "' exists already in this scope", info);
             return;
         }
 
@@ -369,8 +373,8 @@ namespace up
         // Check compatible types
         if (!expr->compatibleType(v->type))
         {
-            compiler->generateError("The type '" + AS_BLUE(v->type) + "' of the variable '" +
-                AS_BLUE(id) + "' is not compatible with the type '" + AS_BLUE(expr->type) + "'", info);
+            compiler->generateError("The type '" + AS_BLUE(v->type.toUp()) + "' of the variable '" +
+                AS_BLUE(id.toUp()) + "' is not compatible with the type '" + AS_BLUE(expr->type.toUp()) + "'", info);
             return;
         }
 
@@ -381,12 +385,12 @@ namespace up
             if (!operatorExists(expr->type, OP))
                 compiler->generateError("The operator '" + AS_BLUE(operand) +
                     "' (or '" + AS_BLUE(OP) + "') can't be used with the type '" +
-                    AS_BLUE(expr->type) + "'",
+                    AS_BLUE(expr->type.toUp()) + "'",
                     info);
         }
         else if (!operatorExists(expr->type, operand))
             compiler->generateError("The operator '" + AS_BLUE(operand) +
-                "' can't be used with the type '" + AS_BLUE(expr->type) + "'",
+                "' can't be used with the type '" + AS_BLUE(expr->type.toUp()) + "'",
                 info);
 
         // TODO : Generate function for non builtin types
@@ -419,16 +423,16 @@ namespace up
             expr->process(compiler);
     }
 
-    UnaryOperation::UnaryOperation(const ErrorInfo &INFO, const string &ID, const string &OP, const bool PREFIX)
-        : Expression(INFO, "auto"), id(ID), operand(OP), prefix(PREFIX)
+    UnaryOperation::UnaryOperation(const ErrorInfo &INFO, const Id &ID, const string &OP, const bool PREFIX)
+        : Expression(INFO, Id::createAuto()), id(ID), operand(OP), prefix(PREFIX)
     {}
 
     string UnaryOperation::toString() const
     {
         if (prefix)
-            return operand + id;
+            return operand + id.toC();
         else
-            return id + operand;
+            return id.toC() + operand;
     }
 
     void UnaryOperation::process(Compiler *compiler)
@@ -438,7 +442,7 @@ namespace up
         // Check variable exists
         if (!v)
         {
-            compiler->generateError("Variable '" + AS_BLUE(id) + "' is not declared in this scope", info);
+            compiler->generateError("Variable '" + AS_BLUE(id.toUp()) + "' is not declared in this scope", info);
             return;
         }
 
@@ -447,14 +451,14 @@ namespace up
 
         if (!operatorExists(type, operand))
             compiler->generateError("The operator '" + AS_BLUE(operand) +
-                "' can't be used with the type '" + AS_BLUE(type) + "'",
+                "' can't be used with the type '" + AS_BLUE(type.toUp()) + "'",
                 info);
 
         // TODO : Call custom function for non builtin types
     }
 
     BinaryOperation::BinaryOperation(const ErrorInfo &INFO, Expression *first, Expression *second, const string &OP, const bool COND)
-        : Expression(INFO, COND ? "bool" : "auto"), first(first), second(second), operand(OP), condition(COND)
+        : Expression(INFO, COND ? Id("bool") : Id::createAuto()), first(first), second(second), operand(OP), condition(COND)
     {}
 
     BinaryOperation::~BinaryOperation()
@@ -475,21 +479,21 @@ namespace up
 
         // Type compatibility
         if (!first->compatibleType(second->type))
-            compiler->generateError("Types '" + AS_BLUE(first->type) +
-                "' and '" + AS_BLUE(second->type) + "' are incompatible for '" +
+            compiler->generateError("Types '" + AS_BLUE(first->type.toUp()) +
+                "' and '" + AS_BLUE(second->type.toUp()) + "' are incompatible for '" +
                 AS_BLUE(operand) + "' operation", info);
 
         // Check operator declared
         if (!operatorExists(first->type, operand))
             compiler->generateError("The operator '" + AS_BLUE(operand) +
-                "' can't be used with the type '" + AS_BLUE(first->type) + "'",
+                "' can't be used with the type '" + AS_BLUE(first->type.toUp()) + "'",
                 info);
 
         // TODO : Call custom function for non builtin types
 
         // Set type
         if (condition)
-            type = "bool";
+            type = Id("bool");
         else
             type = first->type;
     }
@@ -527,7 +531,7 @@ namespace up
         compiler->scopes.pop_back();
     }
 
-    Variable *Block::getVar(const string &ID)
+    Variable *Block::getVar(const Id &ID)
     {
         for (auto v : vars)
             if (v->id == ID)
@@ -538,16 +542,17 @@ namespace up
 
     Argument *Argument::createEllipsis(const ErrorInfo &INFO)
     {
-        return new Argument(INFO, "...", "...");
+        return new Argument(INFO, Id::createEllipsis(), Id::createEllipsis());
     }
 
-    Argument::Argument(const ErrorInfo &INFO, const string &TYPE, const string &ID)
+    Argument::Argument(const ErrorInfo &INFO, const Id &TYPE, const Id &ID)
         : ISyntax(INFO), type(TYPE), id(ID)
     {}
 
     string Argument::toString() const
     {
-        return cType(type) + " " + id;
+        // TODO : cType change
+        return cType(type.toUp()) + " " + id.toC();
     }
 
     void Argument::process(Compiler *compiler)
@@ -560,7 +565,7 @@ namespace up
         return type == "..." || ARG.type == "..." || ARG.type == type;
     }
 
-    Function::Function(const ErrorInfo &INFO, const string &TYPE, const string &ID, const vector<Argument*> &ARGS, const bool IS_C_DEF)
+    Function::Function(const ErrorInfo &INFO, const Id &TYPE, const Id &ID, const vector<Argument*> &ARGS, const bool IS_C_DEF)
         : ISyntax(INFO), type(TYPE), id(ID), args(ARGS), isCDef(IS_C_DEF)
     {}
 
@@ -580,7 +585,8 @@ namespace up
 
     string Function::signature() const
     {
-        string s = cType(type) + " " + cName() + "(";
+        // TODO : cType
+        string s = cType(type.toUp()) + " " + cName() + "(";
 
         if (!args.empty())
         {
@@ -598,14 +604,14 @@ namespace up
     {
         auto info = ErrorInfo(Module("main.c"), 0, 0);
 
-        UpFunction *main = new UpFunction(info, "int", "main",
-            { new Argument(info, "int", "argc"), new Argument(info, "char**", "argv") },
+        UpFunction *main = new UpFunction(info, Id("int"), Id("main"),
+            { new Argument(info, Id("int"), Id("argc")), new Argument(info, Id("char**"), Id("argv")) },
             new Block(info));
 
         return main;
     }
 
-    UpFunction::UpFunction(const ErrorInfo &INFO, const string &TYPE, const string &ID, const vector<Argument*> &ARGS, Block *body)
+    UpFunction::UpFunction(const ErrorInfo &INFO, const Id &TYPE, const Id &ID, const vector<Argument*> &ARGS, Block *body)
         : Function(INFO, TYPE, ID, ARGS, false), body(body)
     {}
 
