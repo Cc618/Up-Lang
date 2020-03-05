@@ -1,6 +1,7 @@
 #include "compiler.h"
 
 #include <sstream>
+#include <algorithm>
 
 #include "colors.h"
 #include "types.h"
@@ -71,7 +72,7 @@ namespace up
             // Import errors
             // TODO : ErrorInfo::isEmpty
             if (mod.path() != mainFile)
-                generateError("File " + mod.path() + " can't be imported\n", modImportInfo);
+                generateError("File '" + AS_BLUE(mod.path()) + "' can't be imported\n", modImportInfo);
 
             return ret;
         }
@@ -92,10 +93,9 @@ namespace up
     {
         generationError = true;
 
-        cerr << "File " << GREEN << INFO.file.path() << DEFAULT <<
-            ":" << YELLOW << INFO.line << DEFAULT << ":" << YELLOW << INFO.column << DEFAULT <<
-            " - " << RED << (IS_LEX_ERROR ? "Syntax Error" : "Generation Error") <<
-            DEFAULT << " :\n" << MSG << '\n';
+        cerr << INFO.toString() <<
+            " - " << AS_RED_S(IS_LEX_ERROR ? "Syntax Error" : "Generation Error") <<
+            " :\n" << MSG << '\n';
     }
 
     void Compiler::pushGlobalStatement(Statement *s)
@@ -140,7 +140,12 @@ namespace up
     
     void Compiler::addFunction(Function *f)
     {
-        // TODO : Test whether f is already in functions
+        // f is already in functions
+        if (std::find_if(functions.cbegin(), functions.cend(), [f](const Function* a) -> bool { return *a == *f; }) != functions.cend())
+        {
+            generateError("The function '" + AS_BLUE(f->id.toUp()) + "' already exists (declared ", f->info);
+            return;
+        }
 
         functions.push_back(f);
     }

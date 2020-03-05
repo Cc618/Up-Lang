@@ -6,11 +6,6 @@
 #include "types.h"
 #include "colors.h"
 
-// Colors for one variable
-#define AS_BLUE(s) (BLUE + s + DEFAULT)
-#define AS_RED(s) (RED + s + DEFAULT)
-#define AS_GREEN(s) (GREEN + s + DEFAULT)
-
 using namespace std;
 
 namespace up
@@ -656,6 +651,12 @@ namespace up
         s += ")";
 
         return s;
+    }
+
+    bool Function::operator==(const Function &OTHER) const
+    {
+        // TODO : Add type check also when function overloading
+        return id == OTHER.id;
     }
 
     UpFunction *UpFunction::createMain()

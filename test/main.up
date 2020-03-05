@@ -131,6 +131,10 @@ use dir.dep
 
 cdef nil Str.set()
 
+nil a()
+    ret
+
+
 
 int var = 42
 

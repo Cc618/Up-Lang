@@ -4,6 +4,17 @@
 
 #include <string>
 
+// Colors for one variable
+#define AS_BLUE(s) (BLUE + s + DEFAULT)
+#define AS_RED(s) (RED + s + DEFAULT)
+#define AS_GREEN(s) (GREEN + s + DEFAULT)
+#define AS_YELLOW(s) (YELLOW + s + DEFAULT)
+
+#define AS_BLUE_S(s) BLUE << (s) << DEFAULT
+#define AS_RED_S(s) RED << (s) << DEFAULT
+#define AS_GREEN_S(s) GREEN << (s) << DEFAULT
+#define AS_YELLOW_S(s) YELLOW << (s) << DEFAULT
+
 namespace up
 {
     static const std::string DEFAULT = "\e[0m";

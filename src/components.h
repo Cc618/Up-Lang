@@ -461,6 +461,9 @@ namespace up
         }
 
     public:
+        bool operator==(const Function &OTHER) const;
+
+    public:
         // To check whether this function is defined in c or up
         bool isCDef;
         std::vector<Argument*> args;
