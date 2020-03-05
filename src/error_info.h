@@ -29,7 +29,7 @@ namespace up
         {
             std::stringstream s;
             
-            s << "File " << AS_GREEN_S(file.path()) <<
+            s << AS_GREEN_S(file.path()) <<
                 ":" << AS_YELLOW_S(line) << ":" << AS_YELLOW_S(column);
 
             return s.str();

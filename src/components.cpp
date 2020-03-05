@@ -311,11 +311,19 @@ namespace up
             return;
         }
 
-        // Check type
+        // Check simple type
         if (!type.isSimple())
         {
             compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the variable '" +
                 AS_BLUE(id.toUp()) + "' must have a simple name (no prefix)", info);
+            return;
+        }
+
+        // Check type exists
+        if (type != "auto" && !typeExists(type))
+        {
+            compiler->generateError("The type '" + AS_BLUE(type.toUp()) + "' of the variable '" +
+                AS_BLUE(id.toUp()) + "' isn't declared", info);
             return;
         }
 
@@ -337,7 +345,7 @@ namespace up
             else
             {
                 compiler->generateError("Error for variable '" + AS_BLUE(id.toUp()) + "'\n" \
-                    "The initialization expression of type '" + expr->type.toUp() +
+                    "The initialization expression of type '" + AS_BLUE(expr->type.toUp()) +
                     "' must match the type of the variable\n", info);
 
                 return;

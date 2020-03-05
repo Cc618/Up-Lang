@@ -137,5 +137,6 @@ nil a()
 
 
 int var = 42
+$abc var2
 
 

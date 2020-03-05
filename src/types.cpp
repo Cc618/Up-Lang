@@ -10,12 +10,7 @@ using namespace std;
 
 namespace up
 {
-
-
     // TODO : += statements check types
-
-
-
 
     // Whether a type declares an operator
     // * Mangling in operatorExists
@@ -58,6 +53,16 @@ namespace up
         "bool!=",
     };
 
+    set<Id> types = {
+        Id("int"),
+        Id("num"),
+        Id("nil"),
+        Id("bool"),
+
+        /* // TODO : Remove */ 
+        Id("str"),
+    };
+
     string cType(const string &id)
     {
         if (id == "auto")
@@ -89,6 +94,23 @@ namespace up
             args.push_back(arg->type.toC());
 
         return args;
+    }
+
+    void newType(const Id &ID, Compiler *compiler)
+    {
+        // Check already exists
+        if (typeExists(ID))
+        {
+            // TODO : Error
+            // compiler->generateError()
+        }
+
+        types.insert(ID);
+    }
+
+    bool typeExists(const Id &ID)
+    {
+        return types.find(ID) != types.end();
     }
 
     bool compatibleType(const Id &a, const Id &b)

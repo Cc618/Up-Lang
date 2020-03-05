@@ -93,7 +93,7 @@ namespace up
     {
         generationError = true;
 
-        cerr << INFO.toString() <<
+        cerr << "File " << INFO.toString() <<
             " - " << AS_RED_S(REASON + " Error") <<
             " :\n" << MSG << '\n';
     }
@@ -114,7 +114,6 @@ namespace up
             return;
 
         // TODO : Use absolute file path
-        // TODO : Use . for folders
 
         // Set this module to parsed
         parsedModules.insert(mod);

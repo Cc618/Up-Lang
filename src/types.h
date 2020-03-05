@@ -10,6 +10,7 @@
 namespace up
 {
     class Expression;
+    class Compiler;
 
     // Casts up type to c type in string
     // !!! May return empty string if the type
@@ -20,6 +21,12 @@ namespace up
     // Returns the argument types list
     // All arguments have a c type
     std::vector<std::string> typeArgList(const std::vector<Expression*> &ARGS);
+
+    // Declares a new type
+    void newType(const Id &ID, Compiler *compiler);
+
+    // Whether a type already exists
+    bool typeExists(const Id &ID);
 
     // Whether both types are compatible
     bool compatibleType(const Id &a, const Id &b);    
