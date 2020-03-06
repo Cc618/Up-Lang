@@ -1,7 +1,5 @@
 #include "components.h"
 
-#include <iostream>
-
 #include "compiler.h"
 #include "types.h"
 #include "colors.h"
@@ -183,7 +181,7 @@ namespace up
 
         // TODO : Update target type with num support
         string targetType = "int";
-        
+
         // Add the variable to the content's scope
         content->vars.push_back(new Variable(varId, targetType));
 
@@ -267,10 +265,14 @@ namespace up
 
     void Call::process(Compiler *compiler)
     {
+        // Process args
+        for (auto a : args)
+            a->process(compiler);
+
         std::string funType = "function";
 
         // Check if it's a constructor
-        if (typeExists(id))
+        if (id.isSimple() && typeExists(id))
         {
             funType = "constructor";
 
@@ -284,9 +286,15 @@ namespace up
         // Error : No function found
         if (!func)
         {
-            compiler->generateError("The " + funType + " '" + AS_BLUE(id.toUp()) +
+            // Stringify args
+            string strArgs = args.size() == 0 ? "" : args[0]->type.toUp();
+            for (size_t i = 1; i < args.size(); ++i)
+                strArgs += ", " + args[i]->type.toUp();
+
+            compiler->generateError("The " + funType + " '" + AS_BLUE(id.toUp() + "(" + strArgs + ")") +
                 + "' doesn't match any other " + funType +
                 ", verify the name or the arguments", info);
+ 
             return;
         }
 
@@ -567,7 +575,13 @@ namespace up
 
         // Add statements
         for (auto instr : content)
+        {
+            // Prepend destructors before a return
+            if (dynamic_cast<Return*>(instr))
+                s += destructors;
+
             s += "\t" + instr->toString() + "\n";
+        }
 
         s += "}\n";
 
@@ -579,8 +593,32 @@ namespace up
         // Push scope
         compiler->scopes.push_back(this);
 
+        // Process content
         for (auto instr : content)
             instr->process(compiler);
+
+        // Generate destructors
+        for (auto var : vars)
+        {
+            // Generate destructor id
+            Id id({ var->type.toUp(), "del" });
+
+            // If this destructor exists, process it and add it
+            if (compiler->getFunction(id))
+            {
+                // Generate the destructor call statement
+                auto des = new ExpressionStatement(info,
+                    new Call(info, id, { new VariableUsage(info, var->id) })
+                );
+
+                des->process(compiler);
+
+                // Stringify the statement
+                destructors += "\t" + des->toString() + "\n";
+
+                delete des;
+            }
+        }
 
         compiler->scopes.pop_back();
     }
@@ -635,6 +673,20 @@ namespace up
         return type == "..." || ARG.type == "..." || ARG.type == type;
     }
 
+    Function *Function::createCDef(const ErrorInfo &INFO, const Id &TYPE, const Id &ID,
+        const std::vector<Argument*> &ARGS)
+    {
+        Function *f = new Function(INFO, TYPE, ID, ARGS, true);
+
+        // Special type
+        if (!ID.isSimple())
+            // Destructor
+            if (ID.name() == "del")
+                f->isDestructor = true;
+
+        return f;
+    }
+
     Function::Function(const ErrorInfo &INFO, const Id &TYPE, const Id &ID, const vector<Argument*> &ARGS, const bool IS_C_DEF)
         : ISyntax(INFO), type(TYPE), id(ID), args(ARGS), isCDef(IS_C_DEF)
     {}
@@ -647,6 +699,20 @@ namespace up
 
     void Function::process(Compiler *compiler)
     {
+        // Special functions
+        if (isDestructor)
+        {
+            if (!args.empty())
+            {
+                compiler->generateError("The destructor '" + AS_BLUE(id.toUp()) +
+                    "' can't have arguments", info);
+                return;
+            }
+
+            // TODO : If name mangling, change ids[0] to class name
+            args = { new Argument(info, id.ids[0], Id("me") ) };
+        }
+
         // Check simple type
         if (!type.isSimple())
         {

@@ -53,6 +53,7 @@ namespace up
         // Finds a function
         // !!! Can return nullptr if the function is not found
         // TODO : ARG_TYPES with Id
+        Function *getFunction(const Id &ID);
         Function *getFunction(const Id &ID, const std::vector<std::string> &ARG_TYPES);
 
         // Returns the variable in the current scope

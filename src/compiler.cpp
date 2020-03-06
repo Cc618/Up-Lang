@@ -158,6 +158,15 @@ namespace up
         functions.push_back(f);
     }
 
+    Function *Compiler::getFunction(const Id &ID)
+    {
+        for (auto f : functions)
+            return f;
+
+        // Not found
+        return nullptr;
+    }
+
     Function *Compiler::getFunction(const Id &ID, const std::vector<std::string> &ARG_TYPES)
     {
         bool isEllipsis = ARG_TYPES.size() == 1 && ARG_TYPES[0] == "...";
@@ -235,9 +244,14 @@ namespace up
         // Functions //
         // TODO : Create depedencies on functions which use other functions (add signature)
 
-        // Process functions
+        // Process functions (cdef and then up)
+        // TODO : Separate CDef and UpFunction
         for (auto f : functions)
-            f->process(this);
+            if (f->isCDef)
+                f->process(this);
+        for (auto f : functions)
+            if (!f->isCDef)
+                f->process(this);
 
         // Don't stringify program if there are errors
         if (generationError)

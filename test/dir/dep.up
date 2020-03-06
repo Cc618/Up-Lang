@@ -1,6 +1,6 @@
 # I am a depedency for main.up
 
-
+# Declare object
 obj MyObj
 
 # Constructor

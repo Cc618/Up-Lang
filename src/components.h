@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "error_info.h"
 #include "variable.h"
@@ -401,6 +402,10 @@ namespace up
         // The content
         std::vector<Statement*> content;
         std::vector<Variable*> vars;
+
+    private:
+        // All destructors as string
+        std::string destructors;
     };
 
     // An argument within a function definition
@@ -441,9 +446,14 @@ namespace up
     class Function : public ISyntax
     {
     public:
+        // Creates a cdef function
+        static Function *createCDef(const ErrorInfo &INFO, const Id &TYPE, const Id &ID,
+            const std::vector<Argument*> &ARGS);
+
+    public:
         Function() = default;
         Function(const ErrorInfo &INFO, const Id &TYPE, const Id &ID,
-            const std::vector<Argument*> &ARGS, const bool IS_C_DEF=true);
+            const std::vector<Argument*> &ARGS, const bool IS_C_DEF);
         virtual ~Function();
 
     public:
@@ -466,6 +476,7 @@ namespace up
     public:
         // To check whether this function is defined in c or up
         bool isCDef;
+        bool isDestructor = false;
         std::vector<Argument*> args;
         // Return type
         Id type;

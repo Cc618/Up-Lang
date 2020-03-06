@@ -173,7 +173,7 @@ type_decl:
 
 function:
 	id id args new_line block		{ $$ = new UpFunction(LOC_ERROR(@2), $1, $2, $3, $5); }
-	| CDEF id id args new_line 		{ $$ = new Function(LOC_ERROR(@3), $2, $3, $4); }
+	| CDEF id id args new_line 		{ $$ = Function::createCDef(LOC_ERROR(@3), $2, $3, $4); }
 	;
 
 block:
