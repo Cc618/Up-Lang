@@ -267,14 +267,26 @@ namespace up
 
     void Call::process(Compiler *compiler)
     {
+        std::string funType = "function";
+
+        // Check if it's a constructor
+        if (typeExists(id))
+        {
+            funType = "constructor";
+
+            // Change id
+            id.ids.push_back("new");
+        }
+
         // Check the function exists
         Function *func = compiler->getFunction(id, typeArgList(args));
 
         // Error : No function found
         if (!func)
         {
-            compiler->generateError("The function '" + AS_BLUE(id.toUp()) +
-                + "' doesn't match any other function, verify the name or the arguments", info);
+            compiler->generateError("The " + funType + " '" + AS_BLUE(id.toUp()) +
+                + "' doesn't match any other " + funType +
+                ", verify the name or the arguments", info);
             return;
         }
 

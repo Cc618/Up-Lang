@@ -139,7 +139,11 @@ use dir.dep
 # int var = 42
 # $abc var2
 
+nil fn()
+    $o = MyObj(42)
 
-$o = MyObj.new(42)
+    # TODO : Don't destroy when return
+    # ret o
+    ret 42
 
 

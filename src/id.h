@@ -39,6 +39,10 @@ namespace up
         inline std::string &name()
         { return ids.back(); }
 
+        // Prepends to id a specifier
+        inline void pushSpec(const std::string &s)
+        { ids.insert(ids.begin(), s); }
+
         // Return the up string representation (dots)
         // !!! Must have at least one id
         std::string toUp() const;

@@ -4,7 +4,7 @@
 obj MyObj
 
 # Constructor
-cdef MyObj MyObj.new(int)
+cdef MyObj MyObj.new(int v)
 # Destructor
 cdef nil MyObj.del()
 
@@ -12,15 +12,16 @@ cdef nil MyObj.del()
     #include <stdio.h>
     #include <stdlib.h>
 
+    // Keep in mind that this object is a pointer
     typedef struct
     {
         int val;
-    } MyObj;
+    } *MyObj;
 
     // Constructor
-    MyObj* new_MyObj(int val)
+    MyObj MyObj_new(int val)
     {
-        MyObj *obj = malloc(sizeof(MyObj));
+        MyObj obj = malloc(sizeof(MyObj));
         
         obj->val = val;
 
@@ -28,18 +29,18 @@ cdef nil MyObj.del()
     }
 
     // Destructor
-    void del_MyObj(MyObj* obj)
+    void MyObj_del(MyObj obj)
     {
         free(obj);
     }
 
-// Test
+    // Test
 //    int main()
 //    {
-//        MyObj *obj = new_MyObj(42);
+//        MyObj obj = MyObj_new(42);
 //
 //        printf("%d\n", obj->val);
 //
-//        del_MyObj(obj);
+//        MyObj_del(obj);
 //    }
 %}

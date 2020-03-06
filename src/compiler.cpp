@@ -248,6 +248,11 @@ namespace up
             if (!functions[i]->isCDef)
                 program += functions[i]->toString() + "\n";
 
+        // Add a return statement to main
+        auto err = ErrorInfo::empty();
+        ((UpFunction*) main())->body->
+            content.push_back(new Return(err, new Literal(err, "0", Id("int"))));
+
         // Add the main function at the end
         program += main()->toString();
     }
