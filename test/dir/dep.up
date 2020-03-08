@@ -5,6 +5,11 @@ obj MyObj
 
 # Constructor
 cdef MyObj MyObj.new(int v)
+
+# Methods
+cdef int MyObj.doubleVal()
+cdef nil MyObj.print()
+
 # Destructor
 cdef nil MyObj.del()
 
@@ -26,6 +31,16 @@ cdef nil MyObj.del()
         obj->val = val;
 
         return obj;
+    }
+
+    int MyObj_doubleVal(MyObj me)
+    {
+        return me->val * 2;
+    }
+
+    void MyObj_print(MyObj me)
+    {
+        printf("MyObj { val = %d }\n", me->val);
     }
 
     // Destructor

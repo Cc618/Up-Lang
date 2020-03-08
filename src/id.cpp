@@ -37,12 +37,14 @@ namespace up
 
     string Id::toC() const
     {
-        // Name before
-        string s = name();
+        string s;
 
         for (int i = 0; i < ids.size() - 1; ++i)
-            s += '_' + ids[i];
+            s += ids[i] + '_';
         
+        // Name after
+        s += name();
+
         return s;
     }
 

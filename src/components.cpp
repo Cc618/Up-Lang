@@ -284,20 +284,43 @@ namespace up
 
     void Call::process(Compiler *compiler)
     {
+        std::string funType;
+
+        // Check if it's a constructor
+        if (id.isSimple())
+        {
+            if (typeExists(id))
+            {
+                funType = "constructor";
+
+                // Change id
+                id.ids.push_back("new");
+            }
+            else
+                funType = "function";
+        }
+        // Check variable exists
+        else if (auto var = compiler->getVar(id.ids[0]))
+        {
+            funType = "method";
+
+            // Add the variable as argument
+            auto varExpr = new VariableUsage(info, var->id);
+            varExpr->process(compiler);
+            args.insert(args.begin(), { varExpr });
+
+            // Change id
+            id.ids[0] = var->type.name();
+        }
+        else if (!isDestructor)
+        {
+            compiler->generateError("The function '" + AS_BLUE(id.toUp()) +
+                "' is invalid", info);
+        }
+
         // Process args
         for (auto a : args)
             a->process(compiler);
-
-        std::string funType = "function";
-
-        // Check if it's a constructor
-        if (id.isSimple() && typeExists(id))
-        {
-            funType = "constructor";
-
-            // Change id
-            id.ids.push_back("new");
-        }
 
         // Check the function exists
         Function *func = compiler->getFunction(id, typeArgList(args));
@@ -632,7 +655,7 @@ namespace up
                 {
                     // Generate the destructor call statement
                     auto des = new ExpressionStatement(info,
-                        new Call(info, id, { new VariableUsage(info, vars[varI]->id) })
+                        new Call(info, id, { new VariableUsage(info, vars[varI]->id) }, true)
                     );
 
                     des->process(compiler);
@@ -644,26 +667,6 @@ namespace up
                 }
             }
         }
-
-
-
-
-
-        // // For blocks
-        // int i = 0;
-        // for (auto instr : content)
-        // {
-        //     if (IBlockStatement *b = dynamic_cast<IBlockStatement*>(instr))
-        //     {
-        //         // TMP
-        //         cout << "OK\n";
-
-        //         // Add destructors
-        //         b->pushDestructor(destructors);
-        //     }
-
-        //     ++i;
-        // }
 
         compiler->scopes.pop_back();
     }
@@ -728,11 +731,16 @@ namespace up
     {
         Function *f = new Function(INFO, TYPE, ID, ARGS, true);
 
-        // Special type
-        if (!ID.isSimple())
+        // Special type / Method
+        if (ID.ids.size() == 2)
+        {
             // Destructor
             if (ID.name() == "del")
                 f->isDestructor = true;
+
+            if (ID.name() != "new")
+                f->isMethod = true;
+        }
 
         return f;
     }
@@ -750,12 +758,13 @@ namespace up
     void Function::process(Compiler *compiler)
     {
         // Special functions
-        if (isDestructor)
+        if (isMethod)
         {
-            if (!args.empty())
+            if (isDestructor && !args.empty())
             {
                 compiler->generateError("The destructor '" + AS_BLUE(id.toUp()) +
                     "' can't have arguments", info);
+
                 return;
             }
 

@@ -281,8 +281,8 @@ namespace up
     {
     public:
         Call() = default;
-        Call(const ErrorInfo &INFO, const Id &ID, const std::vector<Expression*> &ARGS={})
-            : Expression(INFO, Id::createAuto()), id(ID), args(ARGS)
+        Call(const ErrorInfo &INFO, const Id &ID, const std::vector<Expression*> &ARGS={}, const bool IS_DESTRUCTOR=false)
+            : Expression(INFO, Id::createAuto()), id(ID), args(ARGS), isDestructor(IS_DESTRUCTOR)
         {}
         ~Call();
 
@@ -293,6 +293,7 @@ namespace up
     public:
         Id id;
         std::vector<Expression*> args;
+        bool isDestructor;
     };
 
     // For example :
@@ -508,6 +509,8 @@ namespace up
     public:
         // To check whether this function is defined in c or up
         bool isCDef;
+        // Whether this is an object's method
+        bool isMethod = false;
         bool isDestructor = false;
         std::vector<Argument*> args;
         // Return type

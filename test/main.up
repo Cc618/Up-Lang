@@ -144,12 +144,21 @@ int fn()
     bool machin = yes
 
     machin ?
+        # Destroy o
         ret -1
 
     $o2 = MyObj(43)
 
     # TODO : Don't destroy when return
     # ret o
+
+    o.print()
+    # o2.print()
+    # o.doubleVal()
+    # o.print()
+
+
+    # Destroy o and o2
     ret 42
 
 
