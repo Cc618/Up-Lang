@@ -114,12 +114,42 @@ namespace up
         std::string code;
     };
 
+    // When a statement contains one or more blocks
+    class IBlockStatement : public Statement
+    {
+    public:
+        IBlockStatement() = default;
+        IBlockStatement(const ErrorInfo &INFO)
+            : Statement(INFO)
+        {}
+        virtual ~IBlockStatement()
+        {}
+
+    public:
+        virtual void pushDestructor(const std::string &des) = 0;
+    };
+
+    // When a statement contains only one block
+    class IMonoBlockStatement : public IBlockStatement
+    {
+    public:
+        IMonoBlockStatement() = default;
+        IMonoBlockStatement(const ErrorInfo &INFO, Block *content);
+        virtual ~IMonoBlockStatement();
+
+    public:
+        virtual void pushDestructor(const std::string &DES) override;
+    
+    protected:
+        Block *content;
+    };
+
     // An if or while
     // For example :
     // condition ?
     //      block
     // if : KEYWORD
-    class ControlStatement : public Statement
+    class ControlStatement : public IMonoBlockStatement
     {
     public:
         ControlStatement() = default;
@@ -133,13 +163,12 @@ namespace up
 
     private:
         Expression *condition;
-        Block *content;
         std::string keyword;
     };
 
     // Sequence of if / or if / or
     // * Starts with a if
-    class ConditionSequence : public Statement
+    class ConditionSequence : public IBlockStatement
     {
     public:
         ConditionSequence() = default;
@@ -151,6 +180,9 @@ namespace up
         virtual void process(Compiler *compiler) override;
 
     public:
+        virtual void pushDestructor(const std::string &DES) override;
+
+    public:
         // If / or if / or block statements
         std::vector<Statement*> controls;
     };
@@ -160,7 +192,7 @@ namespace up
     // or
     //      block
     // !!! Used only in Block::createOrStatement
-    class OrStatement : public Statement
+    class OrStatement : public IMonoBlockStatement
     {
     public:
         OrStatement() = default;
@@ -170,9 +202,6 @@ namespace up
     public:
         virtual std::string toString() const override;
         virtual void process(Compiler *compiler) override;
-
-    private:
-        Block *content;
     };
 
     // A for loop
@@ -180,7 +209,7 @@ namespace up
     // for i to 42
     //      block
     // i : VAR_ID, 0 : begin, 42 : end
-    class ForStatement : public Statement
+    class ForStatement : public IMonoBlockStatement
     {
     public:
         // Creates a for statement with the default initializer (begin)
@@ -200,7 +229,6 @@ namespace up
     private:
         Expression *begin;
         Expression *end;
-        Block *content;
         Id varId;
     };
 
@@ -398,14 +426,18 @@ namespace up
         // !!! Can return nullptr
         Variable *getVar(const Id &ID);
 
+        // Adds a statement in the content        
+        void pushStatement(Statement *s);
+
     public:
-        // The content
-        std::vector<Statement*> content;
         std::vector<Variable*> vars;
 
-    private:
         // All destructors as string
         std::string destructors;
+    
+    private:
+        // The content
+        std::vector<Statement*> content;
     };
 
     // An argument within a function definition

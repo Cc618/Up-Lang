@@ -48,15 +48,28 @@ namespace up
     {
         return "\n" + code + "\n";
     }
+    
+    IMonoBlockStatement::IMonoBlockStatement(const ErrorInfo &INFO, Block *content)
+        : IBlockStatement(INFO), content(content)
+    {}
+    
+    IMonoBlockStatement::~IMonoBlockStatement()
+    {
+        delete content;
+    }
+
+    void IMonoBlockStatement::pushDestructor(const string &DES)
+    {
+        content->destructors += DES;
+    }
 
     ControlStatement::ControlStatement(const ErrorInfo &INFO, Expression *condition, Block *content, const string &KEYWORD)
-        : Statement(INFO), condition(condition), content(content), keyword(KEYWORD)
+        : IMonoBlockStatement(INFO, content), condition(condition), keyword(KEYWORD)
     {}
 
     ControlStatement::~ControlStatement()
     {
         delete condition;
-        delete content;
     }
 
     string ControlStatement::toString() const
@@ -84,7 +97,7 @@ namespace up
     }
 
     ConditionSequence::ConditionSequence(const ErrorInfo &INFO, ControlStatement *ifStmt)
-        : Statement(INFO)
+        : IBlockStatement(INFO)
     {
         controls.push_back(ifStmt);
     }
@@ -122,8 +135,14 @@ namespace up
         }
     }
 
+    void ConditionSequence::pushDestructor(const std::string &DES)
+    {
+        for (auto c : controls)
+            ((IBlockStatement*) c)->pushDestructor(DES);
+    }
+
     OrStatement::OrStatement(const ErrorInfo &INFO, Block *content)
-        : Statement(INFO), content(content)
+        : IMonoBlockStatement(INFO, content)
     {}
 
     OrStatement::~OrStatement()
@@ -149,7 +168,7 @@ namespace up
 
     ForStatement::ForStatement(const ErrorInfo &INFO, const Id &VAR_ID, Expression *begin,
         Expression *end, Block *content)
-        : Statement(INFO), varId(VAR_ID), begin(begin), end(end), content(content)
+        : IMonoBlockStatement(INFO, content), varId(VAR_ID), begin(begin), end(end)
     {}
 
     ForStatement::~ForStatement()
@@ -410,8 +429,6 @@ namespace up
             return;
         }
 
-        // TODO : Constructors / Destructors
-
         // Error : The variable doesn't exists
         Variable *v = compiler->getVar(id);
 
@@ -594,31 +611,59 @@ namespace up
         compiler->scopes.push_back(this);
 
         // Process content
+        int varI = 0;
         for (auto instr : content)
+        {
             instr->process(compiler);
 
-        // Generate destructors
-        for (auto var : vars)
-        {
-            // Generate destructor id
-            Id id({ var->type.toUp(), "del" });
+            // Add destructors for variable declared before the block
+            if (IBlockStatement *b = dynamic_cast<IBlockStatement*>(instr))
+                // Add destructors
+                b->pushDestructor(destructors);
 
-            // If this destructor exists, process it and add it
-            if (compiler->getFunction(id))
+            // Generate destructors for new variables
+            for ( ; varI < vars.size(); ++varI)
             {
-                // Generate the destructor call statement
-                auto des = new ExpressionStatement(info,
-                    new Call(info, id, { new VariableUsage(info, var->id) })
-                );
+                // Generate destructor id
+                Id id({ vars[varI]->type.toUp(), "del" });
 
-                des->process(compiler);
+                // If this destructor exists, process it and add it
+                if (auto f = compiler->getFunction(id))
+                {
+                    // Generate the destructor call statement
+                    auto des = new ExpressionStatement(info,
+                        new Call(info, id, { new VariableUsage(info, vars[varI]->id) })
+                    );
 
-                // Stringify the statement
-                destructors += "\t" + des->toString() + "\n";
+                    des->process(compiler);
 
-                delete des;
+                    // Stringify the statement
+                    destructors += "\t" + des->toString() + "\n";
+
+                    delete des;
+                }
             }
         }
+
+
+
+
+
+        // // For blocks
+        // int i = 0;
+        // for (auto instr : content)
+        // {
+        //     if (IBlockStatement *b = dynamic_cast<IBlockStatement*>(instr))
+        //     {
+        //         // TMP
+        //         cout << "OK\n";
+
+        //         // Add destructors
+        //         b->pushDestructor(destructors);
+        //     }
+
+        //     ++i;
+        // }
 
         compiler->scopes.pop_back();
     }
@@ -630,6 +675,11 @@ namespace up
                 return v;
 
         return nullptr;
+    }
+
+    void Block::pushStatement(Statement *s)
+    {
+        content.push_back(s);
     }
 
     Argument *Argument::createEllipsis(const ErrorInfo &INFO)

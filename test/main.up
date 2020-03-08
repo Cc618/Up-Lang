@@ -139,8 +139,14 @@ use dir.dep
 # int var = 42
 # $abc var2
 
-nil fn()
+int fn()
     $o = MyObj(42)
+    bool machin = yes
+
+    machin ?
+        ret -1
+
+    $o2 = MyObj(43)
 
     # TODO : Don't destroy when return
     # ret o

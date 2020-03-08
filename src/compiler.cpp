@@ -104,7 +104,7 @@ namespace up
         if (auto cSection = dynamic_cast<CStatement*>(s))
             addGlobalCCode(cSection->toString());
         else
-            ((UpFunction*) main())->body->content.push_back(s);
+            ((UpFunction*) main())->body->pushStatement(s);
     }
 
     void Compiler::import(Module mod, const ErrorInfo &INFO)
@@ -161,7 +161,8 @@ namespace up
     Function *Compiler::getFunction(const Id &ID)
     {
         for (auto f : functions)
-            return f;
+            if (f->id == ID)
+                return f;
 
         // Not found
         return nullptr;
@@ -265,7 +266,7 @@ namespace up
         // Add a return statement to main
         auto err = ErrorInfo::empty();
         ((UpFunction*) main())->body->
-            content.push_back(new Return(err, new Literal(err, "0", Id("int"))));
+            pushStatement(new Return(err, new Literal(err, "0", Id("int"))));
 
         // Add the main function at the end
         program += main()->toString();

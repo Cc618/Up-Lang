@@ -182,8 +182,8 @@ block:
 	;
 
 block_start:
-	INDENT stmt						{ $$ = new Block(LOC_ERROR(@2)); $$->content.push_back($2); }
-	| block_start stmt				{ $$ = $1; $$->content.push_back($2); }
+	INDENT stmt						{ $$ = new Block(LOC_ERROR(@2)); $$->pushStatement($2); }
+	| block_start stmt				{ $$ = $1; $$->pushStatement($2); }
 	;
 
 args:
