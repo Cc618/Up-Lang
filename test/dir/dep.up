@@ -8,6 +8,7 @@ cdef MyObj MyObj.new(int v)
 
 # Methods
 cdef int MyObj.doubleVal()
+cdef nil MyObj.setVal(int val)
 cdef nil MyObj.print()
 
 # Destructor
@@ -38,6 +39,11 @@ cdef nil MyObj.del()
         return me->val * 2;
     }
 
+    void MyObj_setVal(MyObj me, int val)
+    {
+        me->val = val;
+    }
+
     void MyObj_print(MyObj me)
     {
         printf("MyObj { val = %d }\n", me->val);
@@ -48,14 +54,4 @@ cdef nil MyObj.del()
     {
         free(obj);
     }
-
-    // Test
-//    int main()
-//    {
-//        MyObj obj = MyObj_new(42);
-//
-//        printf("%d\n", obj->val);
-//
-//        MyObj_del(obj);
-//    }
 %}

@@ -163,3 +163,16 @@ int fn()
 
 
 
+
+
+$object = MyObj(618)
+
+# val = 618
+object.print()
+
+object.setVal(314)
+object.doubleVal()
+
+# val = 314 * 2 = 628
+object.print()
+

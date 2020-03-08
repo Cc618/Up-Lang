@@ -769,7 +769,7 @@ namespace up
             }
 
             // TODO : If name mangling, change ids[0] to class name
-            args = { new Argument(info, id.ids[0], Id("me") ) };
+            args.insert(args.begin(), { new Argument(info, id.ids[0], Id("me") ) });
         }
 
         // Check simple type
