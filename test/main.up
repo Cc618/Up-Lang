@@ -1,7 +1,5 @@
 
-# TODO : ...
 
-# TODO : Params in scope
 int myFn(int i)
     ret i * i
 
