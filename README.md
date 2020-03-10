@@ -63,6 +63,11 @@ cdef num cosf(num)
     // This code is in the global scope
     int myNb = 128;
 %}
+
+# Objects
+# To declare objects, see syntax.md
+$o = MyObject(618)
+o.add(48)
 ```
 
 ## Depedencies
@@ -96,7 +101,12 @@ To compile multiple components are used :
 To compile a file :
 
 ```sh
-up <file_ path>
+# Display to stdout the C code
+up <entry.up>
+# Transpile to C
+up <entry.up> <out.c>
+# Compile to Bin
+up <entry.up> <out>
 ```
 
 To run the test file located at test/main.up :

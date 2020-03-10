@@ -90,6 +90,7 @@ To import modules :
 
 ```
 use module
+use dir.submodule
 ```
 
 libc is used to have c headers :
@@ -99,6 +100,8 @@ use libc
 ```
 
 ## C Compatibility
+
+### Functions
 
 To declare extern C functions :
 
@@ -112,6 +115,58 @@ To add C sections in global scope :
     // C Code
     int myNumber = 128;
 %}
+```
+
+### Objects
+
+To declare an object :
+
+```
+obj MyObject
+```
+
+**This object will be a pointer**
+
+To declare it in the C section :
+
+```c
+typedef struct {
+    int val
+} _MyObject;
+typedef _MyObject* MyObject;
+```
+
+To add methods :
+
+```
+# Constructor
+cdef MyObject MyObject.new(int val)
+
+# Destructor
+cdef nil MyObject.del()
+
+# Method
+cdef int MyObject.add(int val)
+```
+
+And to create these methods :
+
+```c
+MyObject MyObject_new(int val) {
+    MyObject me = malloc(sizeof(_MyObject));
+
+    me->val = val;
+
+    return me;
+}
+
+void MyObject_del(MyObject me) {
+    free(me);
+}
+
+int MyObject_add(MyObject me, int val) {
+    return val + me->val;
+}
 ```
 
 ## LibUp (_WIP_)
