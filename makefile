@@ -12,7 +12,7 @@ src:
 # Runs the compiler on the test/main.up file
 test: src
 	@printf '--- Running up ---\n\n'
-	@bin/up test/main.up
+	@bin/up test/main.up # test/out
 
 clean:
 	cd src && make clean

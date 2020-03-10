@@ -63,8 +63,7 @@ namespace up
         inline bool operator!=(const std::string &s) const
         { return name() != s; }
         // For sets
-        inline bool operator<(const Id &OTHER) const
-        { return ids[0][0] < OTHER.ids[0][0]; }
+        bool operator<(const Id &OTHER) const;
 
     public:
         // Must contain at leat one non empty string

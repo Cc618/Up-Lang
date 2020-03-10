@@ -1,5 +1,7 @@
 #include "id.h"
 
+#include <cstring>
+
 using namespace std;
 
 namespace up
@@ -20,6 +22,11 @@ namespace up
                 return false;
         
         return true;
+    }
+    
+    bool Id::operator<(const Id &OTHER) const
+    {
+        return strcmp(ids[0].c_str(), OTHER.ids[0].c_str()) < 0;
     }
 
     string Id::toUp() const

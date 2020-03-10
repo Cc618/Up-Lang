@@ -55,6 +55,8 @@ namespace up
     };
 
     set<Id> types = {
+        Id::createEllipsis(),
+     
         Id("int"),
         Id("num"),
         Id("nil"),

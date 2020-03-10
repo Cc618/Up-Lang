@@ -19,7 +19,7 @@ namespace up
         clearFunctions();
     }
 
-    int Compiler::parse(const std::string &FILE_PATH)
+    int Compiler::parse(const string &FILE_PATH, ostream &programOut)
     {
         // Invalid file name
         if (FILE_PATH.size() < 4 || FILE_PATH.substr(FILE_PATH.size() - 3) != ".up")
@@ -83,8 +83,7 @@ namespace up
         if (generationError)
             return 1;
 
-        // TODO : Write into a file
-        cout << program;
+        programOut << program;
 
         return ret;
     }

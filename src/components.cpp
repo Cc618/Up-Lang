@@ -848,6 +848,10 @@ namespace up
 
     void UpFunction::process(Compiler *compiler)
     {
+        // Add args in body's scope
+        for (auto a : args)
+            body->vars.push_back(new Variable(a->id, a->type));
+
         Function::process(compiler);
 
         body->process(compiler);

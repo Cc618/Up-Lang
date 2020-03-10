@@ -23,9 +23,10 @@ namespace up
         ~Compiler();
         
     public:
-        // Compiles the main up source file
+        // Compiles the main Up source file to C
+        // Writes the content to programOut
         // Returns 0 if no error
-        int parse(const std::string &FILE_PATH);
+        int parse(const std::string &FILE_PATH, std::ostream &programOut);
 
         // Creates and display a generation error
         void generateError(const std::string &MSG, const ErrorInfo &INFO, const std::string &REASON="Generation");
