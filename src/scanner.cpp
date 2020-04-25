@@ -1,6 +1,7 @@
 #include "scanner.h"
 
 #include "compiler.h"
+#include "global.h"
 
 using namespace std;
 
@@ -96,15 +97,23 @@ namespace up
         tokens.push_back(Parser::make_START(loc));
         ended = false;
 
+        // Try open relative module
         fileInput.open(MOD.path());
-
         if (fileInput.is_open())
-        {
-            switch_streams(fileInput, cout);
-            return true;
-        }
+            goto fileOpen;
 
+        // Try open include module
+        fileInput.open(includeDir + MOD.id.toPath());
+        if (fileInput.is_open())
+            goto fileOpen;
+
+        // Can't open module
         return false;
+
+    fileOpen:;
+        switch_streams(fileInput, cout);
+        
+        return true;
     }
 
     void Scanner::endParse()

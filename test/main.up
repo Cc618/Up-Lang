@@ -1,4 +1,5 @@
 
+use str
 
 int myFn(int i)
     ret i * i

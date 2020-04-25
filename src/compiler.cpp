@@ -3,7 +3,6 @@
 #include <sstream>
 #include <algorithm>
 
-#include "global.h"
 #include "colors.h"
 #include "types.h"
 
