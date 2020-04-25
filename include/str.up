@@ -1,0 +1,54 @@
+
+obj Str
+
+cdef Str Str.new(str data)
+cdef nil Str.del()
+cdef nil Str.print()
+cdef Str Str.add(str data)
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+} _Str;
+typedef _Str* Str;
+
+Str Str_new(char *data)
+{
+    Str me = malloc(sizeof(_Str));
+
+    me->str = data;
+
+    return me;
+}
+
+void Str_del(Str me)
+{
+    free(me);
+}
+
+void Str_print(Str me)
+{
+    printf("%s\n", me->str);
+}
+
+Str Str_add(Str me, char *data)
+{
+    // Find length
+    int lenA = strlen(me->str);
+    int lenB = strlen(data);
+    int newLen = lenA + lenB;
+
+    char *resultData = malloc(newLen + 1);
+    strcpy(resultData, me->str);
+    strcpy(resultData + lenA, data);
+    // TODO : Useless ?
+    resultData[newLen] = '\0';
+
+    return Str_new(resultData);
+}
+
+%}

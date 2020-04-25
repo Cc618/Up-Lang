@@ -5,6 +5,7 @@
 #include "scanner.h"
 #include "compiler.h"
 #include "parser.hpp"
+#include "global.h"
 
 using namespace up;
 using namespace std;
@@ -58,8 +59,12 @@ void compileToBinFile(const string ENTRY, const string OUT, Compiler &compiler, 
 
 int main(int argc, char **argv)
 {
+    int ret = initGlobal();
+
+    if (ret != 0)
+        return ret;
+
     Compiler compiler;
-    int ret;
 
     // Output C to stdout
     if (argc == 2)
