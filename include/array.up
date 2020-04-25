@@ -1,0 +1,59 @@
+
+# Number array
+
+obj Array
+
+cdef Array Array.new(int count)
+cdef nil Array.del()
+cdef nil Array.print()
+cdef nil Array.atSet(int i, num val)
+cdef num Array.atGet(int i)
+
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    float *data;
+    int count;
+} _Array;
+typedef _Array* Array;
+
+Array Array_new(int count)
+{
+    Array me = malloc(sizeof(_Array));
+
+    me->data = malloc(sizeof(float) * count);
+    me->count = count;
+
+    return me;
+}
+
+void Array_del(Array me)
+{
+    free(me->data);
+    free(me);
+}
+
+void Array_print(Array me)
+{
+    // TODO : Update
+    for (size_t i = 0; i < me->count; ++i)
+        printf("%f ", me->data[i]);
+    
+    puts("");
+}
+
+float Array_atGet(Array me, int i)
+{
+    // TODO : Bounds
+    return me->data[i];
+}
+
+void Array_atSet(Array me, int i, float val)
+{
+    // TODO : Bounds
+    me->data[i] = val;
+}
+
+%}

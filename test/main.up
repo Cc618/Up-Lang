@@ -1,12 +1,12 @@
-
 use str
+use array
 
-int myFn(int i)
-    ret i * i
 
-# cdef int newFn(int i)
-cdef int newFn(...)
+$a = Array(4)
 
-$a = myFn(42)
-$b = newFn(42)
+$x = 4.0
+for i to 4
+    a.atSet(i, x)
+    x += 1.0
 
+a.print()

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdio>
+#include <cstring>
 
 #include "scanner.h"
 #include "compiler.h"
@@ -57,6 +58,14 @@ void compileToBinFile(const string ENTRY, const string OUT, Compiler &compiler, 
     remove(C_FILE.c_str());
 }
 
+void printHelp()
+{
+    cout << "Usage :\n";
+    cout << "up <entry.up>\t\tPrints the C output to stdout\n";
+    cout << "up <entry.up> <out.c>\tWrites the C output to out.c\n";
+    cout << "up <entry.up> <out>\tCompiles to the binary out (using gcc)\n";
+}
+
 int main(int argc, char **argv)
 {
     int ret = initGlobal();
@@ -68,7 +77,13 @@ int main(int argc, char **argv)
 
     // Output C to stdout
     if (argc == 2)
-        ret = compiler.parse(argv[1], std::cout);
+    {
+        if (strcmp(argv[1], "--help") == 0 |
+            strcmp(argv[1], "-h") == 0)
+            printHelp();
+        else
+            ret = compiler.parse(argv[1], std::cout);
+    }
     // Write file
     else if (argc == 3)
     {
@@ -84,10 +99,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        cerr << "Usage :\n";
-        cerr << "up <entry.up>\t\tPrints the C output to stdout\n";
-        cerr << "up <entry.up> <out.c>\tWrites the C output to out.c\n";
-        cerr << "up <entry.up> <out>\tCompiles to the binary out (using gcc)\n";
+        printHelp();
 
         return -1;
     }
